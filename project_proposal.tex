@@ -1,44 +1,81 @@
 \documentclass[12pt]{article}
 \usepackage{float}
+\usepackage{harvard}
+\usepackage[acronym]{glossaries}
+\usepackage[automake]{glossaries-extra}
 
-\title{Project Proposal}
+
+\makeglossaries
+
+\newglossaryentry{ictal}
+{
+        name=latex,
+        description={Is a mark up language specially suited for 
+scientific documents}
+}
+
+\newglossaryentry{preictal}
+{
+        name=latex,
+        description={Is a mark up language specially suited for 
+scientific documents}
+}
+
+%\acrshort{gcd}
+%\acrfull{gcd}
+\newacronym{eeg}{EEG}{Electroencephalogram}
+\newacronym{eegs}{EEGs}{Electroencephalograms}
+\newacronym{ai}{AI}{Artificial Intelligence}
+\newacronym{ml}{ML}{Machine Learning}
+\newacronym{snr}{SNR}{Signal-to-Noise Ratio}
+\newacronym{emd}{EMD}{Empirical Mode Decomposition}
+\newacronym{svm}{SVM}{Support Vector Machine}
+\newacronym{imf}{IMF}{Intrinsic Mode Functions}
+\newacronym{csp}{CSP}{Common Spatial Pattern}
+
+
+\title{Project Proposal \\ Real-time ictal-preictal detection through the application of machine learning to Electroencephalogram signals.}
 \author{William Riddell}
 
 \begin{document}
 \maketitle
 
-
+\textit{Comments for Kashi will be written in italics. - William}
 
 \section{Introduction}
-\subsection{Background (overview of topic and motivation)}
-asdf
-\cite{test}
-\subsection{Aim}
-asdf
-\subsection{Objectives}
-asdf
-\subsection{Product Overview}
-asdf
-\subsubsection{Scope (What will it do? How will it work?)}
-asdf
-\subsubsection{Audience (Who is it for?)}
-asdf
+
+Over the last 20 years, \acrfull{ai} has seen a large evolution through the use of \acrfull{ml}; the statistical analysis of data which leads to the unveiling of characteristics and connections. \cite{awad2015efficient}. There has been a large uptake of applying \acrshort{ml} techniques to biomedical data, increasing the speed and accuracy of prediction, detection, diagnosis, and prognosis. 
+
+\acrfull{eegs} measure the electrical signals in the brain. \acrshort{eegs} have a great use in giving an insight into the inner workings of the brain, for example allowing us to pick up abnormalities preceding and during their occurrence. ``A seizure is a burst of uncontrolled electrical activity between brain cells (also called neurons or nerve cells) that causes temporary abnormalities in muscle tone or movements (stiffness, twitching or limpness), behaviours, sensations or states of awareness.'' \cite{johnHopkinsTypesOfSeizures} Due to this, monitoring the brain's electrical activity through the use of an \acrshort{eeg}, and piping the data-stream through an \acrshort{ml} model may allow us to detect the preictal period. ``An automated accurate prediction of seizures will significantly improve the quality of life of patients and reduce the burden on caregivers'' \cite{acharya2018automated}
+
+This project will aim to develop an \acrshort{ml} model which triggers an alert if a preictal period is detected. The model will have to achieve a high degree of accuracy ($\geq85\%$) when being applied to real-time \acrshort{eeg} data. It will make use of a \acrfull{svm} to classify the preictal periods from interictal and ictal periods, making use of the CHB-MIT Dataset which contains extracranial EEG signals from 22 patients in the Boston Children's Hospital. \cite{shoeb2009application} \cite{PhysioNet}
+
 
 \section{Background Review}
-\subsection{Summary of existing approaches (e.g. Competitive analysis, if appropriate)}
-asdf
-\subsection{Brief summary of related literature (i.e. Literature review, or annotated bibliography, with
-asdf
-brief summary of sources)}
+
+There have been extensive research into applying \acrshort{ml} models to \acrshort{eeg} data \cite{shoeb2010application} \cite{chakraborti2018machine}\cite{kumar2014machine} \cite{shen2022eeg} \cite{gupta2019epileptic} \cite{samiee2015long} \cite{zabihi2015analysis} \cite{wang2021one} \cite{zarei2021automatic} \cite{li2021seizure} \cite{shoeb2009application} \cite{wong2023eeg} although there have been fewer attempts to apply ML models to identify the preictal state in a real-time setting with high accuracy, although they do exist \cite{usman2017epileptic}. 
+
+Dataset CHB-MIT \cite{shoeb2009application} \cite{PhysioNet} was taken from Boston Children's Hospital. It is a long-term dataset with recording of 22 paediatric subjects, 5 male and 17 female, who have intractable seizures. The dataset contains 23 \acrshort{eeg} signals positioned on the scalp in the international 10-20 \acrshort{eeg} system \cite{sharbrough1991american}. The dataset is labelled with the timestamps of the onset and ending of each seizure. Over the course of several days the onsets and ends of a total of 182 seizures were annotated \cite{shoeb2009application} \cite{PhysioNet}. This dataset is utilized by many papers when working on real-time epileptic seizure detection, there have been many different approaches with detection accuracy reaching 92.23\% \cite{usman2017epileptic}
+
+Usman et al. was able to achieve a preictal detection rate of 92.23\%. \cite{usman2017epileptic} Usman noted that poor \acrfull{snr} within the dataset lead to a large amount of false positives and posed as a issue during his research. To combat this he combined the many \acrshort{eeg} signals into a single surrogate signal and then utilized \acrfull{emd} to increase the \acrshort{snr}. Usman et al. then ``extracted multiple features including entropy, approximate entropy, Hjorth parameters, spectral moments, and statistical moments. It has been observed that both statistical and spectral features give increased sensitivity between interictal and preictal states. \acrfull{svm} \cite{hearst1998support} has been used as a classifier for classification between preictal state and interictal state.'' \cite{usman2017epileptic}.
+
+When a seizure occurs, or during the preictal state, the spike rate and variation in the \acrshort{eeg} signals change \cite{lange1983temporo} \cite{truccolo2011single} ``spike rate is used as the indicator to anticipate seizures in \acrfull{eeg} signal. Spikes detection step is used in \acrshort{eeg} signal during interictal, preictal, and ictal periods followed by a mean filter to smooth the spike number. The maximum spike rate in interictal periods is used as an indicator to predict seizures.'' \cite{slimen2020epileptic}. Using this method, Slimen et al. was able to achieve a 92\% accuracy.
+
 
 \section{Methodology}
+
 \subsection{Approach (Description of the research and development methodology, e.g. Software
 development model, requirement gathering method, test and evaluation process)}
-asdf
-\subsection{Technology (Implementation tools and resources such as hardware, software)}
-asdf
-\subsection{Version management plan (e.g. Git repository or shared drive)}
-asdf
+
+I will be utilizing the open-source CHB-MIT dataset \cite{shoeb2009application} \cite{PhysioNet} as it contains all ictal periods which is ideal for the prediction of epileptic seizures. I will be following the preprocessing stages that Usman et al. used during their research. This involves converting the \acrshort{eeg} signals into a single signal through the use of applying an averaging filter and the \acrfull{csp} algorithm to increase the \acrshort{snr}. Once I have applied these algorithms I will perform \acrshort{emd} which breaks the surrogate signal into its oscillatory functions, which are amplitude, period, and frequency. This is also known as its \acrfull{imf}.
+
+Usman et al. also state that the noise generally affects the high-frequency components \cite{usman2017epileptic}, due to this I will select the suitable \acrshort{imf} frequencies and extract them for classification. I will finally be using a \acrshort{svm} to classify the data between interictal and preictal states.
+
+I will be programming the preprocessing and the ML model in Python 3 \cite{python3}, using librarys such as TensorFlow \cite{tensorflow2015-whitepaper} which I will be using to construct my \acrshort{svm} and Numpy \cite{harris2020array} to write in my averaging filter and the \acrshort{csp} algorithm. I will also be using the ``EMD-signal'' library \cite{pyemd} to split the surrogate signal into its \acrshort{imf}. I will be version managing this project using the software ``Git'' , and hosting the repository on ``Github''.
+
+For testing purposes \textit{write in testing methodology, including suitable cross-validation for SVM (required research)}
+
+
 
 \section{Project management}
 \subsection{Activities: tasks required to complete each objective}
@@ -50,8 +87,17 @@ asdf
 \subsection{Deliverables}
 asdf
 
-%Change citations and references so they adher to the University guidelines or IEEE
-\bibliographystyle{unsrt}
+
+
+
+\pagebreak
+
+\printglossary[type=\acronymtype]
+\printglossary
+
+\pagebreak
+
+\bibliographystyle{agsm}
 \bibliography{references}
 
 \end{document}
