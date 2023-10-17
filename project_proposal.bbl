@@ -1,0 +1,188 @@
+\begin{thebibliography}{xx}
+
+\harvarditem[Abadi et~al.]{Abadi, Agarwal \harvardand\
+  et~al.}{2015}{tensorflow2015-whitepaper}
+Abadi, M., Agarwal, A. \harvardand\ et~al., P.~B.  \harvardyearleft
+  2015\harvardyearright , `{TensorFlow}: Large-scale machine learning on
+  heterogeneous systems'.
+\newblock Software available from tensorflow.org.
+\newline\harvardurl{https://www.tensorflow.org/}
+
+\harvarditem[Acharya et~al.]{Acharya, Hagiwara \harvardand\
+  Adeli}{2018}{acharya2018automated}
+Acharya, U.~R., Hagiwara, Y. \harvardand\ Adeli, H.  \harvardyearleft
+  2018\harvardyearright , `Automated seizure prediction', {\em Epilepsy \&
+  Behavior} {\bf 88},~251--261.
+
+\harvarditem{Awad \harvardand\ Khanna}{2015}{awad2015efficient}
+Awad, M. \harvardand\ Khanna, R.  \harvardyearleft 2015\harvardyearright , {\em
+  Efficient Learning Machines: Theories, Concepts, and Applications for
+  Engineers and System Designers}, Apress.
+\newline\harvardurl{https://books.google.co.uk/books?id=qPGQnAEACAAJ}
+
+\harvarditem[Chakraborti et~al.]{Chakraborti, Choudhary, Singh, Kumar
+  \harvardand\ Swetapadma}{2018}{chakraborti2018machine}
+Chakraborti, S., Choudhary, A., Singh, A., Kumar, R. \harvardand\ Swetapadma,
+  A.  \harvardyearleft 2018\harvardyearright , `A machine learning based method
+  to detect epilepsy', {\em International Journal of Information Technology}
+  {\bf 10},~257--263.
+
+\harvarditem[Gao et~al.]{Gao, Liu, Cui, Qian \harvardand\
+  Chen}{2022}{gao2022general}
+Gao, Y., Liu, A., Cui, X., Qian, R. \harvardand\ Chen, X.  \harvardyearleft
+  2022\harvardyearright , `A general sample-weighted framework for epileptic
+  seizure prediction', {\em Computers in Biology and Medicine} {\bf
+  150},~106169.
+
+\harvarditem[Goldberger et~al.]{Goldberger, Amaral, Glass, Hausdorff, Ivanov,
+  Mark, Mietus, Moody, Peng \harvardand\ Stanley}{2000 (June 13)}{PhysioNet}
+Goldberger, A.~L., Amaral, L. A.~N., Glass, L., Hausdorff, J.~M., Ivanov,
+  P.~C., Mark, R.~G., Mietus, J.~E., Moody, G.~B., Peng, C.-K. \harvardand\
+  Stanley, H.~E.  \harvardyearleft 2000 (June 13)\harvardyearright ,
+  `{PhysioBank, PhysioToolkit, and PhysioNet}: Components of a new research
+  resource for complex physiologic signals', {\em Circulation} {\bf
+  101}(23),~e215--e220.
+\newblock Circulation Electronic Pages:
+  http://circ.ahajournals.org/content/101/23/e215.full PMID:1085218; doi:
+  10.1161/01.CIR.101.23.e215.
+
+\harvarditem{Gupta \harvardand\ Pachori}{2019}{gupta2019epileptic}
+Gupta, V. \harvardand\ Pachori, R.~B.  \harvardyearleft 2019\harvardyearright ,
+  `Epileptic seizure identification using entropy of fbse based eeg rhythms',
+  {\em Biomedical Signal Processing and Control} {\bf 53},~101569.
+
+\harvarditem[Harris et~al.]{Harris, Millman \harvardand\ van der Walt~et
+  al.}{2020}{harris2020array}
+Harris, C.~R., Millman, K.~J. \harvardand\ van der Walt~et al., S.~J.
+  \harvardyearleft 2020\harvardyearright , `Array programming with {NumPy}',
+  {\em Nature} {\bf 585}(7825),~357--362.
+\newline\harvardurl{https://doi.org/10.1038/s41586-020-2649-2}
+
+\harvarditem{Kumar \harvardand\ Kolekar}{2014}{kumar2014machine}
+Kumar, A. \harvardand\ Kolekar, M.~H.  \harvardyearleft 2014\harvardyearright ,
+  Machine learning approach for epileptic seizure detection using wavelet
+  analysis of eeg signals, {\em in} `2014 International Conference on Medical
+  Imaging, m-Health and Emerging Communication Systems (MedCom)', IEEE,
+  pp.~412--416.
+
+\harvarditem[Lange et~al.]{Lange, Lieb, Engel~Jr \harvardand\
+  Crandall}{1983}{lange1983temporo}
+Lange, H.~H., Lieb, J.~P., Engel~Jr, J. \harvardand\ Crandall, P.~H.
+  \harvardyearleft 1983\harvardyearright , `Temporo-spatial patterns of
+  pre-ictal spike activity in human temporal lobe epilepsy', {\em
+  Electroencephalography and clinical neurophysiology} {\bf 56}(6),~543--555.
+
+\harvarditem{Laszuk}{2017}{pyemd}
+Laszuk, D.  \harvardyearleft 2017\harvardyearright , `Python implementation of
+  empirical mode decomposition algorithm',
+  https://github.com/laszukdawid/PyEMD.
+
+\harvarditem[Li et~al.]{Li, Zhou, Liu, Zhang, Geng, Liu, Wang \harvardand\
+  Shang}{2021}{li2021seizure}
+Li, C., Zhou, W., Liu, G., Zhang, Y., Geng, M., Liu, Z., Wang, S. \harvardand\
+  Shang, W.  \harvardyearleft 2021\harvardyearright , `Seizure onset detection
+  using empirical mode decomposition and common spatial pattern', {\em IEEE
+  Transactions on Neural Systems and Rehabilitation Engineering} {\bf
+  29},~458--467.
+
+\harvarditem{Medicine}{n.d.}{johnHopkinsTypesOfSeizures}
+Medicine, J.~H.  \harvardyearleft n.d.\harvardyearright , `Types of seizures,
+  what is a seizure?'.
+\newline\harvardurl{https://www.hopkinsmedicine.org/health/conditions-and-diseases/epilepsy/types-of-seizures}
+
+\harvarditem{Ozcan \harvardand\ Erturk}{2019}{ozcan2019seizure}
+Ozcan, A.~R. \harvardand\ Erturk, S.  \harvardyearleft 2019\harvardyearright ,
+  `Seizure prediction in scalp eeg using 3d convolutional neural networks with
+  an image-based approach', {\em IEEE Transactions on Neural Systems and
+  Rehabilitation Engineering} {\bf 27}(11),~2284--2293.
+
+\harvarditem[Samiee et~al.]{Samiee, Kiranyaz, Gabbouj \harvardand\
+  Saram{\"a}ki}{2015}{samiee2015long}
+Samiee, K., Kiranyaz, S., Gabbouj, M. \harvardand\ Saram{\"a}ki, T.
+  \harvardyearleft 2015\harvardyearright , `Long-term epileptic eeg
+  classification via 2d mapping and textural features', {\em Expert Systems
+  with Applications} {\bf 42}(20),~7175--7185.
+
+\harvarditem{Sharbrough}{1991}{sharbrough1991american}
+Sharbrough, F.  \harvardyearleft 1991\harvardyearright , `American
+  electroencephalographic society guidelines for standard electrode position
+  nomenclature', {\em Clin Neurophysiol} {\bf 8},~200--202.
+
+\harvarditem[Shen et~al.]{Shen, Wen, Song \harvardand\ Li}{2022}{shen2022eeg}
+Shen, M., Wen, P., Song, B. \harvardand\ Li, Y.  \harvardyearleft
+  2022\harvardyearright , `An eeg based real-time epilepsy seizure detection
+  approach using discrete wavelet transform and machine learning methods', {\em
+  Biomedical Signal Processing and Control} {\bf 77},~103820.
+
+\harvarditem{Shoeb}{2009}{shoeb2009application}
+Shoeb, A.~H.  \harvardyearleft 2009\harvardyearright , Application of machine
+  learning to epileptic seizure onset detection and treatment, PhD thesis,
+  Massachusetts Institute of Technology.
+
+\harvarditem{Shoeb \harvardand\ Guttag}{2010}{shoeb2010application}
+Shoeb, A.~H. \harvardand\ Guttag, J.~V.  \harvardyearleft 2010\harvardyearright
+  , Application of machine learning to epileptic seizure detection, {\em in}
+  `Proceedings of the 27th international conference on machine learning
+  (ICML-10)', pp.~975--982.
+
+\harvarditem[Slimen et~al.]{Slimen, Boubchir \harvardand\
+  Seddik}{2020}{slimen2020epileptic}
+Slimen, I.~B., Boubchir, L. \harvardand\ Seddik, H.  \harvardyearleft
+  2020\harvardyearright , `Epileptic seizure prediction based on eeg spikes
+  detection of ictal-preictal states', {\em Journal of biomedical research}
+  {\bf 34}(3),~162.
+
+\harvarditem[Truccolo et~al.]{Truccolo, Donoghue, Hochberg, Eskandar, Madsen,
+  Anderson, Brown, Halgren \harvardand\ Cash}{2011}{truccolo2011single}
+Truccolo, W., Donoghue, J.~A., Hochberg, L.~R., Eskandar, E.~N., Madsen, J.~R.,
+  Anderson, W.~S., Brown, E.~N., Halgren, E. \harvardand\ Cash, S.~S.
+  \harvardyearleft 2011\harvardyearright , `Single-neuron dynamics in human
+  focal epilepsy', {\em Nature neuroscience} {\bf 14}(5),~635--641.
+
+\harvarditem[Usman et~al.]{Usman, Khalid \harvardand\
+  Bashir}{2021}{usman2021deep}
+Usman, S.~M., Khalid, S. \harvardand\ Bashir, S.  \harvardyearleft
+  2021\harvardyearright , `A deep learning based ensemble learning method for
+  epileptic seizure prediction', {\em Computers in Biology and Medicine} {\bf
+  136},~104710.
+
+\harvarditem[Usman et~al.]{Usman, Usman, Fong et~al.}{2017}{usman2017epileptic}
+Usman, S.~M., Usman, M., Fong, S. et~al.  \harvardyearleft
+  2017\harvardyearright , `Epileptic seizures prediction using machine learning
+  methods', {\em Computational and mathematical methods in medicine} {\bf
+  2017}.
+
+\harvarditem{Van~Rossum \harvardand\ Drake}{2009}{python3}
+Van~Rossum, G. \harvardand\ Drake, F.~L.  \harvardyearleft
+  2009\harvardyearright , {\em Python 3 Reference Manual}, CreateSpace, Scotts
+  Valley, CA.
+
+\harvarditem[Wang et~al.]{Wang, Wang, Liu, Chang, K{\"a}rkk{\"a}inen
+  \harvardand\ Cong}{2021}{wang2021one}
+Wang, X., Wang, X., Liu, W., Chang, Z., K{\"a}rkk{\"a}inen, T. \harvardand\
+  Cong, F.  \harvardyearleft 2021\harvardyearright , `One dimensional
+  convolutional neural networks for seizure onset detection using long-term
+  scalp and intracranial eeg', {\em Neurocomputing} {\bf 459},~212--222.
+
+\harvarditem[Wong et~al.]{Wong, Simmons, Rivera-Villicana, Barnett,
+  Sivathamboo, Perucca, Ge, Kwan, Kuhlmann, Vasa et~al.}{2023}{wong2023eeg}
+Wong, S., Simmons, A., Rivera-Villicana, J., Barnett, S., Sivathamboo, S.,
+  Perucca, P., Ge, Z., Kwan, P., Kuhlmann, L., Vasa, R. et~al.
+  \harvardyearleft 2023\harvardyearright , `Eeg datasets for seizure detection
+  and prediction—a review', {\em Epilepsia Open} .
+
+\harvarditem[Zabihi et~al.]{Zabihi, Kiranyaz, Rad, Katsaggelos, Gabbouj
+  \harvardand\ Ince}{2015}{zabihi2015analysis}
+Zabihi, M., Kiranyaz, S., Rad, A.~B., Katsaggelos, A.~K., Gabbouj, M.
+  \harvardand\ Ince, T.  \harvardyearleft 2015\harvardyearright , `Analysis of
+  high-dimensional phase space via poincar{\'e} section for patient-specific
+  seizure detection', {\em IEEE Transactions on Neural Systems and
+  Rehabilitation Engineering} {\bf 24}(3),~386--398.
+
+\harvarditem{Zarei \harvardand\ Asl}{2021}{zarei2021automatic}
+Zarei, A. \harvardand\ Asl, B.~M.  \harvardyearleft 2021\harvardyearright ,
+  `Automatic seizure detection using orthogonal matching pursuit, discrete
+  wavelet transform, and entropy based features of eeg signals', {\em Computers
+  in Biology and Medicine} {\bf 131},~104250.
+
+\end{thebibliography}

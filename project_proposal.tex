@@ -5,6 +5,8 @@
 \usepackage[automake]{glossaries-extra}
 \usepackage{pgfgantt}
 \usepackage{graphicx}
+\usepackage{array}
+
 \graphicspath{ {./images/} }
 
 
@@ -52,12 +54,81 @@ Over the last 20 years, \acrfull{ai} has seen a large evolution through the use 
 
 \acrfull{eegs} measure the electrical signals in the brain. \acrshort{eegs} have a great use in giving an insight into the inner workings of the brain, for example allowing us to pick up abnormalities preceding and during their occurrence. ``A seizure is a burst of uncontrolled electrical activity between brain cells (also called neurons or nerve cells) that causes temporary abnormalities in muscle tone or movements (stiffness, twitching or limpness), behaviours, sensations or states of awareness.'' \cite{johnHopkinsTypesOfSeizures} Due to this, monitoring the brain's electrical activity through the use of an \acrshort{eeg}, and applying analysis through an \acrshort{ml} model may allow us to detect the preictal period. ``An automated accurate prediction of seizures will significantly improve the quality of life of patients and reduce the burden on caregivers'' \cite{acharya2018automated}
 
-This project will aim to develop an \acrshort{ml} model which triggers an alert if a preictal period is detected. The model will have to achieve a high degree of accuracy ($\geq85\%$) when being applied to real-time \acrshort{eeg} data. It will make use of a \acrfull{svm} to classify the preictal periods from interictal and ictal periods, making use of the CHB-MIT Dataset, which contains extracranial EEG signals from 22 patients from the Boston Children's Hospital. \cite{shoeb2009application} \cite{PhysioNet}
+This project will aim to develop an \acrshort{ml} model which triggers an alert if a preictal period is detected. The model will have to achieve a high degree of accuracy ($\geq90\%$) when being applied to real-time \acrshort{eeg} data. Throughout this project I will compare previous attempts using different \acrshort{ml} models, and I will evaluate the different datsets avaliable for preictal prediction. 
 
 
 \section{Background Review}
 
-There has been extensive research into applying \acrshort{ml} models to \acrshort{eeg} data; \cite{shoeb2010application} \cite{chakraborti2018machine}\cite{kumar2014machine} \cite{shen2022eeg} \cite{gupta2019epileptic} \cite{samiee2015long} \cite{zabihi2015analysis} \cite{wang2021one} \cite{zarei2021automatic} \cite{li2021seizure} \cite{shoeb2009application} \cite{wong2023eeg}. \\ Although there have been fewer attempts to apply ML models to identify the preictal state in a real-time setting with high accuracy, although they do exist \cite{usman2017epileptic}. 
+
+\cite{wong2023eeg} reviews 10 datasets avaliable to download. It evaluates the way the EEGs were physically setup on the subject, the subjects themselves and the data's properties. Wong et al. also states their opinion on what tasks suite what dataset, with the main two tasks being either detection and prediction. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l}
+\textbf{Dataset}                       \\
+University of Bonn                   \\
+CHB-MIT Scalp EEG                    \\
+Melbourne-NeuroVista seizure trial (Neurovista Ictal)                           \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge                     \\
+Neurology and Sleep Centre Hauz Khas \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge                  \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge \\
+TUH EEG Seizure Corpus (TUSZ)        \\
+Siena Scalp EEG                      \\
+Helsinki University Hospital EEG    
+\end{tabular}
+\caption{10 Datasets within \protect\cite{wong2023eeg}}
+\end{table}
+
+Within these datasets Wong et al. was also able to find the way the EEG nodes were posistioned on the subject's cranium, along with whether the EEG nodes were either placed intracranial or extracranial. Wong et al. also the number of channels that are contained in the raw EEG data for each dataset.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.4\textwidth}p{0.1\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\textbf{Dataset}                                              & \textbf{Number of channels} & \textbf{Placement method}                & \textbf{Type of signal} \\
+University of Bonn                                            & 1                           & International 10–20 system, Intracranial & Scalp/Intracranial EEG  \\
+CHB-MIT Scalp EEG                                             & 18                          & International 10–20 system/Nomenclature  & Scalp EEG               \\
+Melbourne-NeuroVista seizure trial (NeuroVista Ictal)         & 16                          & Intracranial                             & Intracranial EEG        \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge    & 16–76                       & Intracranial                             & Intracranial EEG        \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge & 16                          & Intracranial                             & Intracranial EEG        \\
+Neurology and Sleep Centre Hauz Khas                          & 1                           & International 10–20 System               & Scalp EEG               \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge Data & 16 & Intracranial & Intracranial EEG \\
+TUH EEG Seizure Corpus (TUSZ)                                 & 23–31                       & International 10–20 system / Nomenclature & Scalp EEG               \\
+Helsinki University Hospital EEG                              & 19                          & International 10–20 system               & Scalp EEG               \\
+Siena Scalp EEG                                               & 20/29                       & International 10–20 system/Nomenclature  & Scalp EEG              
+\end{tabular}
+\caption{\protect\cite{wong2023eeg}}
+\end{table}
+
+Wong et al. also noted along with this data that the ``University of Bonn dataset contains a mixture of both scalp and intracranial EEG data where scalp EEG from healthy subjects was taken, while intracranial EEG was taken from subjects with a history of seizures.'' \cite{wong2023eeg}. This may present a skew on the \acrshort{ml} model during training.
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.4\textwidth}p{0.2\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+  \textbf{Dataset} &
+  \textbf{Noncontinuous data} &
+  \textbf{Short-term continuous data} &
+  \textbf{Continuous data} \\
+  
+University of Bonn                                                              & Yes & No  & No  \\
+CHB-MIT Scalp EEG                                                               & No  & Yes & Yes \\
+Melbourne-NeuroVista seizure trial (Neurovista Ictal)                           & N/A & N/A & N/A \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge                      & Yes & No  & No  \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge                   & Yes & No  & No  \\
+Neurology and Sleep Centre Hauz Khas                                            & Yes & No  & No  \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge Data & Yes & No  & No  \\
+TUH EEG Seizure Corpus (TUSZ)                                                   & No  & Yes & No  \\
+Helsinki University Hospital EEG                                                & No  & Yes & No  \\
+Siena Scalp EEG                                                                 & No  & Yes & No 
+\end{tabular}
+\caption{\protect\cite{wong2023eeg}}
+\end{table}
+
+Wong et al. ordered the datasets into groups, either continuous or non continuous data. For the continuous data they seperated out datasets which record for less that 24 hours in a single go, these were classified as ``Short-term continuous'' data.
+
+%TODO add more tables from the wong2023eeg dataset
+
 
 Dataset CHB-MIT \cite{shoeb2009application} \cite{PhysioNet} was taken from Boston Children's Hospital. It is a long-term dataset with recordings of 22 paediatric subjects, 5 male and 17 female, who have intractable seizures. The dataset contains 23 \acrshort{eeg} signals positioned on the scalp in the international 10-20 \acrshort{eeg} system \cite{sharbrough1991american}. The dataset is labelled with the timestamps of the onset and ending of each seizure. Over the course of several days the onsets and ends of a total of 182 seizures were annotated onto the long-term EEG data \cite{shoeb2009application} \cite{PhysioNet}. This dataset is utilized by many papers when working on real-time epileptic seizure detection, there have been many different approaches with detection accuracy reaching 92.23\% \cite{usman2017epileptic}
 
