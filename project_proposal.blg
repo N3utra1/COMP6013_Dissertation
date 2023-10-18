@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: project_proposal.aux
+The style file: agsm.bst
+Database file #1: references.bib
+Warning--entry type for "johnHopkinsTypesOfSeizures" isn't style-file defined
+--line 18 of file references.bib
+You've used 11 entries,
+            2909 wiz_defined-function locations,
+            710 strings with 7283 characters,
+and the built_in function-call counts, 64356 in all, are:
+= -- 10528
+> -- 1014
+< -- 0
++ -- 5207
+- -- 315
+* -- 5731
+:= -- 12669
+add.period$ -- 12
+call.type$ -- 11
+change.case$ -- 153
+chr.to.int$ -- 11
+cite$ -- 11
+duplicate$ -- 174
+empty$ -- 356
+format.name$ -- 353
+if$ -- 11571
+int.to.chr$ -- 5
+int.to.str$ -- 0
+missing$ -- 10
+newline$ -- 41
+num.names$ -- 118
+pop$ -- 53
+preamble$ -- 1
+purify$ -- 165
+quote$ -- 0
+skip$ -- 148
+stack$ -- 0
+substring$ -- 15074
+swap$ -- 30
+text.length$ -- 154
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 42
+warning$ -- 0
+while$ -- 242
+width$ -- 0
+write$ -- 157
+(There was 1 warning)
