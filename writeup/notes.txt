@@ -1,0 +1,19 @@
+https://www.hindawi.com/journals/cmmm/2017/9074759/
+
+create figure 1 graph
+can I feed in the seperate channels AND a surrogate channel?
+
+no machine model is 100% accurate
+
+Preprocessing:
+
+Butterworth Filter when recording data. May be included in datasets
+Notch Removal
+Surrogate Signal -> Empirical Mode Decomposition
+
+
+
+Models:
+
+Support Vector Machines
+
