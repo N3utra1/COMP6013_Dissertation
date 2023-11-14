@@ -55,7 +55,7 @@ class EDF_File():
         inverted_summary = summary[::-1] 
         for line in inverted_summary:
             if re.search("^Data Sampling Rate:.*$", line):
-                return line.split(" ")[-2]
+                return int(line.split(" ")[-2])
             
     def extract_start_time(self):
         return self.parent_chb.full_summary[self.summary_start_line+1].split(" ")[-1]
@@ -82,5 +82,5 @@ class EDF_File():
         preictal = {}
         MINUITE = 60
         for seizure, times in self.seizure_dict.items():
-            preictal.update({seizure : {"start" : max(0, times["start"] - 15 * MINUITE), "end" : times["start"] - 1}})
+            preictal.update({seizure : {"start" : int(max(0, times["start"] - 15 * MINUITE)), "end" : int(times["start"] - 1)}})
         return preictal 
