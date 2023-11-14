@@ -8,15 +8,13 @@ class CHB:
         self.name = dir_name
         self.path = os.path.join(chb_mit_path, self.name)
         self.summary_path = os.path.join(self.path, f"{self.name}-summary.txt")
-        self.seizures = {
-            #"filename"  : [
-            #    { "start" : 2906, "end" : 3060},
-            #    { "start" : 4053, "end" : 4101},
-            #]
-            
-            # "EDF_File.name" : "EDF_File.seizure_dict()"
-        }
         self.full_summary = (self.load_summary()) 
+        self.seizures = {
+            #"filename"  : { 
+            #       1 : { "start" : 2906, "end" : 3060},
+            #       2 : { "start" : 4053, "end" : 4101},
+            #}
+        }
         self.edf_files = self.generate_edf_files()
         
     def __repr__(self):
@@ -32,8 +30,13 @@ class CHB:
         for file in os.listdir(self.path):
             if not os.path.splitext(file)[1] == ".edf": continue
             edf_file = EDF_File(self, file) 
-            print("loaded edf file:")
+            loaded_files.append(edf_file)
             print(repr(edf_file))
+            
+        #update self.seizures
+        for edf in loaded_files:
+            self.seizures.update({edf.name : edf.seizure_dict})
+            
         return loaded_files  
         
     def load_summary(self):
@@ -76,6 +79,7 @@ class EDF_File():
         self.end_time = self.extract_end_time() 
         self.number_of_seizures = 0 #updated in self.extract_seizures()
         self.seizure_dict = self.extract_seizures()
+        self.preictal_period_dict = self.extract_preictal_period()
         
     
     def __repr__(self):
@@ -88,6 +92,7 @@ class EDF_File():
         Data Sampling Rate (Hz): {self.data_sampling_rate}
         Number of Seizures: {self.number_of_seizures}
         Seizure Dictionary: {self.seizure_dict}
+        Preictal Period Dictionary: {self.preictal_period_dict}
         """
 
     def get_summary_start_line(self):
@@ -128,13 +133,21 @@ class EDF_File():
         seizure_def_block_start = self.summary_start_line + 4
         seizure_definition_lines = self.parent_chb.full_summary[ seizure_def_block_start 
                                                           : seizure_def_block_start + (2 * self.number_of_seizures)]
+        all_seizures = {}
+        seizure_counter = 0
         for i in range(0, len(seizure_definition_lines), 2):
-            start_line = seizure_definition_lines[i]
-            end_line = seizure_definition_lines[i+1]
-            print(start_line)
-            print(end_line)
-        
-
+            seizure_counter += 1
+            start = seizure_definition_lines[i].split(" ")[-2]
+            end = seizure_definition_lines[i+1].split(" ")[-2]
+            all_seizures.update({seizure_counter : {"start" : start, "end" : end}})
+        return all_seizures
+   
+    def extract_preictal_period(self):
+        preictal = {}
+        for n, times in self.seizure_dict:
+            print(n)
+            print(times)
+    
 chb_mit_path = "../../chb-mit-scalp-eeg-database-1.0.0"
 loaded_chb = []
 for dir in os.listdir(chb_mit_path):
