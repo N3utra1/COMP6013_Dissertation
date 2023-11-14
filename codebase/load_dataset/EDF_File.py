@@ -1,76 +1,12 @@
-import mne
-import os 
-from pprint import pprint
+import os
 import re
 
-class CHB:
-    def __init__(self, dir_name):
-        self.name = dir_name
-        self.path = os.path.join(chb_mit_path, self.name)
-        self.summary_path = os.path.join(self.path, f"{self.name}-summary.txt")
-        self.full_summary = (self.load_summary()) 
-        self.seizures = {
-            #"filename"  : { 
-            #       1 : { "start" : 2906, "end" : 3060},
-            #       2 : { "start" : 4053, "end" : 4101},
-            #}
-        }
-        self.edf_files = self.generate_edf_files()
-        
-    def __repr__(self):
-        return f"""
-        Name: {self.name} 
-        Path: {self.path} 
-        Summary Path: {self.summary_path} 
-        Seizures: {self.seizures}
-        """
-       
-    def generate_edf_files(self):
-        loaded_files = []
-        for file in os.listdir(self.path):
-            if not os.path.splitext(file)[1] == ".edf": continue
-            edf_file = EDF_File(self, file) 
-            loaded_files.append(edf_file)
-            print(repr(edf_file))
-            
-        #update self.seizures
-        for edf in loaded_files:
-            self.seizures.update({edf.name : edf.seizure_dict})
-            
-        return loaded_files  
-        
-    def load_summary(self):
-        lines = []
-        with open(self.summary_path, "r") as summary:
-            lines = summary.readlines()
-        lines = [line.strip() for line in lines if not line == "\n"]
-        return lines
-    
-    def extract_data_sampling_rate(self):
-        return self.full_summary[0].split(" ")[-2]
-    
-    
-    def extract_edf_file_info(self):
-        def find_edf_file(target_name):
-            for edf in self.edf_files:
-                if edf.name == target_name:
-                    return  edf
-        
-        i = 0 
-        for i in range(0, len(self.full_summary)):
-            line = self.full_summary[i]
-            if re.search("^File Name: .*$", line):
-                edf = find_edf_file(line.split(" ")[-1])
-                edf.start_time = self.full_summary[i+1]
-                edf.end_time = self.full_summary[i+2]
-                i += 2
-            i += 1
-                
 class EDF_File():
     def __init__(self, _parent_chb, _edf_path):
         self.parent_chb = _parent_chb
-        self.full_name = _edf_path
-        self.name = _edf_path[6:]
+        # self.full_name = _edf_path
+        # self.name = _edf_path[6:]         # unknown change from linux -> windows. Could be due to malformed file names on linux machine 
+        self.name = _edf_path
         self.path = os.path.join(self.parent_chb.path, _edf_path)
         self.summary_start_line = self.get_summary_start_line() 
         self.channels = self.extract_channels()
@@ -139,34 +75,12 @@ class EDF_File():
             seizure_counter += 1
             start = seizure_definition_lines[i].split(" ")[-2]
             end = seizure_definition_lines[i+1].split(" ")[-2]
-            all_seizures.update({seizure_counter : {"start" : start, "end" : end}})
+            all_seizures.update({seizure_counter : {"start" : int(start), "end" : int(end)}})
         return all_seizures
    
     def extract_preictal_period(self):
         preictal = {}
-        for n, times in self.seizure_dict:
-            print(n)
-            print(times)
-    
-chb_mit_path = "../../chb-mit-scalp-eeg-database-1.0.0"
-loaded_chb = []
-for dir in os.listdir(chb_mit_path):
-    chb = CHB(dir) 
-    loaded_chb.append(chb)
-    
-for chb in loaded_chb:
-    print(repr(chb))
-
-
-
-
-# raw = mne.io.read_raw_edf(path)
-
-# print(raw)
-# print(raw.info)
-# # raw.plot()
-# # input()
-
-# sname = get_file_name(path)
-# print(path)
-# print(sname)
+        MINUITE = 60
+        for seizure, times in self.seizure_dict.items():
+            preictal.update({seizure : {"start" : max(0, times["start"] - 15 * MINUITE), "end" : times["start"] - 1}})
+        return preictal 
