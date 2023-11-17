@@ -1,103 +1,165 @@
-# import mne
-# from pprint import pprint
-
-# path = r"C:\Users\willi\Documents\UNIVERSITY\COMP6013_Dissertation\chb-mit-scalp-eeg-database-1.0.0\chb01\chb01_01.edf"
-# raw = mne.io.read_raw_edf(path)
-
-# print(raw.info)
-# target_channel = "P7-O1"
-# target_second = 10
-
-# # Get the data for the specified channel and time range
-# channel_data, times = raw.pick_channels([target_channel]).crop(tmin=target_second, tmax=target_second+ 1.0)[:]
-
-# # Print the data
-# print(f"Data for {target_channel} from {target_second} to {target_second+ 1.0} seconds:")
-# print(channel_data)
-
-
-
-# import mne
-# import numpy as np
-# import pywt 
-# from scipy.stats import skew, kurtosis
-# from scipy.signal import welch
-# from pyentrp import entropy
-# from mne.time_frequency import psd_welch
-# from mne.features import compute_feature_dict
-
-# # Load EEG data
-# path = 'path/to/your/file.edf'
-# raw = mne.io.read_raw_edf(path, preload=True)
-
-# # Define a time window for feature extraction
-# start_time = 10.0
-# end_time = 20.0
-# raw_crop = raw.crop(tmin=start_time, tmax=end_time)
-
-# # Extract features
-# features = {}
-
-# # Frequency domain features
-# psd, freqs = psd_welch(raw_crop)
-# features['psd_alpha'] = np.mean(psd[:, (freqs >= 8) & (freqs <= 13)])
-# features['psd_beta'] = np.mean(psd[:, (freqs >= 13) & (freqs <= 30)])
-
-# # Time domain features
-# data, _ = raw_crop[:, :]
-# features['mav'] = np.mean(np.abs(data))
-# features['rms'] = np.sqrt(np.mean(data**2))
-# features['std'] = np.std(data)
-
-# # Statistical features
-# features['skewness'] = skew(data)
-# features['kurtosis'] = kurtosis(data)
-
-# # Entropy measures
-# features['shannon_entropy'] = entropy.shannon_entropy(data)
-# features['approximate_entropy'] = entropy.approximate_entropy(data, 2, 0.2)
-
-# # Wavelet Transform Coefficients
-# wavelet = 'db1'  # Choose a wavelet family and type
-# coeffs, _ = pywt.cwt(data, np.arange(1, 128), wavelet)
-# features['wavelet_coefficients'] = np.mean(coeffs, axis=1)  # You might choose a different aggregation method
-
-# # Print extracted features
-# for feature_name, value in features.items():
-#     print(f"{feature_name}: {value}")
-
-import mne
-import numpy as np
 import pandas as pd
-
-# Load EEG data
-path = r"C:\Users\willi\Documents\UNIVERSITY\COMP6013_Dissertation\chb-mit-scalp-eeg-database-1.0.0\chb01\chb01_01.edf"
-raw = mne.io.read_raw_edf(path, preload=True)
-
-all_channels = raw.ch_names
-
-# Create an empty DataFrame to store the data for all channels
-df_all_channels = pd.DataFrame()
-
-# Loop through all channels and extract data
-print(raw.ch_names)
-for channel_name in all_channels:
-    print(channel_name)
-    selected_channel = raw.pick(channel_name)
-    data, times = selected_channel[:, :]
-    df_channel = pd.DataFrame(data.T, columns=[channel_name])
-    df_all_channels = pd.concat([df_all_channels, df_channel], axis=1)
-
-csv_path = r"./output.csv"
-df_all_channels.to_csv(csv_path, index=False)
-
-# raw_new_ref = mne.add_reference_channels(raw, ref_channels=["EEG 999"])
-# # plots raw EEG signals
-# raw_new_ref.plot()
-# input()
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
+import os
+import time
 
 
-# # plots the specral density 
-# spectrum = raw.compute_psd()
-# spectrum.plot(average=True, picks="data", exclude="bads")
-# input()
+
+class svm_linear_model:
+    def __init__(self, csv_path):
+        # load dataset
+        print("loading dataset")
+        self.loaded_dataset = self.load_CSVs(csv_path) 
+        print("dataset loaded")
+
+        #extract features and labels
+        extracted = self.extract()
+        self.features = extracted[0]
+        self.labels = extracted[1]
+        print("extracted features")
+
+        # split dataset into testing and training
+        split_features_and_labels = self.split()
+        self.features_train = split_features_and_labels[0]
+        self.features_test = split_features_and_labels[1]
+        self.labels_train = split_features_and_labels[2]
+        self.labels_test = split_features_and_labels[3]
+        print("split dataset")
+
+        # scale training set
+        scaled_results = self.scale()
+        self.features_train_scaled = scaled_results[0]
+        self.features_test_scaled = scaled_results[1]
+        print("scaled dataset")
+
+        # train model        
+        print("training_model")
+        start_time = time.time()
+        model = self.train_model()
+        end_time = time.time()
+        print("model trained")
+        print(f"start time: {start_time}")
+        print(f"end time: {end_time}")
+        self.print_model_metrics(model)
+
+
+    def load_CSVs(self, path):
+        all_data = pd.DataFrame()
+        for chb_dir in os.listdir(path):
+            sub_path = os.path.join(path, chb_dir)
+            for chb in os.listdir(sub_path):
+                if chb.endswith(".csv"):
+                    file_path = os.path.join(sub_path, chb)
+                    df = pd.read_csv(file_path)
+                    all_data = pd.concat([all_data, df], ignore_index=True)
+        return all_data
+    
+
+    def extract(self):
+        return (self.loaded_dataset.iloc[1:, 1:], self.loaded_dataset.iloc[1:, 0])
+
+    def split(self):
+        return train_test_split(self.features, self.labels, test_size=0.2, random_state=101)
+
+    def scale(self):
+        sk_scaler = StandardScaler()
+        scaled_features_train = sk_scaler.fit_transform(self.features_train)
+        scaled_features_test = sk_scaler.transform(self.features_test)  
+        return (scaled_features_train, scaled_features_test)
+
+    def train_model(self):
+        svm_model = LinearSVC(random_state=101, dual="auto")
+        svm_model.fit(self.features_train_scaled, self.labels_train)
+        return svm_model
+
+    def print_model_metrics(self, model):
+        prediction = model.predict(self.features_test_scaled)
+        accuracy = accuracy_score(self.labels_test, prediction)
+        report = classification_report(self.labels_test, prediction)
+        print(f"Accuracy: {accuracy}")
+        print("Report:")
+        print(report)
+
+
+
+class svm_model():
+    def __init__(self, csv_path):
+        # load dataset
+        print("loading dataset")
+        self.loaded_dataset = self.load_CSVs(csv_path) 
+        print("dataset loaded")
+
+        #extract features and labels
+        extracted = self.extract()
+        self.features = extracted[0]
+        self.labels = extracted[1]
+        print("extracted features")
+
+        # split dataset into testing and training
+        split_features_and_labels = self.split()
+        self.features_train = split_features_and_labels[0]
+        self.features_test = split_features_and_labels[1]
+        self.labels_train = split_features_and_labels[2]
+        self.labels_test = split_features_and_labels[3]
+        print("split dataset")
+
+        # scale training set
+        scaled_results = self.scale()
+        self.features_train_scaled = scaled_results[0]
+        self.features_test_scaled = scaled_results[1]
+        print("scaled dataset")
+
+        # train model        
+        print("training_model")
+        start_time = time.time()
+        model = self.train_model()
+        end_time = time.time()
+        print("model trained")
+        print(f"start time: {start_time}")
+        print(f"end time: {end_time}")
+        self.print_model_metrics(model)
+
+
+    def load_CSVs(self, path):
+        all_data = pd.DataFrame()
+        for chb_dir in os.listdir(path):
+            sub_path = os.path.join(path, chb_dir)
+            for chb in os.listdir(sub_path):
+                if chb.endswith(".csv"):
+                    file_path = os.path.join(sub_path, chb)
+                    df = pd.read_csv(file_path)
+                    all_data = pd.concat([all_data, df], ignore_index=True)
+        return all_data
+    
+
+    def extract(self):
+        return (self.loaded_dataset.iloc[1:, 1:], self.loaded_dataset.iloc[1:, 0])
+
+    def split(self):
+        return train_test_split(self.features, self.labels, test_size=0.2, random_state=101)
+
+    def scale(self):
+        sk_scaler = StandardScaler()
+        scaled_features_train = sk_scaler.fit_transform(self.features_train)
+        scaled_features_test = sk_scaler.transform(self.features_test)  
+        return (scaled_features_train, scaled_features_test)
+
+    def train_model(self):
+        svm_model = SVC(kernel="linear")
+        svm_model.fit(self.features_train_scaled, self.labels_train)
+        return svm_model
+
+    def print_model_metrics(self, model):
+        prediction = model.predict(self.features_test_scaled)
+        accuracy = accuracy_score(self.labels_test, prediction)
+        report = classification_report(self.labels_test, prediction)
+        print(f"Accuracy: {accuracy}")
+        print("Report:")
+        print(report)
+
+
+
