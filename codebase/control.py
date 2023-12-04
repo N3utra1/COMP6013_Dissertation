@@ -25,7 +25,7 @@ def init():
     }
 
     global csv_path
-    csv_path = os.path.abspath("G:\csv-chb-mit")  
+    csv_path = os.path.abspath("D:\csv-chb-mit")  
     # csv_path = os.path.abspath("../csv-chb-mit-scalp-eeg-database")
 
     global dataset_path
