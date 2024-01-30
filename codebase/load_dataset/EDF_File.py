@@ -39,7 +39,6 @@ class EDF_File():
     def extract_channels(self):
         summary = self.parent_chb.full_summary[0: self.summary_start_line] 
         i = len(summary)-1
-        start_index = None
         end_index = None
         while i  > 0:
             line = summary[i]
@@ -47,7 +46,15 @@ class EDF_File():
                 if end_index == None: end_index = i
             else:
                 if not end_index == None:
-                    return [line.split(" ")[-1] for line in summary[i + 1: end_index]]
+                    channels = []
+                    for line in summary[i + 1: end_index]:
+                        name = line.split(" ")[-1]
+                        count = channels.count(name)
+                        if count == 0:
+                            channels.append(name)
+                        else:
+                            channels.append(channels.append(f"{name}-{count}")) 
+                    return channels
             i -= 1 
     
     def extract_data_sampling_rate(self):

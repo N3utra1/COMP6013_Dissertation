@@ -10,41 +10,77 @@ import time
 
 
 class svm_linear_model:
-    def __init__(self, csv_path):
-        # load dataset
-        print("loading dataset")
-        self.loaded_dataset = self.load_CSVs(csv_path) 
-        print("dataset loaded")
+    def __init__(self, csv_path, online_learning, online_learning_batch_size=1000):
+        if not online_learning:
+            # load dataset
+            print("loading dataset")
+            self.loaded_dataset = self.load_CSVs(csv_path) 
+            print("dataset loaded")
 
-        #extract features and labels
-        extracted = self.extract()
-        self.features = extracted[0]
-        self.labels = extracted[1]
-        print("extracted features")
+            #extract features and labels
+            extracted = self.extract()
+            self.features = extracted[0]
+            self.labels = extracted[1]
+            print("extracted features")
 
-        # split dataset into testing and training
-        split_features_and_labels = self.split()
-        self.features_train = split_features_and_labels[0]
-        self.features_test = split_features_and_labels[1]
-        self.labels_train = split_features_and_labels[2]
-        self.labels_test = split_features_and_labels[3]
-        print("split dataset")
+            # split dataset into testing and training
+            split_features_and_labels = self.split()
+            self.features_train = split_features_and_labels[0]
+            self.features_test = split_features_and_labels[1]
+            self.labels_train = split_features_and_labels[2]
+            self.labels_test = split_features_and_labels[3]
+            print("split dataset")
 
-        # scale training set
-        scaled_results = self.scale()
-        self.features_train_scaled = scaled_results[0]
-        self.features_test_scaled = scaled_results[1]
-        print("scaled dataset")
+            # scale training set
+            scaled_results = self.scale()
+            self.features_train_scaled = scaled_results[0]
+            self.features_test_scaled = scaled_results[1]
+            print("scaled dataset")
 
-        # train model        
-        print("training_model")
-        start_time = time.time()
-        model = self.train_model()
-        end_time = time.time()
-        print("model trained")
-        print(f"start time: {start_time}")
-        print(f"end time: {end_time}")
-        self.print_model_metrics(model)
+            # train model        
+            print("training_model")
+            start_time = time.time()
+            model = self.train_model()
+            end_time = time.time()
+            print("model trained")
+            print(f"start time: {start_time}")
+            print(f"end time: {end_time}")
+            self.print_model_metrics(model)
+
+        else:
+            model = None
+            start_time = time.time()
+            for chb_dir in os.listdir(csv_path):
+                sub_path = os.path.join(csv_path, chb_dir)
+                for chb in os.listdir(sub_path):
+                    if chb.endswith(".csv"):
+                        print(f"reading {chb}")
+                        file_path = os.path.join(sub_path, chb)
+                        df = pd.read_csv(file_path)
+
+                        print(f"preparing data for training")
+                        self.features = df[1:, 1:]
+                        self.labels = df[1:, 0]
+
+                        split_features_and_labels = self.split()
+                        self.features_train = split_features_and_labels[0]
+                        self.features_test = split_features_and_labels[1]
+                        self.labels_train = split_features_and_labels[2]
+                        self.labels_test = split_features_and_labels[3]
+
+                        scaled_results = self.scale()
+                        self.features_train_scaled = scaled_results[0]
+                        self.features_test_scaled = scaled_results[1]
+                        if model is None:
+                            model = self.train_model(self.features_train_scaled, self.labels_train)
+                        else:
+                            model = self.update_model(model, self.features_train_scaled, self.labels_train)
+            end_time = time.time()
+            print("model trained")
+            print(f"start time: {start_time}")
+            print(f"end time: {end_time}")
+            self.print_model_metrics(model)
+
 
 
     def load_CSVs(self, path):
@@ -87,7 +123,7 @@ class svm_linear_model:
 
 
 class svm_model():
-    def __init__(self, csv_path):
+    def __init__(self, csv_path, **args):
         # load dataset
         print("loading dataset")
         self.loaded_dataset = self.load_CSVs(csv_path) 

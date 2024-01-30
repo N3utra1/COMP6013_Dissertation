@@ -46,10 +46,13 @@ scientific documents}
 \newacronym{svm}{SVM}{Support Vector Machine}
 \newacronym{knn}{kNN}{K Nearest Neighbor}
 \newacronym{lr}{LR}{Logistical Regression}
-
+\newacronym{stft}{STFT}{Short-Time Fourier Transform}
 
 \title{Real-time preictal detection through the application of machine learning to Electroencephalogram signals.}
 \author{William Riddell}
+\date{\parbox{\linewidth}{\centering%
+\vspace{0.5cm}\today\endgraf\bigskip\vspace{0.5cm}
+  Word Count: 10,000 }}
 
 
 
@@ -59,23 +62,170 @@ scientific documents}
 \tableofcontents
 \pagebreak
 
+\printglossary[type=\acronymtype]
+
+
 \section{Introduction}
 
-\textit{Have 3 channels with the interictal, preictal, ictal and post ictal states labeled.}
+Over the last 20 years, \acrfull{ai} has seen a large evolution through the use of \acrfull{ml}; the statistical analysis of data which leads to the unveiling of characteristics and connections. \cite{awad2015efficient}. There has been a large uptake of applying \acrshort{ml} techniques to biomedical data, increasing the speed and accuracy of prediction, detection, diagnosis, and prognosis. 
+
+\acrfull{eegs} measure the electrical signals in the brain. \acrshort{eegs} have a great use in giving an insight into the inner workings of the brain, for example allowing us to pick up abnormalities preceding and during their occurrence. ``A seizure is a burst of uncontrolled electrical activity between brain cells (also called neurons or nerve cells) that causes temporary abnormalities in muscle tone or movements (stiffness, twitching or limpness), behaviours, sensations or states of awareness.'' \cite{johnHopkinsTypesOfSeizures} Due to this, monitoring the brain's electrical activity through the use of an \acrshort{eeg}, and applying analysis through an \acrshort{ml} model may allow us to detect the preictal period. ``An automated accurate prediction of seizures will significantly improve the quality of life of patients and reduce the burden on caregivers'' \cite{acharya2018automated}
 
 
-\section{\acrfull{ml} Model Research}
+
+\subsection{Background}
+
+``Because of their unpredictable nature, uncontrolled seizures represent a major personal handicap and source of worry for patients. In addition, persistent seizures constitute a considerable burden on healthcare resources.'' \cite{assi2017towards} Due to this both medication and surgery are available to applicable patients, although with ~30\% patients being refractory to drug therapy, and an equally bleak surgery success rate; ~75\% in lesional cases, and ~50\% in nonlesional cases for temporal lobe cases along with ~60\% in lesional cases and merely ~35\% in nonlesional for frontal lobse cases \cite{assi2017towards}, a large population of patients would greatly benefit from the prediction of their uncontrollable seizures, along with an relief of burden for the healthcare system when working with seizure patients. 
+
+\section{Proposed Method}
+
+\subsection{Datasets}
+
+
+\cite{wong2023eeg} reviews 10 datasets available to download. It evaluates the way the \acrshort{eegs} were physically setup on the subject, the subjects themselves and the data's properties. Wong et al. also states their opinion on what tasks suit what dataset, with the main two tasks being either detection or prediction. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l}
+\textbf{Dataset}                       \\
+University of Bonn                   \\
+CHB-MIT Scalp EEG                    \\
+Melbourne-NeuroVista seizure trial (Neurovista Ictal)                           \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge                     \\
+Neurology and Sleep Centre Hauz Khas \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge                  \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge \\
+TUH EEG Seizure Corpus (TUSZ)        \\
+Siena Scalp EEG                      \\
+Helsinki University Hospital EEG    
+\end{tabular}
+\caption{The Datasets analysed}
+\end{table}
+
+Within these datasets Wong et al. was also able to find the way the EEG nodes were positioned on the subject's cranium, along with whether the EEG nodes were either placed intracranial or extracranial. Wong et al. also the number of channels that are contained in the raw EEG data for each dataset.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.4\textwidth}p{0.1\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\textbf{Dataset}                                              & \textbf{Number of channels} & \textbf{Placement method}                & \textbf{Type of signal} \\
+University of Bonn                                            & 1                           & International 10–20 system, Intracranial & Scalp/Intracranial EEG  \\
+CHB-MIT Scalp EEG                                             & 18                          & International 10–20 system/Nomenclature  & Scalp EEG               \\
+Melbourne-NeuroVista seizure trial (NeuroVista Ictal)         & 16                          & Intracranial                             & Intracranial EEG        \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge    & 16–76                       & Intracranial                             & Intracranial EEG        \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge & 16                          & Intracranial                             & Intracranial EEG        \\
+Neurology and Sleep Centre Hauz Khas                          & 1                           & International 10–20 System               & Scalp EEG               \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge Data & 16 & Intracranial & Intracranial EEG \\
+TUH EEG Seizure Corpus (TUSZ)                                 & 23–31                       & International 10–20 system / Nomenclature & Scalp EEG               \\
+Helsinki University Hospital EEG                              & 19                          & International 10–20 system               & Scalp EEG               \\
+Siena Scalp EEG                                               & 20/29                       & International 10–20 system/Nomenclature  & Scalp EEG              
+\end{tabular}
+\caption{Channel Characteristics}
+\end{table}
+
+Wong et al. also noted along with this data that the ``University of Bonn dataset contains a mixture of both scalp and intracranial EEG data where scalp EEG from healthy subjects was taken, while intracranial EEG was taken from subjects with a history of seizures.'' \cite{wong2023eeg}. This may present a skew on the \acrshort{ml} model during training.
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.4\textwidth}p{0.2\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+  \textbf{Dataset} &
+  \textbf{Noncontinuous data} &
+  \textbf{Short-term continuous data} &
+  \textbf{Continuous data} \\
+  
+University of Bonn                                                              & Yes & No  & No  \\
+CHB-MIT Scalp EEG                                                               & No  & Yes & Yes \\
+Melbourne-NeuroVista seizure trial (Neurovista Ictal)                           & N/A & N/A & N/A \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge                      & Yes & No  & No  \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge                   & Yes & No  & No  \\
+Neurology and Sleep Centre Hauz Khas                                            & Yes & No  & No  \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge Data & Yes & No  & No  \\
+TUH EEG Seizure Corpus (TUSZ)                                                   & No  & Yes & No  \\
+Helsinki University Hospital EEG                                                & No  & Yes & No  \\
+Siena Scalp EEG                                                                 & No  & Yes & No 
+\end{tabular}
+\caption{Temporal properties}
+\end{table}
+
+Wong et al. ordered the datasets into groups, either continuous or non continuous data. For the continuous data they separated out datasets which record for less that 24 hours in a single go, these were classified as ``Short-term continuous'' data.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.4\textwidth}p{0.2\textwidth}p{0.2\textwidth}p{0.2\textwidth}}
+\textbf{Dataset}                                                                & \textbf{Number of subjects} & \textbf{Subject type} & \textbf{} \\
+University of Bonn                   & 10  & Human &  \\
+CHB-MIT Scalp EEG                    & 23  & Human &  \\
+Melbourne-NeuroVista seizure trial (NeuroVista Ictal)                           & 12                          & Human                 &           \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge                      & 12                          & Human \& Canine       &           \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge                   & 7                           & Human \& Canine       &           \\
+Neurology and Sleep Centre Hauz Khas & 10  & Human &  \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge Data & 3                           & Human                 &           \\
+TUH EEG Seizure Corpus (TUSZ)        & 642 & Human &  \\
+Helsinki University Hospital EEG     & 79  & Human &  \\
+Siena Scalp EEG                      & 14  & Human & 
+\end{tabular}
+\caption{Subject properties}
+\end{table}
+
+Wong et al. also was able to identify the number of subjects within each dataset. Within the two ``Kaggle'' datasets there are Canine subjects, making them unsuitable for this project. 
+
+Within the review, they also produced tables displaying the segment information for each dataset, breaking down the recording length and frequency, along with the number of events and segments. This information should not weight into which dataset suits the idea of preictal prediction so shall be left out in this background review. Wong et al. also discussed the idea of the class imbalance problem, where the number and length of each ictal period is unbalanced. Two datasets, ``University of Bonn'' and the ``Neurology and Sleep Centre Hauz Khas'' have addressed this issue and have balanced their data between ictal, preictal, interictal and nonictal periods.
+
+Taking the research into account Wong et al. suggested which dataset suits either prediction or detection. ``Since the aim of seizure prediction is to forecast impending seizures, EEG recordings that include preictal and interictal data should be used for the study, while the aim of seizure detection is to detect ongoing seizure events, hence, EEG recordings that contain ictal and interictal data should be used.'' \cite{wong2023eeg}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.5\textwidth}p{0.4\textwidth}}
+\textbf{Dataset}                     & \textbf{Application}         \\
+University of Bonn                   & Seizure detection            \\
+CHB-MIT Scalp EEG                    & Seizure detection/Prediction \\
+Melbourne-NeuroVista seizure trial (NeuroVista Ictal)                           & Seizure detection/Prediction \\
+Kaggle UPenn and Mayo Clinic's Seizure Detection Challenge                      & Seizure detection            \\
+Kaggle American Epilepsy Society Seizure Prediction Challenge                   & Seizure prediction           \\
+Neurology and Sleep Centre Hauz Khas & Seizure detection/Prediction \\
+Kaggle Melbourne-University AES-MathWorks-NIH Seizure Prediction Challenge Data & Seizure prediction           \\
+TUH EEG Seizure Corpus (TUSZ)        & Seizure detection/Prediction \\
+Helsinki University Hospital EEG     & Seizure detection/Prediction \\
+Siena Scalp EEG                      & Seizure detection/Predictio 
+\end{tabular}
+\caption{Suggested applications}
+\end{table} 
+
+From this evaluation the CHB-MIT Scalp EEG dataset has been chosen for the \acrshort{cnn} model training. 
+
+\subsection{Preprocessing}
+
+\paragraph{\acrfull{stft}} \mbox{}\\
+
+As the proposed \acrshort{cnn} will be two-dimensional, it will be required that the input is a two-dimensional matrix. Due to this the EEG data will be transformed using \acrshort{stft}, representing the EEG signals into two-dimensional matrix of axis time and signal frequency. 
+
+\paragraph{Powerline Signal} \mbox{}\\
+
+The CHB-MIT dataset contains powerline noise contamination at 60Hz, to avoid any unwanted issues during the training of the \acrshort{cnn} this noise has been removed. This was achieved by removing the frequency ranges of 57-63Hz and 117-123Hz \cite{truong2018convolutional}. Furthering this, the 0Hz frequency was also removed due to the DC component of the powerline noise.
+
+\textbf{add image}
+
+\paragraph{Dataset Imbalance} \mbox{}\\
+
+A data imbalance occurs when there are more occurrences of a specific class. This is unavoidable when collecting raw seizure EEG data. \cite{wong2023eeg} discussed two datasets,``University of Bonn'' and the ``Neurology and Sleep Centre Hauz Khas'' which have addressed this issue already, although the CHB-MIT Scalp EEG dataset has not, and therefore requires a method to deal with this issue. The data imbalance between the interictal and preictal timespans are at best 9.5:1, and at worst 15.9:1 on a per subject basis within the CHB-MIT datasets, to address this \cite{truong2018convolutional} devised a method of generating extra preictal periods by using an sliding window method. This is where a window of $x$ seconds is moved at a step speed of $s$, where $s<x$ such that data is generated. \textbf{add image}
+
+\subsection{\acrfull{cnn}}
+
+
+
+\subsection{Postprocessing}
+
+\subsection{System Evaluation}
+
+\section{Results}
+
+\section{Discussion}
+
+\section{Conclusion}
 
 
 
 \pagebreak
-
-\printglossary[type=\acronymtype]
-\printglossary
-\cite{test}
-\pagebreak
-
 \bibliographystyle{agsm}
 \bibliography{references}
-
 \end{document}

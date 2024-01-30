@@ -1,9 +1,9 @@
 import control 
 import os
 from load_dataset.CHB import CHB 
-from extract_data.Extractor import Extractor
-from svm.svm import svm_model 
-from svm.svm import svm_linear_model 
+from extract_data.Writer import Writer 
+from extract_data.Extractor import Extractor 
+from svm.ann import ann 
 
 def load_dataset():
     chb_mit_path = control.dataset_path
@@ -16,27 +16,31 @@ def load_dataset():
 
 def write_dataset(loaded_chb):
     for chb in loaded_chb:
-            Extractor(chb=chb, write_path=control.csv_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
-            break
+        Writer(chb=chb, write_path=control.csv_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
+
+def extract_features(loaded_chb):
+    for chb in loaded_chb:
+        Extractor(chb_metadata=chb, csv_path=control.csv_path, write_path=control.feature_extraction_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
 
 def train_model():
     avaliable_models = {
-        "svm" : svm_model,
-        "svm-linear" : svm_linear_model 
+        "ann" : ann 
     }
     print(f"selected model {control.model}")
-    avaliable_models[control.model](control.csv_path)
+    avaliable_models[control.model](control.csv_path, batch_size=control.incrimental_learning_batch_size)
 
 
 def main():
     # load datasets into OOP Objects
-    if control.load_dataset or control.write_dataset:
+    if control.load_dataset or control.write_dataset or control.extract_features:
         loaded_chb = load_dataset() 
 
     # write data to disc as CSV files (feature extraction)
     if control.write_dataset:
         write_dataset(loaded_chb)
-        
+
+    if control.extract_features:
+        extract_features(loaded_chb)
 
     if control.train_model:
         train_model()
