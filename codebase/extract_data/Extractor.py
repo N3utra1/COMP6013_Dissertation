@@ -1,12 +1,13 @@
 import mne
+from mne.time_frequency import stft, stftfreq
 import os
 import pandas as pd
 import threading
 import control
 import numpy as np
 
-from scipy.signal import stft
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 
 
 class Extractor:
@@ -25,23 +26,31 @@ class Extractor:
         self.extract()
 
     def extract(self):
+        def show_plot(chb_file, stft_data, max_time):
+            time_vector = np.linspace(0, max_time, stft_data.shape[1])
+            freq_vector = np.linspace(0, chb_file.data_sampling_rate/2, stft_data.shape[0])
+
+            plt.imshow(np.abs(np.mean(stft_data, axis=0)), origin='lower', aspect='auto', cmap='hot', norm=LogNorm(), extent=[time_vector.min(), time_vector.max(), freq_vector.min(), freq_vector.max()])
+            plt.colorbar(label='Color scale')
+            plt.title(f'{chb_file.name} STFT results')
+            plt.xlabel('Time (s)')
+            plt.ylabel('Frequency (Hz)')
+            plt.ylim([0,128])
+            plt.show()
+
+
         for chb_file in self.chb_metadata.edf_files:
             # get corresponding csv path
             csv_suffix = os.path.join(*os.path.normpath(chb_file.path).split(os.sep)[-2:]).replace("edf", "csv")
             chb_csv_path = os.path.join(self.csv_path, csv_suffix)
             chb_feature_write_path = os.path.join(self.write_path, csv_suffix)
             eeg_data_df = pd.read_csv(chb_csv_path)
-            # Zxx is the STFT of eeg_data_df
-            sample_frequencies, segment_times, Zxx= stft(eeg_data_df, fs=chb_file.data_sampling_rate, nperseg=control.window_size * chb_file.data_sampling_rate) 
-            stft_channel_df = pd.DataFrame(np.abs(Zxx), columns=segment_times, index=sample_frequencies)
-            stft_channel_df = stft_channel_df.T.reset_index()
-            stft_channel_df = stft_channel_df.rename(columns={'index': 'Time'})
-            stft_channel_df.to_csv(chb_feature_write_path)
-            plt.pcolormesh(stft_channel_df.index, stft_channel_df.columns, np.log1p(stft_channel_df.T))
-            plt.ylabel('Frequency (Hz)')
-            plt.xlabel('Time (s)')
-            plt.colorbar(label='Log Magnitude')
-            plt.title(f"STFT of EEG Data for {csv_suffix}")
-            file_path = chb_feature_write_path.replace("csv", "png")
-            plt.savefig(file_path)
-            plt.close()
+            info = mne.create_info(ch_names=control.common_columns, sfreq=chb_file.data_sampling_rate)
+            raw = mne.io.RawArray(eeg_data_df[control.common_columns].transpose(), info)
+
+            wsize = chb_file.data_sampling_rate * control.window_size
+            stft_data = stft(raw.get_data(), wsize)
+            if not chb_file.seizure_dict == {} and control.show_heat_plots:
+                max_time = len(eeg_data_df) / chb_file.data_sampling_rate 
+                print(chb_file)
+                show_plot(chb_file, stft_data, max_time)

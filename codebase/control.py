@@ -20,6 +20,8 @@ def init():
     write_dataset = False 
     global extract_features
     extract_features = True 
+    global show_heat_plots # shows heat plots of the STFT for each file that contains a seizure
+    show_heat_plots = True
     write_dataset = False 
     global train_model 
     train_model = False 

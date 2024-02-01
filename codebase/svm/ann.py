@@ -9,7 +9,7 @@ import numpy as np
 
 import glob
 import os
-import timew
+import time
 import control
 
 
