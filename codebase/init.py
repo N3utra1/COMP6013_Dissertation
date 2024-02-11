@@ -3,16 +3,26 @@ import os
 from load_dataset.CHB import CHB 
 from extract_data.Writer import Writer 
 from extract_data.Extractor import Extractor 
-from svm.ann import ann 
 
 def load_dataset():
     chb_mit_path = control.dataset_path
     loaded_chb = []
-    for dir in os.listdir(chb_mit_path):
-        if os.path.isdir(os.path.join(chb_mit_path, dir)) and not (dir == "chb24"):
-            chb = CHB(dir_name=dir, chb_mit_path=chb_mit_path, verbosity=True) 
+    if control.target == True: # all patients
+        for dir in os.listdir(chb_mit_path):
+            if os.path.isdir(os.path.join(chb_mit_path, dir)) and not (dir == "chb24"):
+                chb = CHB(dir_name=dir, chb_mit_path=chb_mit_path, verbosity=True) 
+                loaded_chb.append(chb)
+        return loaded_chb 
+
+    if type(control.target) == str: # a specific patient
+        if os.path.isdir(os.path.join(chb_mit_path, control.target)):
+            chb = CHB(dir_name=control.target, chb_mit_path=chb_mit_path, verbosity=True) 
             loaded_chb.append(chb)
-    return loaded_chb 
+        return loaded_chb
+
+    print("please set control.target to a valid option (try 'chb03' or True)") 
+
+
 
 def write_dataset(loaded_chb):
     for chb in loaded_chb:
@@ -20,9 +30,10 @@ def write_dataset(loaded_chb):
 
 def extract_features(loaded_chb):
     for chb in loaded_chb:
-        Extractor(chb_metadata=chb, csv_path=control.csv_path, write_path=control.feature_extraction_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
+        Extractor(chb_metadata=chb, csv_path=control.csv_path, write_path=control.stft_extraction_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
 
 def train_model():
+    from svm.ann import ann 
     avaliable_models = {
         "ann" : ann 
     }

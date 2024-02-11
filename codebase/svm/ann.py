@@ -2,8 +2,7 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense 
+from tensorflow.keras import layers, models
 from sklearn.metrics import confusion_matrix
 import numpy as np
 
@@ -18,91 +17,49 @@ class ann:
     def __init__(self, csv_path, batch_size=1000):
         self.csv_path = csv_path        
         print("creating model")
-        self.model = Sequential()
-        self.model.add(Dense(64, input_dim=17, activation="relu"))
-        self.model.add(Dense(64, input_dim=64, activation="relu"))
-        self.model.add(Dense(64, input_dim=64, activation="relu"))
-        self.model.add(Dense(1, activation="sigmoid"))
-        self.model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
 
-        """
-import tensorflow as tf
-from tensorflow.keras import layers, models
+        # Assuming the input has shape (batch_size, time_steps, n_channels)
+        input_shape = (time_steps, n_channels)
 
-# Assuming the input has shape (batch_size, time_steps, n_channels)
-input_shape = (time_steps, n_channels)
+        model = models.Sequential()
 
-model = models.Sequential()
+        # First convolutional block
+        model.add(layers.Conv3D(16, (1, 5, 5), strides=(1, 2, 2), input_shape=input_shape, activation='relu'))
+        model.add(layers.BatchNormalization())
 
-# First convolutional block
-model.add(layers.Conv3D(16, (1, 5, 5), strides=(1, 2, 2), input_shape=input_shape, activation='relu'))
-model.add(layers.BatchNormalization())
+        # Second convolutional block
+        model.add(layers.Conv3D(32, (3, 3, 3), strides=(1, 1, 1), activation='relu'))
+        model.add(layers.BatchNormalization())
 
-# Second convolutional block
-model.add(layers.Conv3D(32, (3, 3, 3), strides=(1, 1, 1), activation='relu'))
-model.add(layers.BatchNormalization())
+        # Third convolutional block
+        model.add(layers.Conv3D(64, (3, 3, 3), strides=(1, 1, 1), activation='relu'))
+        model.add(layers.BatchNormalization())
 
-# Third convolutional block
-model.add(layers.Conv3D(64, (3, 3, 3), strides=(1, 1, 1), activation='relu'))
-model.add(layers.BatchNormalization())
+        # MaxPooling layer
+        model.add(layers.MaxPooling3D(pool_size=(2, 2, 2)))
 
-# MaxPooling layer
-model.add(layers.MaxPooling3D(pool_size=(2, 2, 2)))
+        # Flatten the output before fully connected layers
+        model.add(layers.Flatten())
 
-# Flatten the output before fully connected layers
-model.add(layers.Flatten())
+        # Fully connected layers
+        model.add(layers.Dense(256, activation='relu'))
+        model.add(layers.Dropout(0.5))
+        model.add(layers.Dense(2, activation='softmax'))
 
-# Fully connected layers
-model.add(layers.Dense(256, activation='relu'))
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(2, activation='softmax'))
+        # Compile the model
+        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Compile the model
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-# Display the model summary
-model.summary()
-        """ 
+        # Display the model summary
+        model.summary()
 
 
-        """
-        import tensorflow as tf
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Conv3D, MaxPooling3D, BatchNormalization, Flatten, Dropout, Dense
 
-model = Sequential([
-    Conv3D(114, (22, 59), activation="relu", input_shape=(22, 59, 114)),
-    MaxPooling3D(pool_size=(16, 28, 55)),
-    BatchNormalization(),
-    
-    Conv3D(26, (16, 14), activation="relu"),
-    MaxPooling3D(pool_size=(32, 12)),
-    BatchNormalization(),
-    
-    Conv3D(11,(32 ,6), activation="relu"),
-    MaxPooling3D(pool_size=(64 ,1)),
-    BatchNormalization(),
-    
-    Flatten(),
-    
-    Dropout(0.5),
-    
-    Dense(256),
-    
-    Dropout(0.5),
-    
-   Dense(2)
-])
-
-model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-        """
-
-        if control.training_target == True:
+        if control.target == True:
             self.train_all_files()
-        elif "/" in control.training_target:
-            self.train_on_file(os.path.join(self.csv_path, control.training_target))
+        elif "/" in control.target:
+            self.train_on_file(os.path.join(self.csv_path, control.target))
         else:
-            self.train_subject(control.training_target)   
+            self.train_subject(control.target)   
 
 
         start_time = time.time()

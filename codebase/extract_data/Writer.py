@@ -15,7 +15,8 @@ class Writer:
         self.overwrite = overwrite
         if threading:
             self.extract_threaded() 
-        else: self.extract() 
+        else: 
+            self.extract() 
 
     def extract_threaded(self):
         def threaded_extraction(edf):
@@ -38,11 +39,25 @@ class Writer:
             self.extraction_inner(edf)
 
 
-
-
-
     def extraction_inner(self, edf):
-        extracted_path = os.path.splitext(os.path.sep.join(edf.path.split(os.path.sep)[-2:]))[0] + ".csv"
+        def write_period(type, times, raw, frequency):
+            start, end = [max(0, (time / frequency)-1) for time in times]  
+            print(f"writing {type}: {times[0]}({start}s) -> {times[1]}({end})s ")
+            # start, end = raw.time_as_index(times)
+            if not type in ["interictal", "preictal", "ictal"]: raise ValueError 
+            path = os.path.join(self.write_path, extracted_path, type, "master.csv")
+            sliced_raw = raw.copy().crop(tmin=start, tmax=end)
+            raw_df = sliced_raw.to_data_frame() 
+            raw_df.drop("time", axis=1, inplace=True)
+            if not os.path.exists(path):
+                os.makedirs(os.path.dirname(path))
+                raw_df.to_csv(path, index=False)
+            else:
+                raw_df.to_csv(path, mode="a", index=False,  header=False)
+        
+
+        extracted_path = os.path.splitext(os.path.sep.join(edf.path.split(os.path.sep)[-2:]))[0]
+
         read = edf.path
         write = os.path.join(self.write_path, extracted_path)
 
@@ -58,57 +73,57 @@ class Writer:
         os.makedirs(os.path.split(write)[0], exist_ok=True)
 
         # read in edf file
-        raw = mne.io.read_raw_edf(read)
-        # map channel names to the ones extracted in summary
-        try:
-            channel_mapping = dict(zip(raw.ch_names, edf.channels))
-        except:
-            print(f"    ERROR MAPPING CHANNELS FOR {edf.name}")
-            raise RuntimeError 
+        raw = mne.io.read_raw_edf(read, preload=True)
+        # pick the common channels
+        raw = raw.pick_channels(control.common_columns)
+
+        # apply the band pass filters
+        raw = raw.notch_filter(freqs=control.band_pass_low)
+        raw = raw.notch_filter(freqs=control.band_pass_high)
+
+        # seperate out ictal, preictal and interictal 
+        if edf.seizure_dict == {}:
+            write_period("interictal", [0, len(raw)], raw, edf.data_sampling_rate)
+            return
 
 
-        try:
-            raw.rename_channels(channel_mapping)
-        except:
-            control.warning(f"    ERROR RENAMING CHANNELS (MNE) FOR {edf.name}, CHANNELS:\n {edf.channels}\nRAW CHANNELS:\n {raw.ch_names}")
-            if None in channel_mapping.values():
-                # where raw_channel_name is the ones loaded from the .edf file
-                # and set_channel_name is the ones extracted from the summary
-                # and currently zipped together 
-                for raw_channel_name, set_channel_name in channel_mapping.items():
-                    if set_channel_name == None:
-                        control.warning(f"        setting missing channel name to {raw_channel_name}")
-                        channel_mapping[raw_channel_name] = raw_channel_name
-                try:
-                    raw.rename_channels(channel_mapping) 
-                except ValueError:
-                    control.warning(f"        issues when extracting the channel mapping for {edf.name}, falling back to raw channel names.")
+        # compress seizures
+        seizure_array = []
 
+        for seizure_id in edf.seizure_dict:
+            seizure = edf.seizure_dict[seizure_id]
 
-        # extract EEG datapoints to a pandas dataframe
-        all_channels = pd.DataFrame()
-        for channel in raw.ch_names:
-            if channel == None: break
-            selected_channel = raw.copy().pick(channel)
-            data, times = selected_channel[:, :]
-            df_channel = pd.DataFrame(data.T, columns=[channel])
-            all_channels = pd.concat([all_channels, df_channel], axis=1)
+            # if there have been no previous seizures, skip
+            if len(seizure_array) == 0: 
+                seizure_array.append(seizure)
+                continue
 
-        # add in classification column
-        classification_df = pd.DataFrame([False] * all_channels.shape[0], columns=["Preictal"])
-        for period, times in edf.preictal_period_dict.items():
-            starting_hz = int(times["start"]) * edf.data_sampling_rate
-            ending_hz = int(times["end"]) * edf.data_sampling_rate
-            for index, value in classification_df['Preictal'].items():
-                if starting_hz < index  and index < ending_hz:
-                    classification_df.loc[index, "Preictal"] = True
+            # if there has already been a seizure, and its within 2x the preictal period, treat it as one big seizure
+            if (seizure["start"] - ((control.preictal_period * 60 * edf.data_sampling_rate) * 2)) < seizure_array[-1]["end"]:
+                # seizure "collision"
+                seizure_array[-1]["end"] = seizure["end"]
+            else:
+                seizure_array.append(seizure)
 
+            print("updated seizure_array")
 
-        final_df = pd.concat([classification_df,  all_channels], axis=1)
+        current_index = 0
+        for seizure in seizure_array:
+            preictal_start = max(0, seizure["start"] - (control.preictal_period * 60 * edf.data_sampling_rate))
+            preictal_end = seizure["start"] - 1
+            write_period("preictal", [preictal_start, preictal_end], raw, edf.data_sampling_rate)
 
-        # write dataframe to disc
-        print(f"EXTRACTOR : writing {edf.name} to {write}")
-        final_df.to_csv(write, index=False)
-        print(f"EXTRACTOR : Finished {edf.name}")
+            if not preictal_start == 0:
+                interictal_start = current_index + 1
+                interictal_end = preictal_start - 1 
+                write_period("interictal", [interictal_start, interictal_end], raw, edf.data_sampling_rate)
 
+            ictal_start = seizure["start"]
+            ictal_end = seizure["end"]
+            write_period("ictal", [ictal_start, ictal_end], raw, edf.data_sampling_rate)
+
+            current_index = seizure["end"] + 1
+        # write the remainder of the file as interictal
+        write_period("interictal", [current_index, len(raw)], raw, edf.data_sampling_rate)
+        pass
 
