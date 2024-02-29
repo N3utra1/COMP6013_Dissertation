@@ -99,7 +99,7 @@ class Writer:
                 continue
 
             # if there has already been a seizure, and its within 2x the preictal period, treat it as one big seizure
-            if (seizure["start"] - ((control.preictal_period * 60 * edf.data_sampling_rate) * 2)) < seizure_array[-1]["end"]:
+            if (seizure["start"] - (((control.preictal_period * 60) * control.window_size * edf.data_sampling_rate) * 2)) < seizure_array[-1]["end"]:
                 # seizure "collision"
                 seizure_array[-1]["end"] = seizure["end"]
             else:

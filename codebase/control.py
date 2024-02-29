@@ -14,16 +14,19 @@ def init():
     global window_size
     window_size = 30
 
+    global test_percentage
+    test_percentage = 0.2
+
     global load_dataset # this needs to be true to be able to write and extract the data
-    load_dataset = True 
+    load_dataset = False 
     global write_dataset # this writes the 3 ictal periods to csv file, containing the common columns (channels) with the band pass filter applied
     write_dataset = False 
     global extract_features # this balances the 3 ictal periods and generates spectograph images for each channel in 30 second segments
-    extract_features = True 
+    extract_features = False 
     global show_heat_plots # shows heat plots of the STFT for each file that contains a seizure
-    show_heat_plots = True
+    show_heat_plots = False 
     global train_model 
-    train_model = False 
+    train_model = True
 
     global common_columns
     common_columns = ["FP1-F7", "F7-T7", "T7-P7", "P7-O1", "FP1-F3", "F3-C3", "C3-P3", "P3-O1", "FP2-F4", "F4-C4", "C4-P4", "P4-O2", "FP2-F8", "F8-T8", "P8-O2", "FZ-CZ", "CZ-PZ"]
@@ -39,14 +42,17 @@ def init():
 
     global avaliable_models
     avaliable_models = [
-       "ann"
+       "cnn"
     ]
        
     global model 
-    model = "ann"
+    model = "cnn"
 
-    global incrimental_learning_batch_size
-    incrimental_learning_batch_size = True
+    global batch_size
+    batch_size = 421  # should be 1, 19, 421 as total files are 7999 for each class
+
+    global epoch 
+    epoch = 1
 
     global extractor
     extractor = {
@@ -58,8 +64,6 @@ def init():
     # chb24 is not a valid patient. target can either be a specific patient or all (True) patients
     #target = True 
     target = "chb06"
-
-
 
     global csv_path
     csv_path = os.path.abspath("D:\csv-chb-mit")  

@@ -33,12 +33,12 @@ def extract_features(loaded_chb):
         Extractor(chb_metadata=chb, csv_path=control.csv_path, write_path=control.stft_extraction_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
 
 def train_model():
-    from svm.ann import ann 
+    from cnn.cnn import cnn 
     avaliable_models = {
-        "ann" : ann 
+        "cnn" : cnn 
     }
     print(f"selected model {control.model}")
-    avaliable_models[control.model](control.csv_path, batch_size=control.incrimental_learning_batch_size)
+    avaliable_models[control.model](control.stft_extraction_path, batch_size=control.batch_size, epoch=control.epoch)
 
 
 def main():

@@ -25,36 +25,53 @@ class Extractor:
         print("threading is not implimented, falling back to single threaded extraction")
         self.extract()
 
+
     def extract(self):
-        for chb_file in self.chb_metadata.edf_files:
-            # if no seizures exist skip
-            if chb_file.seizure_dict == {}: continue 
+        def count_lines(filename):
+            with open(filename, 'r') as f:
+                for i, line in enumerate(f, 1):
+                    pass
+            return i - 1
 
+        def get_class_size(class_type):
+            total = 0
+            for chb_file in self.chb_metadata.edf_files:
+                csv_prefix = os.path.splitext(os.path.join(control.csv_path, *os.path.normpath(chb_file.path).split(os.sep)[-2:]))[0]
+                file_path = os.path.join(csv_prefix, class_type, "master.csv")
+                if os.path.exists(file_path):
+                    total += count_lines(file_path)
+            print(f"{class_type}  :  {total}")
+            return total
 
-            csv_prefix = os.path.splitext(os.path.join(control.csv_path, *os.path.normpath(chb_file.path).split(os.sep)[-2:]))[0]
+        def generate_windows_for_class(class_type):
+            all_dfs = []
+            for chb_file in self.chb_metadata.edf_files:
+                csv_prefix = os.path.splitext(os.path.join(control.csv_path, *os.path.normpath(chb_file.path).split(os.sep)[-2:]))[0]
+                path = os.path.join(csv_prefix, class_type, "master.csv")
+                if os.path.exists(path): all_dfs.append(pd.read_csv(path))
+            whole_df = pd.concat(all_dfs) 
+            self.generate_windows(whole_df, target_number_of_windows, 256, os.path.join(stft_prefix, class_type))
 
-            ictal_master = pd.read_csv(os.path.join(csv_prefix, "ictal", "master.csv"), header=0)
-            preictal_master = pd.read_csv(os.path.join(csv_prefix, "preictal", "master.csv"), header=0)
-            interictal_master = pd.read_csv(os.path.join(csv_prefix, "interictal", "master.csv"), header=0)
-
-            dataframes = {'ictal_master': ictal_master, 'preictal_master': preictal_master, 'interictal_master': interictal_master}
-            largest_df_name = max(dataframes, key=lambda x: dataframes[x].size)
-            largest = dataframes[largest_df_name]
-
-            target_number_of_windows = largest.size // (control.window_size * chb_file.data_sampling_rate)
-
-            stft_prefix = os.path.splitext(os.path.join(control.stft_extraction_path, *os.path.normpath(chb_file.path).split(os.sep)[-2:]))[0]
-            self.generate_windows(ictal_master, target_number_of_windows, chb_file.data_sampling_rate, os.path.join(stft_prefix, "ictal"))
-            self.generate_windows(preictal_master, target_number_of_windows, chb_file.data_sampling_rate, os.path.join(stft_prefix, "preictal"))
-            self.generate_windows(interictal_master, target_number_of_windows, chb_file.data_sampling_rate, os.path.join(stft_prefix, "interictal"))
-
+        # dataframes = {'ictal': get_class_size("ictal"), 
+        #                 'preictal': get_class_size("preictal"), 
+        #                 'interictal': get_class_size("interictal")}
+        dataframes = {'ictal': 17796, 'preictal': 41284, 'interictal': 61439306}
+        largest_df_name = max(dataframes, key=lambda x: dataframes[x])
+        largest = dataframes[largest_df_name]
+        target_number_of_windows = largest // (control.window_size * 256)
+        stft_prefix = os.path.splitext(os.path.join(control.stft_extraction_path, self.chb_metadata.name))[0]
+        print("attempting to generate windows for ictal")
+        generate_windows_for_class("ictal")
+        print("attempting to generate windows for preictal")
+        generate_windows_for_class("preictal")
+        print("attempting to generate windows for interictal")
+        generate_windows_for_class("interictal")
 
     def generate_windows(self, df, target_number, sampling_rate, write_path_prefix):
         start = 0
-        end = df.size
+        end = len(df)
         window_size = (control.window_size * sampling_rate)
 
-        if window_size > end: return
         file, mode = os.path.split(write_path_prefix)[-2:]
         print(f"writing {mode} for {file}")
         step = (end - start - window_size) / (target_number- 1)
@@ -67,6 +84,9 @@ class Extractor:
             info = mne.create_info(ch_names=control.common_columns, sfreq=sampling_rate)
             raw = mne.io.RawArray(df_window_slice[control.common_columns].transpose(), info, verbose=False)
             stft_data = stft(raw.get_data(), window_size, verbose=False)
+            if not stft_data.shape == (17, 3841, 2):
+                print(f"bad shape for {os.path.join(write_path_prefix, f'{w_start}-{w_end}-stft.npy')}")
+                input()
             output_path = os.path.join(write_path_prefix, f"{w_start}-{w_end}-stft.npy")
             if not os.path.exists(os.path.dirname(output_path)):
                 os.makedirs(os.path.dirname(output_path))
