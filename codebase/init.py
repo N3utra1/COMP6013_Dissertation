@@ -32,13 +32,20 @@ def extract_features(loaded_chb):
     for chb in loaded_chb:
         Extractor(chb_metadata=chb, csv_path=control.csv_path, write_path=control.stft_extraction_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
 
-def train_model():
+def train_model(num_conv_layers=4, num_dense_layers=4, dense_layer_size=4):
+    # tuning, loading and training are all covered by this function
     from cnn.cnn import cnn 
     avaliable_models = {
         "cnn" : cnn 
     }
     print(f"selected model {control.model}")
-    avaliable_models[control.model](control.stft_extraction_path, batch_size=control.batch_size, epoch=control.epoch)
+    avaliable_models[control.model](control.stft_extraction_path)
+
+def tune_model():
+    for conv in control.hyperparam_limits["model_parameters"]["num_conv_layers"]:
+        for dense in control.hyperparam_limits["model_parameters"]["num_dense_layers"]:
+            for dense_size in control.hyperparam_limits["model_parameters"]["dense_layer_size"]:
+                train_model(num_conv_layers=conv, num_dense_layers=dense, dense_layer_size=dense_size)
 
 
 def main():
@@ -53,9 +60,11 @@ def main():
     if control.extract_features:
         extract_features(loaded_chb)
 
-    if control.train_model:
+    if control.train_model or control.load_model:
         train_model()
 
+    if control.tune_model:
+        tune_model()
 
 if __name__ == "__main__":
     control.init()

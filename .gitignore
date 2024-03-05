@@ -3,3 +3,5 @@
 
 chb-mit-scalp-eeg-database-1.0.0/
 csv-chb-mit-scalp-eeg-database/
+**/*.keras
+**/*.h3

@@ -19,14 +19,41 @@ def init():
 
     global load_dataset # this needs to be true to be able to write and extract the data
     load_dataset = False 
+
     global write_dataset # this writes the 3 ictal periods to csv file, containing the common columns (channels) with the band pass filter applied
     write_dataset = False 
+
     global extract_features # this balances the 3 ictal periods and generates spectograph images for each channel in 30 second segments
     extract_features = False 
+
     global show_heat_plots # shows heat plots of the STFT for each file that contains a seizure
     show_heat_plots = False 
-    global train_model 
-    train_model = True
+
+    global train_model # trains a single model using default params, must specifiy batch and epochs below
+    train_model = False
+    global epochs
+    epochs = 4
+    global batch_size
+    batch_size = 32
+
+    global tune_model # finds an optimal model through hyperparam tuning, must specify hyperparam_limits below
+    tune_model = True 
+    global hyperparam_limits 
+    hyperparam_limits = {
+        "model_parameters" : {
+            "num_conv_layers" : [2, 4, 6, 8, 10],
+            "num_dense_layers"  : [2, 4, 6, 8, 10],
+            "dense_layer_size" : [32, 64, 128, 256, 512]
+        },
+        "training_parameters" : {
+            "epoch" : [4, 8, 16, 32, 64],
+            "batch_size" : [1, 2, 4, 8, 16, 32, 64]
+        }
+    }
+
+    global load_model # loads a specific model
+    # load_model = "./train_model.keras" 
+    load_model = False
 
     global common_columns
     common_columns = ["FP1-F7", "F7-T7", "T7-P7", "P7-O1", "FP1-F3", "F3-C3", "C3-P3", "P3-O1", "FP2-F4", "F4-C4", "C4-P4", "P4-O2", "FP2-F8", "F8-T8", "P8-O2", "FZ-CZ", "CZ-PZ"]
@@ -40,20 +67,9 @@ def init():
     global preictal_period # minuites
     preictal_period = 20
 
-    global avaliable_models
-    avaliable_models = [
-       "cnn"
-    ]
-       
-    global model 
+    global model
     model = "cnn"
-
-    global batch_size
-    batch_size = 421  # should be 1, 19, 421 as total files are 7999 for each class
-
-    global epoch 
-    epoch = 1
-
+       
     global extractor
     extractor = {
        "overwrite" : False,
@@ -66,15 +82,18 @@ def init():
     target = "chb06"
 
     global csv_path
-    csv_path = os.path.abspath("D:\csv-chb-mit")  
+    csv_path = os.path.abspath("D:\\csv-chb-mit")  
     # csv_path = os.path.abspath("../csv-chb-mit-scalp-eeg-database")
 
     global stft_extraction_path
     # feature_extraction_path = "D:\csv-feature-chb-mit"
-    stft_extraction_path = "D:\stft-chb-mit"
+    stft_extraction_path = "D:\\stft-chb-mit"
 
     global dataset_path
     dataset_path = os.path.abspath("../chb-mit-scalp-eeg-database-1.0.0")
+
+    global model_save_path
+    model_save_path = "D:\\results"
 
     global warnings_path
     warnings_path = os.path.abspath("../warnings")
