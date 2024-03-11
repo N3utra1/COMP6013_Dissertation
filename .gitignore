@@ -6,4 +6,4 @@ csv-chb-mit-scalp-eeg-database/
 **/*.h5
 **/*.h3
 
-./venv
+venv
