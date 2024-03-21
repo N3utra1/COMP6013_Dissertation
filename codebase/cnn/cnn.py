@@ -16,6 +16,10 @@ from random import sample, shuffle
 
 class cnn:
     def __init__(self, stft_path, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64):
+        self.num_conv_layers = num_conv_layers
+        self.num_dense_layers = num_dense_layers
+        self.dense_layer_size = dense_layer_size 
+
         self.stft_path = stft_path 
         self.create_model(num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
 
@@ -95,6 +99,7 @@ class cnn:
                     file.writelines(results)
                 print(results)
                 print(f" $$ saved results {results}")
+                return model_output_path
 
             # add the classes to each file
             all_files = []
@@ -111,13 +116,31 @@ class cnn:
                 train_on_spectogram(batch)
                 c += 1
 
-            save_model()
+            return save_model()
 
         def tune_model():
             for e in control.hyperparam_limits["training_parameters"]["epoch"]:
                 for b in control.hyperparam_limits["training_parameters"]["batch_size"]:
-                    print(f"\t$$ training model:\t\t$$ batch_size: {b}\n\t\t$$ epochs: {e}")
+                    print(f"""
+                        $$      current configuration
+
+                            conv layers count   :   {self.num_conv_layers}
+                                dense layer count   :   {self.num_dense_layers}
+                                    dense layer size    :   {self.dense_layer_size}
+
+                                        epochs  :   {e}
+                                            batch_size  :   {b}
+
+                        $$
+                          """)
+
+                    start_time = time.time()
+                    print(f"$$ start time: {start_time}")
                     train_model(batch_size=b, epochs=e)
+                    end_time = time.time()
+                    print(f"$$ end time: {end_time}")
+                    print(f"$$ {start_time} -> {end_time} = {str(datetime.timedelta(seconds=(end - start)))}")
+
 
         def load_model():
             self.model = tf.keras.models.load_model(control.load_model)
@@ -149,14 +172,14 @@ class cnn:
         train_interictal_files, test_interictal_files = self.split_array(interictal_files)
 
 
-        if control.load_model and (not control.train_model and not control.tune_model):
+        if control.load_model and (not control.train_model or not control.tune_model):
             load_model()  
-        elif control.train_model and (not control.load_model or not control.tune_model):
+        elif control.train_model and not control.tune_model:
             train_model(control.batch_size, control.epochs)
-        elif control.tune_model and (not control.load_model or not control.train_model):
+        elif control.tune_model and not control.train_model:
             tune_model()
         else:
-            print("$$ only one of these can be true: \n\tcontrol.load_model\n\ntcontrol.train_model\n\tcontrol.tune_model")
+            print("$$ only one of these can be true: \n\tcontrol.load_model\n\tcontrol.train_model\n\tcontrol.tune_model")
             raise RuntimeError
 
 
