@@ -116,7 +116,7 @@ class cnn:
         def tune_model():
             for e in control.hyperparam_limits["training_parameters"]["epoch"]:
                 for b in control.hyperparam_limits["training_parameters"]["batch_size"]:
-                    print(f"\t$$ training model:\t\tbatch_size: {b}\n\t\tepochs: {e}")
+                    print(f"\t$$ training model:\t\t$$ batch_size: {b}\n\t\t$$ epochs: {e}")
                     train_model(batch_size=b, epochs=e)
 
         def load_model():
