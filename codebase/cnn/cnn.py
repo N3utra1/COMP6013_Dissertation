@@ -20,17 +20,17 @@ class cnn:
         self.create_model(num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
 
         start_time = time.time()
-        print(f"start time: {start_time}")
+        print(f"$$ start time: {start_time}")
         if control.target == True:
             self.train_all_files()
         elif "/" in control.target:
-            print("training on a specific file is not supported. Please specify either a subject or set control.target to True")
+            print("$$ training on a specific file is not supported. Please specify either a subject or set control.target to True")
             raise RuntimeError
         else:
             self.train_on_subject(control.target)   
         end_time = time.time()
-        print("finished all training model trained")
-        print(f"end time: {end_time}")
+        print("$$ finished all training model trained")
+        print(f"$$ end time: {end_time}")
 
 
     def train_all_files(self):
@@ -50,7 +50,7 @@ class cnn:
             c = 0
             total_loops = (len(file_paths) // batch_size)
             for i in range(0, len(file_paths), batch_size):
-                print(f"[{true_label}] predicting batch {c}/{total_loops}")
+                print(f"$$ [{true_label}] predicting batch {c}/{total_loops}")
                 paths = file_paths[i: i + batch_size]
                 open_files = np.array([np.load(path) for path in paths])
                 batch = np.reshape(np.array(open_files), (len(open_files), 17, 3841, 2))
@@ -88,13 +88,13 @@ class cnn:
                 else:
                     self.model.save(f"{model_output_path}.keras")
 
-                print(f"saved model {model_output_path}")
+                print(f"$$ saved model {model_output_path}")
 
                 results = compute_confusion_matrix()
                 with open(f"{model_output_path}.results", "w") as file:
                     file.writelines(results)
                 print(results)
-                print(f"saved results {results}")
+                print(f" $$ saved results {results}")
 
             # add the classes to each file
             all_files = []
@@ -106,7 +106,7 @@ class cnn:
             c = 0 
             total_loops = len(all_files) // batch_size
             for i in range(0, len(all_files), batch_size):
-                print(f"training batch {c}/{total_loops}")
+                print(f"$$ training batch {c}/{total_loops}")
                 batch = all_files[i: i + batch_size]
                 train_on_spectogram(batch)
                 c += 1
@@ -116,7 +116,7 @@ class cnn:
         def tune_model():
             for e in control.hyperparam_limits["training_parameters"]["epoch"]:
                 for b in control.hyperparam_limits["training_parameters"]["batch_size"]:
-                    print(f"\ttraining model:\t\tbatch_size: {b}\n\t\tepochs: {e}")
+                    print(f"\t$$ training model:\t\tbatch_size: {b}\n\t\tepochs: {e}")
                     train_model(batch_size=b, epochs=e)
 
         def load_model():
@@ -156,7 +156,7 @@ class cnn:
         elif control.tune_model and (not control.load_model or not control.train_model):
             tune_model()
         else:
-            print("only one of these can be true: \n\tcontrol.load_model\n\ntcontrol.train_model\n\tcontrol.tune_model")
+            print("$$ only one of these can be true: \n\tcontrol.load_model\n\ntcontrol.train_model\n\tcontrol.tune_model")
             raise RuntimeError
 
 
@@ -173,7 +173,7 @@ class cnn:
         self.dense_layer_size = dense_layer_size 
 
         if num_dense_layers < 1 or num_conv_layers < 0: 
-            print("Layer count cannot be less than 1")
+            print("$$ Layer count cannot be less than 1")
             raise ValueError
 
         model = models.Sequential()
