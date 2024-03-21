@@ -26,11 +26,17 @@ class cnn:
         elif "/" in control.target:
             print("training on a specific file is not supported. Please specify either a subject or set control.target to True")
             raise RuntimeError
-        else:
+        elif type(control.target) == type([]):
             self.train_on_subject(control.target)   
+        else:
+            self.train_on_multiple_subjects()
         end_time = time.time()
         print("finished all training model trained")
         print(f"end time: {end_time}")
+
+    def train_on_multiple_subjects(self):
+        for subject in subjects:
+            self.train_on_subject(subject)
 
 
     def train_all_files(self):

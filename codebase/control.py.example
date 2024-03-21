@@ -47,7 +47,8 @@ def init():
         },
         "training_parameters" : {
             "epoch" : [1],
-            "batch_size" : [128]
+            "batch_size" : [32, 128, 256, 1024]
+
         }
     }
 
