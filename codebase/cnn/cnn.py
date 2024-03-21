@@ -139,7 +139,7 @@ class cnn:
                     train_model(batch_size=b, epochs=e)
                     end_time = time.time()
                     print(f"$$ end time: {end_time}")
-                    print(f"$$ {start_time} -> {end_time} = {str(datetime.timedelta(seconds=(end - start)))}")
+                    print(f"$$ {start_time} -> {end_time} = {str(datetime.timedelta(seconds=(end_time - start_time)))}")
 
 
         def load_model():
