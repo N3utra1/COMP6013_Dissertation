@@ -82,18 +82,18 @@ def init():
     target = "chb06"
 
     global csv_path
-    csv_path = os.path.abspath("D:\\csv-chb-mit")  
+    csv_path = os.path.abspath("/data/csv-chb-mit")  
     # csv_path = os.path.abspath("../csv-chb-mit-scalp-eeg-database")
 
     global stft_extraction_path
     # feature_extraction_path = "D:\csv-feature-chb-mit"
-    stft_extraction_path = "D:\\stft-chb-mit"
+    stft_extraction_path = "/data/stft-chb-mit"
 
     global dataset_path
-    dataset_path = os.path.abspath("../chb-mit-scalp-eeg-database-1.0.0")
+    dataset_path = os.path.abspath("/data/chb-mit-scalp-eeg-database-1.0.0")
 
     global model_save_path
-    model_save_path = "D:\\results"
+    model_save_path = "/data/results"
 
     global warnings_path
     warnings_path = os.path.abspath("../warnings")

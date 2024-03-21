@@ -39,12 +39,13 @@ def train_model(num_conv_layers=4, num_dense_layers=4, dense_layer_size=4):
         "cnn" : cnn 
     }
     print(f"selected model {control.model}")
-    avaliable_models[control.model](control.stft_extraction_path)
+    avaliable_models[control.model](control.stft_extraction_path, num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
 
 def tune_model():
     for conv in control.hyperparam_limits["model_parameters"]["num_conv_layers"]:
         for dense in control.hyperparam_limits["model_parameters"]["num_dense_layers"]:
             for dense_size in control.hyperparam_limits["model_parameters"]["dense_layer_size"]:
+                print(f"conv layer count: {conv}\ndense layer count: {dense}\ndense layer size: {dense_size}")
                 train_model(num_conv_layers=conv, num_dense_layers=dense, dense_layer_size=dense_size)
 
 
