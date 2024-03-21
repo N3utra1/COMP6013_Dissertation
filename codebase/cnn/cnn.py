@@ -3,7 +3,9 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras import layers, models
+from tensorflow.keras import backend as K 
 from sklearn.metrics import confusion_matrix
+
 import numpy as np
 
 import glob
@@ -21,7 +23,9 @@ class cnn:
         self.dense_layer_size = dense_layer_size 
 
         self.stft_path = stft_path 
-        self.create_model(num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
+
+        devices = tf.config.experimental.list_physical_devices("GPU")
+        tf.config.experimental.set_memory_growth(devices[0], True)
 
         start_time = time.time()
         print(f"$$ start time: {start_time}")
@@ -100,6 +104,9 @@ class cnn:
                 print(results)
                 print(f" $$ saved results {results}")
                 return model_output_path
+            
+            # build model
+            self.create_model(num_conv_layers=self.num_conv_layers, num_dense_layers=self.num_dense_layers, dense_layer_size=self.dense_layer_size)
 
             # add the classes to each file
             all_files = []
@@ -140,6 +147,7 @@ class cnn:
                     end_time = time.time()
                     print(f"$$ end time: {end_time}")
                     print(f"$$ {start_time} -> {end_time} = {str(datetime.timedelta(seconds=(end_time - start_time)))}")
+                    K.clear_session()
 
 
         def load_model():
