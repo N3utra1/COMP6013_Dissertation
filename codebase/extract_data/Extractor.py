@@ -17,6 +17,7 @@ class Extractor:
         self.csv_path = csv_path 
         self.write_path = write_path
         self.overwrite = overwrite
+        if self.chb_metadata.name == "chb01": return
         if threading:
             self.extract_threaded() 
         else: self.extract() 
@@ -52,10 +53,10 @@ class Extractor:
             whole_df = pd.concat(all_dfs) 
             self.generate_windows(whole_df, target_number_of_windows, 256, os.path.join(stft_prefix, class_type))
 
-        # dataframes = {'ictal': get_class_size("ictal"), 
-        #                 'preictal': get_class_size("preictal"), 
-        #                 'interictal': get_class_size("interictal")}
-        dataframes = {'ictal': 17796, 'preictal': 41284, 'interictal': 61439306}
+        dataframes = {'ictal': get_class_size("ictal"), 
+                        'preictal': get_class_size("preictal"), 
+                        'interictal': get_class_size("interictal")}
+        # dataframes = {'ictal': 1, 'preictal': 1, 'interictal': 2} # this forces it to always think interictal is the largest class
         largest_df_name = max(dataframes, key=lambda x: dataframes[x])
         largest = dataframes[largest_df_name]
         target_number_of_windows = largest // (control.window_size * 256)
@@ -83,10 +84,11 @@ class Extractor:
             df_window_slice = df.iloc[w_start : w_end]
             info = mne.create_info(ch_names=control.common_columns, sfreq=sampling_rate)
             raw = mne.io.RawArray(df_window_slice[control.common_columns].transpose(), info, verbose=False)
-            stft_data = stft(raw.get_data(), window_size, verbose=False)
+            stft_data = stft(raw.get_data(), window_size, verbose=True)
             if not stft_data.shape == (17, 3841, 2):
                 print(f"bad shape for {os.path.join(write_path_prefix, f'{w_start}-{w_end}-stft.npy')}")
-                input()
+                continue
+            input()
             output_path = os.path.join(write_path_prefix, f"{w_start}-{w_end}-stft.npy")
             if not os.path.exists(os.path.dirname(output_path)):
                 os.makedirs(os.path.dirname(output_path))

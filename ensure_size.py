@@ -16,7 +16,6 @@ def check_shape():
         if not current_file.shape == (17, 3841, 2):
             print(f"bad shape for {file}")
             print(current_file.shape)
-            input()
         del(current_file)
 
 def check_3rd_dim():

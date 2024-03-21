@@ -75,7 +75,11 @@ class Writer:
         # read in edf file
         raw = mne.io.read_raw_edf(read, preload=True)
         # pick the common channels
-        raw = raw.pick_channels(control.common_columns)
+        try:
+            raw = raw.pick_channels(control.common_columns)
+        except Exception as e:
+            control.warning(f"error when writing extracted csv data to {write}. Error: {e}\n\n")
+            return 
 
         # apply the band pass filters
         raw = raw.notch_filter(freqs=control.band_pass_low)

@@ -24,7 +24,7 @@ def init():
     write_dataset = False 
 
     global extract_features # this balances the 3 ictal periods and generates spectograph images for each channel in 30 second segments
-    extract_features = False 
+    extract_features = True
 
     global show_heat_plots # shows heat plots of the STFT for each file that contains a seizure
     show_heat_plots = False 
@@ -41,13 +41,13 @@ def init():
     global hyperparam_limits 
     hyperparam_limits = {
         "model_parameters" : {
-            "num_conv_layers" : [2, 4, 6, 8, 10],
-            "num_dense_layers"  : [2, 4, 6, 8, 10],
-            "dense_layer_size" : [32, 64, 128, 256, 512]
+            "num_conv_layers" : [2, 6, 10],
+            "num_dense_layers"  : [4, 8, 12],
+            "dense_layer_size" : [64, 128, 256]
         },
         "training_parameters" : {
-            "epoch" : [4, 8, 16, 32, 64],
-            "batch_size" : [1, 2, 4, 8, 16, 32, 64]
+            "epoch" : [1],
+            "batch_size" : [128]
         }
     }
 
@@ -78,7 +78,7 @@ def init():
 
     global target
     # chb24 is not a valid patient. target can either be a specific patient or all (True) patients
-    #target = True 
+    # target = True 
     target = "chb06"
 
     global csv_path
