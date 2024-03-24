@@ -13,6 +13,7 @@ import os
 import time
 import control
 import datetime
+import threading
 from random import sample, shuffle
 
 
@@ -143,6 +144,9 @@ class cnn:
 
                     start_time = time.time()
                     print(f"$$ start time: {start_time}")
+                    thread = threading.Thread(target=train_model, args=(b, e))
+                    thread.start()
+                    thread.join()
                     train_model(batch_size=b, epochs=e)
                     end_time = time.time()
                     print(f"$$ end time: {end_time}")
