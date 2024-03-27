@@ -32,6 +32,7 @@ class cnn:
 
         self.stft_path = stft_path 
 
+
         # devices = tf.config.experimental.list_physical_devices("GPU")
         # tf.config.experimental.set_memory_growth(devices[0], True)
 
@@ -43,23 +44,18 @@ class cnn:
             print("$$ training on a specific file is not supported. Please specify either a subject or set control.target to True")
             raise RuntimeError
         elif type(control.target) == type([]):
-            self.train_on_multiple_subjects()
+            self.train(control.target)
         else:
-            self.train_on_subject(control.target)   
+            self.train([control.target])   
         end_time = time.time()
         print("$$ finished all training model trained")
         print(f"$$ end time: {end_time}")
 
-    def train_on_multiple_subjects(self):
-        for subject in subjects:
-            self.train_on_subject(subject)
-
     def train_all_files(self):
         subjects = [path.split(os.sep)[-1] for path in glob.glob(os.path.join(self.stft_path), "*")]
-        for subject in subjects:
-            self.train_on_subject(subject)
+        self.train(subjects)
 
-    def train_on_subject(self, file_path):
+    def train(self, file_path):
         one_hot_encoding = {
             "interictal" : np.array([1,0,0]),
             "preictal" : np.array([0,1,0]),
@@ -179,9 +175,20 @@ class cnn:
 
 
 
-        ictal_files = glob.glob(os.path.join(control.stft_extraction_path, file_path, "ictal", "*"))
-        preictal_files = glob.glob(os.path.join(control.stft_extraction_path, file_path, "preictal", "*"))
-        interictal_files = glob.glob(os.path.join(control.stft_extraction_path, file_path, "interictal", "*"))
+        ictal_files = []
+        preictal_files = []
+        interictal_files = []
+        # go through each subject path, read in a shuffle all their data.
+        for path in file_path:
+            ictal_files += glob.glob(os.path.join(control.stft_extraction_path, path, "interictal", "*"))
+            preictal_files += glob.glob(os.path.join(control.stft_extraction_path, path, "preictal", "*"))
+            interictal_files += glob.glob(os.path.join(control.stft_extraction_path, path, "ictal", "*"))
+
+        # take a random sample else too much data. For a single subject take all files
+        target_number = len(ictal_files) // len(file_path) # will be the same for all classes
+        ictal_files = sample(ictal_files, target_number)
+        preictal_files = sample(preictal_files, target_number)
+        interictal_files = sample(interictal_files, target_number)
 
         shuffle(ictal_files)
         shuffle(preictal_files)
