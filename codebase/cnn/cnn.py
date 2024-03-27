@@ -7,26 +7,33 @@ from tensorflow.keras import backend as K
 from sklearn.metrics import confusion_matrix
 
 import numpy as np
+import argparse
 
 import glob
 import os
 import time
-import control
 import datetime
 import threading
 from random import sample, shuffle
+import sys
 
+script_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+import control
 
 class cnn:
-    def __init__(self, stft_path, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64):
+    def __init__(self, stft_path, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64, epochs=1, batch_size=64):
         self.num_conv_layers = num_conv_layers
         self.num_dense_layers = num_dense_layers
         self.dense_layer_size = dense_layer_size 
+        self.epochs = epochs
+        self.batch_size = batch_size
 
         self.stft_path = stft_path 
 
-        devices = tf.config.experimental.list_physical_devices("GPU")
-        tf.config.experimental.set_memory_growth(devices[0], True)
+        # devices = tf.config.experimental.list_physical_devices("GPU")
+        # tf.config.experimental.set_memory_growth(devices[0], True)
 
         start_time = time.time()
         print(f"$$ start time: {start_time}")
@@ -36,9 +43,9 @@ class cnn:
             print("$$ training on a specific file is not supported. Please specify either a subject or set control.target to True")
             raise RuntimeError
         elif type(control.target) == type([]):
-            self.train_on_subject(control.target)   
-        else:
             self.train_on_multiple_subjects()
+        else:
+            self.train_on_subject(control.target)   
         end_time = time.time()
         print("$$ finished all training model trained")
         print(f"$$ end time: {end_time}")
@@ -46,7 +53,6 @@ class cnn:
     def train_on_multiple_subjects(self):
         for subject in subjects:
             self.train_on_subject(subject)
-
 
     def train_all_files(self):
         subjects = [path.split(os.sep)[-1] for path in glob.glob(os.path.join(self.stft_path), "*")]
@@ -122,6 +128,22 @@ class cnn:
             [all_files.append([one_hot_encoding["interictal"], path]) for path in train_interictal_files]
             shuffle(all_files)
 
+            print(f"""
+                $$      current configuration
+
+                    conv layers count   :   {self.num_conv_layers}
+                        dense layer count   :   {self.num_dense_layers}
+                            dense layer size    :   {self.dense_layer_size}
+
+                                epochs  :   {self.epochs}
+                                    batch_size  :   {self.batch_size}
+
+                $$
+                    """)
+
+
+            start_time = time.time()
+            print(f"$$ start time: {start_time}")
             c = 0 
             total_loops = len(all_files) // batch_size
             for i in range(0, len(all_files), batch_size):
@@ -130,35 +152,10 @@ class cnn:
                 train_on_spectogram(batch)
                 c += 1
 
+            end_time = time.time()
+            print(f"$$ end time: {end_time}")
+            print(f"$$ {start_time} -> {end_time} = {str(datetime.timedelta(seconds=(end_time - start_time)))}")
             return save_model()
-
-        def tune_model():
-            for e in control.hyperparam_limits["training_parameters"]["epoch"]:
-                for b in control.hyperparam_limits["training_parameters"]["batch_size"]:
-                    print(f"""
-                        $$      current configuration
-
-                            conv layers count   :   {self.num_conv_layers}
-                                dense layer count   :   {self.num_dense_layers}
-                                    dense layer size    :   {self.dense_layer_size}
-
-                                        epochs  :   {e}
-                                            batch_size  :   {b}
-
-                        $$
-                          """)
-
-                    start_time = time.time()
-                    print(f"$$ start time: {start_time}")
-                    thread = threading.Thread(target=train_model, args=(b, e))
-                    thread.start()
-                    thread.join()
-                    train_model(batch_size=b, epochs=e)
-                    end_time = time.time()
-                    print(f"$$ end time: {end_time}")
-                    print(f"$$ {start_time} -> {end_time} = {str(datetime.timedelta(seconds=(end_time - start_time)))}")
-                    K.clear_session()
-
 
         def load_model():
             self.model = tf.keras.models.load_model(control.load_model)
@@ -192,13 +189,8 @@ class cnn:
 
         if control.load_model and (not control.train_model or not control.tune_model):
             load_model()  
-        elif control.train_model and not control.tune_model:
-            train_model(control.batch_size, control.epochs)
-        elif control.tune_model and not control.train_model:
-            tune_model()
         else:
-            print("$$ only one of these can be true: \n\tcontrol.load_model\n\tcontrol.train_model\n\tcontrol.tune_model")
-            raise RuntimeError
+            train_model(control.batch_size, control.epochs)
 
 
     def split_array(self, array):
@@ -235,3 +227,17 @@ class cnn:
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         self.model = model
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--conv', type=int, default=4)
+    parser.add_argument('--dense', type=int, default=4)
+    parser.add_argument('--dense-size', type=int, default=4)
+    parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--batch-size', type=int, default=32)
+    args = parser.parse_args()
+    control.init()
+
+    model = cnn(control.stft_extraction_path, num_conv_layers=args.conv, num_dense_layers=args.dense, dense_layer_size=args.dense_size, epochs=args.epochs, batch_size=args.batch_size)

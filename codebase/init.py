@@ -3,6 +3,8 @@ import os
 from load_dataset.CHB import CHB 
 from extract_data.Writer import Writer 
 from extract_data.Extractor import Extractor 
+import subprocess
+args = None
 
 def load_dataset():
     chb_mit_path = control.dataset_path
@@ -46,7 +48,16 @@ def tune_model():
     for conv in control.hyperparam_limits["model_parameters"]["num_conv_layers"]:
         for dense in control.hyperparam_limits["model_parameters"]["num_dense_layers"]:
             for dense_size in control.hyperparam_limits["model_parameters"]["dense_layer_size"]:
-                train_model(num_conv_layers=conv, num_dense_layers=dense, dense_layer_size=dense_size)
+                for epoch in control.hyperparam_limits["training_parameters"]["epoch"]:
+                    for batch_size in control.hyperparam_limits["training_parameters"]["batch_size"]:
+                        subprocess.run(["python", 
+                                        "./cnn/cnn.py", 
+                                        "--conv", str(conv), 
+                                        "--dense", str(dense), 
+                                        "--dense-size", str(dense_size), 
+                                        "--epochs", str(epoch), 
+                                        "--batch-size", 
+                                        str(batch_size)], check=True)
 
 
 def main():
