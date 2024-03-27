@@ -195,7 +195,7 @@ class cnn:
         if control.load_model and (not control.train_model or not control.tune_model):
             load_model()  
         else:
-            train_model(control.batch_size, control.epochs)
+            train_model(self.batch_size, self.epochs)
 
 
     def split_array(self, array):
@@ -239,8 +239,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--conv', type=int, default=4)
     parser.add_argument('--dense', type=int, default=4)
-    parser.add_argument('--dense-size', type=int, default=4)
-    parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--dense-size', type=int, default=64)
+    parser.add_argument('--epochs', type=int, default=1)
     parser.add_argument('--batch-size', type=int, default=32)
     args = parser.parse_args()
     control.init()
