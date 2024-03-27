@@ -1,10 +1,16 @@
 """
     This is used to debug files written by the program. It is not needed when running the finished product
 """
-
+import mne
+from mne.time_frequency import stft
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import numpy as np 
 import os
 import glob
+from codebase import control
+
 files_to_check = glob.glob("D:\\stft-chb-mit\\chb06\\*\\*.npy")
 
 
@@ -36,7 +42,6 @@ def check_2nd_dim_chb06():
         del(current_file)
 
 def open_windows():
-    import matplotlib.pyplot as plt
     def menu():
         def get_path(path, level):
             if level == 3:
@@ -74,7 +79,7 @@ def open_windows():
                     if page < num_pages:
                         page += 1
                 elif choice.lower() == 'q':
-                    return None
+                    method_menu() 
 
         path = get_path("D:\\stft-chb-mit\\", 0)
         if path:
@@ -84,12 +89,19 @@ def open_windows():
             print("No file selected.")
 
     def show_plot(file):
-        stft_result = np.load(file)
-        plt.specgram(stft_result, cmap='hot', sides='default', mode='default')
-        plt.ylabel("Frequency [Hz]")
-        plt.xlabel("Time [sec]")
-        plt.legend([file])
+        stft_data = np.load(file)
+
+        time_vector = np.linspace(0, 15, 3841)
+        freq_vector = np.linspace(0, 128, 17)
+
+        plt.imshow(np.abs(np.mean(stft_data, axis=0)), origin='lower', aspect='auto', cmap='hot', norm=LogNorm(), extent=[time_vector.min(), time_vector.max(), freq_vector.min(), freq_vector.max()])
+        plt.colorbar(label='Color scale')
+        plt.title(f'{file} STFT results')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Frequency (Hz)')
+        plt.ylim([0,128])
         plt.show()
+
     menu()
 
 
@@ -114,4 +126,5 @@ def method_menu():
         print("Invalid choice. Please try again.")
         method_menu()
 
+control.init()
 method_menu()
