@@ -32,8 +32,13 @@ class cnn:
 
         self.stft_path = stft_path 
 
-        # devices = tf.config.experimental.list_physical_devices("GPU")
-        # tf.config.experimental.set_memory_growth(devices[0], True)
+        devices = tf.config.experimental.list_physical_devices("GPU")
+        tf.config.experimental.set_memory_growth(devices[0], True)
+
+        exists = glob.glob(os.path.join(os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/")), f"{batch_size}.{epochs}.*"))
+        if exists: 
+            print(f"skipping {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{batch_size}.{epochs}")
+            return
 
         start_time = time.time()
         print(f"$$ start time: {start_time}")
