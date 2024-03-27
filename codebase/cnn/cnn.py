@@ -32,8 +32,8 @@ class cnn:
 
         self.stft_path = stft_path 
 
-        devices = tf.config.experimental.list_physical_devices("GPU")
-        tf.config.experimental.set_memory_growth(devices[0], True)
+        # devices = tf.config.experimental.list_physical_devices("GPU")
+        # tf.config.experimental.set_memory_growth(devices[0], True)
 
         exists = glob.glob(os.path.join(os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/")), f"{batch_size}.{epochs}.*"))
         if exists: 
@@ -88,19 +88,58 @@ class cnn:
                 c += 1
 
         def train_model(batch_size=8, epochs=1):
+            # def train_on_spectogram(batch):
+            #     data_batch = []
+            #     labels_batch = []
+
+            #     for one_hot_class, path in batch:
+            #         print("$$ ", end="")
+            #         print(path)
+            #         data = np.load(path)
+            #         data_batch.append(data)
+            #         labels_batch.append(one_hot_class)
+
+            #     data_batch = np.reshape(data_batch, (len(data_batch), 17, 3841, 2))
+            #     labels_batch = np.reshape(labels_batch, (len(labels_batch), 3))
+
+            #     self.model.fit(data_batch, labels_batch, batch_size=batch_size, epochs=epochs)
+
             def train_on_spectogram(batch):
                 data_batch = []
                 labels_batch = []
 
                 for one_hot_class, path in batch:
-                    data = np.load(path)
+                    try:
+                        data = np.load(path)
+                    except:
+                        print(f"$$ path")
                     data_batch.append(data)
                     labels_batch.append(one_hot_class)
 
                 data_batch = np.reshape(data_batch, (len(data_batch), 17, 3841, 2))
                 labels_batch = np.reshape(labels_batch, (len(labels_batch), 3))
 
-                self.model.fit(data_batch, labels_batch, batch_size=batch_size, epochs=epochs)
+                # Gradient accumulation
+                optimizer = tf.keras.optimizers.Adam()
+                loss_fn = tf.keras.losses.CategoricalCrossentropy(from_logits=True)
+
+                @tf.function
+                def train_step(x, y):
+                    with tf.GradientTape() as tape:
+                        logits = self.model(x, training=True)
+                        loss_value = loss_fn(y, logits)
+                    grads = tape.gradient(loss_value, self.model.trainable_weights)
+                    optimizer.apply_gradients(zip(grads, self.model.trainable_weights))
+                    return loss_value
+
+                for epoch in range(epochs):
+                    for i in range(0, len(data_batch), batch_size):
+                        batch_data = data_batch[i:i+batch_size]
+                        batch_labels = labels_batch[i:i+batch_size]
+                        loss_value = train_step(batch_data, batch_labels)
+                        print(f"Training loss at step {i} is {float(loss_value)}")
+
+
 
             def save_model():
                 # save path structured as:
