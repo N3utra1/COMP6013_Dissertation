@@ -160,6 +160,7 @@ class cnn:
                 print(f"$$ training batch {c}/{total_loops}")
                 batch = all_files[i: i + batch_size]
                 train_on_spectogram(batch)
+                del batch
                 c += 1
 
             end_time = time.time()
