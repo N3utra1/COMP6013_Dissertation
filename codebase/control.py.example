@@ -26,9 +26,6 @@ def init():
     global extract_features # this balances the 3 ictal periods and generates spectograph images for each channel in 30 second segments
     extract_features = True
 
-    global show_heat_plots # shows heat plots of the STFT for each file that contains a seizure
-    show_heat_plots = False 
-
     global train_model # trains a single model using default params, must specifiy batch and epochs below
     train_model = False
     global epochs
