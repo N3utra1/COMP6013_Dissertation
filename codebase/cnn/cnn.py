@@ -116,7 +116,7 @@ class cnn:
                     with open(f"{model_output_path}.results", "w") as file:
                         file.writelines(results)
                 else:
-                    with open(f"{model_output_path}.{datetime.datetime.now().strftime("%d.%m.%Y.%H.%M")}.results", "w") as file:
+                    with open(f"{model_output_path}.{datetime.datetime.now().strftime('%d.%m.%Y.%H.%M')}.results", "w") as file:
                         file.writelines(results)
 
                 print(results)
