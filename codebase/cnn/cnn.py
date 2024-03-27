@@ -112,8 +112,13 @@ class cnn:
                 print(f"$$ saved model {model_output_path}")
 
                 results = compute_confusion_matrix()
-                with open(f"{model_output_path}.results", "w") as file:
-                    file.writelines(results)
+                if not os.path.exists(f"{model_output_path}.results"):
+                    with open(f"{model_output_path}.results", "w") as file:
+                        file.writelines(results)
+                else:
+                    with open(f"{model_output_path}.{datetime.datetime.now().strftime("%d.%m.%Y.%H.%M")}.results", "w") as file:
+                        file.writelines(results)
+
                 print(results)
                 print(f" $$ saved results {results}")
                 return model_output_path
