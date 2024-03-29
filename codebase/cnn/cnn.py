@@ -52,6 +52,9 @@ class Generator(Sequence):
 class cnn:
     def __init__(self, stft_path, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64, epochs=1, batch_size=64):
         self.stft_path = stft_path
+        self.num_conv_layers = num_conv_layers
+        self.num_dense_layers = num_dense_layers
+        self.dense_layer_size = dense_layer_size 
         self.epochs = epochs 
         self.batch_size = batch_size
 
