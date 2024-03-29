@@ -40,7 +40,7 @@ class Generator(Sequence):
 
         batch_images = []
         for file in batch_files:
-            image = np.load(file.decode("utf-8"))
+            image = np.load(file.decode("utf-8"), allow_pickle=True)
             batch_images.append(image)
 
         batch_images = np.array(batch_images)
@@ -54,6 +54,25 @@ class cnn:
         self.stft_path = stft_path
         self.epochs = epochs 
         self.batch_size = batch_size
+
+        exists = glob.glob(os.path.join(os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/")), f"{self.batch_size}.{self.epochs}.*"))
+        if exists: 
+            print(f"skipping {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
+            return
+    
+        print(f"""
+            $$      current configuration
+
+                conv layers count   :   {self.num_conv_layers}
+                    dense layer count   :   {self.num_dense_layers}
+                        dense layer size    :   {self.dense_layer_size}
+
+                            epochs  :   {self.epochs}
+                                batch_size  :   {self.batch_size}
+
+            $$
+                """)
+
         # get classification and test datasets
         self.generate_datasets()
         # compile model
@@ -84,11 +103,13 @@ class cnn:
         # if more than one subject, take the average number of samples 
         if len(target_subjects) > 1: 
             combined_dataset = combined_dataset.take(len(combined_dataset) // len(target_subjects))
+        
 
         # split into testing and training 
         train_size = int(len(combined_dataset) * control.train_percentage)
         self.train_dataset = combined_dataset.take(train_size)
         self.test_dataset = combined_dataset.skip(train_size) 
+        self.test_dataset = self.test_dataset.take(min(1000, len(self.test_dataset)))
 
         train_paths = []
         train_labels = []
@@ -140,9 +161,14 @@ class cnn:
 
     def train(self):
         self.model.fit(self.train_generator, epochs=self.epochs, batch_size=self.batch_size)
-        result = self.model.evaluate(self.test_generator)
+
+        directory_path = os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/"))
+        if not os.path.exists(directory_path): os.mkdir(directory_path)
+        model_output_path = os.path.join(directory_path, f"{self.batch_size}.{self.epochs}")
+        self.model.save(f"{model_output_path}.keras")
+
+        result = self.model.evaluate(self.test_generator, batch_size=self.batch_size)
         print(result)
-        pass
 
         
 
@@ -156,5 +182,5 @@ if __name__ == "__main__":
     parser.add_argument('--batch-size', type=int, default=32)
     args = parser.parse_args()
     control.init()
-
+    
     model = cnn(control.stft_extraction_path, num_conv_layers=args.conv, num_dense_layers=args.dense, dense_layer_size=args.dense_size, epochs=args.epochs, batch_size=args.batch_size)
