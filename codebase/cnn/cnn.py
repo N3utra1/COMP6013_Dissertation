@@ -169,6 +169,7 @@ class cnn:
         self.model = model
 
     def train(self):
+        print(f"$$ training: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
         self.model.fit(self.train_generator, epochs=self.epochs, batch_size=self.batch_size)
 
         directory_path = os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/"))
@@ -176,6 +177,7 @@ class cnn:
         model_output_path = os.path.join(directory_path, f"{self.batch_size}.{self.epochs}")
         self.model.save(f"{model_output_path}.keras")
 
+        print(f"$$ testing: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
         result = self.model.evaluate(self.test_generator, batch_size=self.batch_size)
         print(result)
 
