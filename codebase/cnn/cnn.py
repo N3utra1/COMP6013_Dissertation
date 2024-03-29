@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras import layers, models
 from tensorflow.keras import backend as K 
-from tensorflow.keras.utils import to_categorical, Sequence
+from tensorflow.keras.utils import to_categorical, Sequence, set_random_seed
 from sklearn.metrics import confusion_matrix
 
 import numpy as np
@@ -51,6 +51,7 @@ class Generator(Sequence):
 
 class cnn:
     def __init__(self, stft_path, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64, epochs=1, batch_size=64):
+        set_random_seed(control.seed)
         self.stft_path = stft_path
         self.num_conv_layers = num_conv_layers
         self.num_dense_layers = num_dense_layers
@@ -104,9 +105,12 @@ class cnn:
         else: raise ValueError
 
         # Combine datasets for each class and shuffle
-        file_paths = glob.glob(os.path.join(self.stft_path, "*", "*", "*.npy"))
-        labels = [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
-        # combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(len(file_paths)).batch(self.batch_size)
+        file_paths = []
+        labels = []
+        for subject in target_subjects:
+            file_paths += glob.glob(os.path.join(self.stft_path, subject, "*", "*.npy"))
+            labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
+
         combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(32)
 
         # if more than one subject, take the average number of samples 
