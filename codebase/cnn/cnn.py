@@ -76,7 +76,7 @@ class cnn:
         else: raise ValueError
 
         # Combine datasets for each class and shuffle
-        file_paths = glob.glob(os.path.join(self.stft_path, ".\**\**\*.npy"))
+        file_paths = glob.glob(os.path.join(self.stft_path, "*", "*", "*.npy"))
         labels = [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
         # combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(len(file_paths)).batch(self.batch_size)
         combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(32)
