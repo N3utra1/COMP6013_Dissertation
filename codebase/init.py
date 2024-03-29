@@ -4,6 +4,7 @@ from load_dataset.CHB import CHB
 from extract_data.Writer import Writer 
 from extract_data.Extractor import Extractor 
 import subprocess
+import traceback
 args = None
 
 def load_dataset():
@@ -50,14 +51,22 @@ def tune_model():
             for dense_size in control.hyperparam_limits["model_parameters"]["dense_layer_size"]:
                 for epoch in control.hyperparam_limits["training_parameters"]["epoch"]:
                     for batch_size in control.hyperparam_limits["training_parameters"]["batch_size"]:
-                        subprocess.run(["python", 
-                                        "./cnn/cnn.py", 
-                                        "--conv", str(conv), 
-                                        "--dense", str(dense), 
-                                        "--dense-size", str(dense_size), 
-                                        "--epochs", str(epoch), 
-                                        "--batch-size", 
-                                        str(batch_size)], check=True)
+                        try:
+                            subprocess.run(["python", 
+                                            "./cnn/cnn.py", 
+                                            "--conv", str(conv), 
+                                            "--dense", str(dense), 
+                                            "--dense-size", str(dense_size), 
+                                            "--epochs", str(epoch), 
+                                            "--batch-size", 
+                                            str(batch_size)], check=True)
+                        except AttributeError as e:
+                            control.warning(f"\n\n $$ target subjects: {control.target} ;\n traceback for error while tuning {conv}.{dense}.{dense_size}.{epoch}.{batch_size}\n")
+                            control.warning(traceback.format_exec())
+                            continue 
+
+
+
 
 
 def main():
