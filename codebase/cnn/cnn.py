@@ -83,7 +83,7 @@ class cnn:
             pass
 
         # get classification and test datasets
-        self.generate_datasets()
+        self.train_generator, self.test_generator = self.generate_datasets()
         # compile model
         self.compile_model(num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
         # train model
@@ -127,7 +127,7 @@ class cnn:
             train_labels.append(label.numpy())
         train_paths = np.array(train_paths)
         train_labels = np.array(train_labels) 
-        self.train_generator = Generator(train_paths, train_labels, self.batch_size)
+        train_generator = Generator(train_paths, train_labels, self.batch_size)
 
         test_paths = []
         test_labels = []
@@ -136,7 +136,8 @@ class cnn:
             test_labels.append(label.numpy())
         test_paths = np.array(test_paths)
         test_labels = np.array(test_labels) 
-        self.test_generator = Generator(test_paths, test_labels, self.batch_size)
+        test_generator = Generator(test_paths, test_labels, self.batch_size)
+        return train_generator, test_generator
 
 
     def compile_model(self, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64):

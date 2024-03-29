@@ -23,8 +23,7 @@ def load_dataset():
             loaded_chb.append(chb)
         return loaded_chb
 
-    print("please set control.target to a valid option (try 'chb03' or True)") 
-
+    print("please set control.target to a valid option (try 'chb06' or True)") 
 
 
 def write_dataset(loaded_chb):
@@ -35,14 +34,15 @@ def extract_features(loaded_chb):
     for chb in loaded_chb:
         Extractor(chb_metadata=chb, csv_path=control.csv_path, write_path=control.stft_extraction_path, overwrite=control.extractor["overwrite"], threading=control.extractor["threading"])
 
-def train_model(num_conv_layers=4, num_dense_layers=4, dense_layer_size=4):
+def train_model():
     # tuning, loading and training are all covered by this function
     from cnn.cnn import cnn 
-    avaliable_models = {
-        "cnn" : cnn 
-    }
-    print(f"selected model {control.model}")
-    avaliable_models[control.model](control.stft_extraction_path, num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
+    c = cnn(control.stft_extraction_path, 
+                    num_conv_layers=control.single_model_params["num_conv_layers"], 
+                    num_dense_layers=control.single_model_params["num_dense_layers"],
+                    dense_layer_size=control.single_model_params["dense_layer_size"],
+                    epochs=control.single_model_params["epochs"],
+                    batch_size=control.single_model_params["batch_size"])
 
 def tune_model():
     print("$$ starting model tuning")
@@ -65,29 +65,39 @@ def tune_model():
                             control.warning(traceback.format_exec())
                             continue 
 
-
-
+def calculate_metrics():
+    from cnn.calculate_metrics import calculate_metrics
+    c = calculate_metrics()
 
 
 def main():
     # load datasets into OOP Objects
-    if control.load_dataset or control.write_dataset or control.extract_features:
-        loaded_chb = load_dataset() 
+    loaded_chb = load_dataset() 
 
     # write data to disc as CSV files (feature extraction)
     if control.write_dataset:
+        print("$$ extracting csv files from dataset")
         write_dataset(loaded_chb)
 
+    # converts the written data to stft windows
     if control.extract_features:
+        print("$$ extracting stft windows")
         extract_features(loaded_chb)
 
-    if (control.train_model or control.load_model) and not control.tune_model:
+    # trains a single model with the structure
+    if control.train_single_model:
         print("$$ training model")
         train_model()
 
+    # saves .keras models and saves them in the results dir
     if control.tune_model:
         print("$$ tuning model")
         tune_model()
+
+    # tests the .keras models in the results dir and writes its "results" file
+    if control.calculate_metrics:
+        print("$$ calculating metrics")
+        calculate_metrics()
 
 if __name__ == "__main__":
     control.init()
