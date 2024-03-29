@@ -61,11 +61,12 @@ class cnn:
 
         exists = glob.glob(os.path.join(os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/")), f"{self.batch_size}.{self.epochs}.*"))
         if exists: 
-            print(f"skipping {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
+            control.warning(f"skipping {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
             return
     
-        print(f"""
-            $$      current configuration
+        control.warning(f"""
+       ---------------------------------------------
+                    current configuration
 
                 conv layers count   :   {self.num_conv_layers}
                     dense layer count   :   {self.num_dense_layers}
@@ -74,7 +75,7 @@ class cnn:
                             epochs  :   {self.epochs}
                                 batch_size  :   {self.batch_size}
 
-            $$
+            
                 """)
 
         try:
@@ -84,10 +85,13 @@ class cnn:
             pass
 
         # get classification and test datasets
+        control.warning("generating dataset")
         self.generate_datasets()
         # compile model
+        control.warning("compiling model")
         self.compile_model(num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
         # train model
+        control.warning("training model")
         self.train()
 
     def generate_datasets(self):
@@ -96,6 +100,9 @@ class cnn:
         integer_mapping = {x: i for i,x in enumerate(classes)}
         labels = [integer_mapping[c] for c in classes]
         one_hot_matrix = to_categorical(labels, num_classes=len(classes))
+        control.warning("one hot matrix:")
+        control.warning(labels)
+        control.warning(one_hot_matrix)
 
         # generates a array of subject names called target_subjects
         mode = type(control.target)
@@ -103,6 +110,7 @@ class cnn:
         elif mode == type(bool): target_subjects = [path.split(os.sep)[-1] for path in glob.glob(self.stft_path+os.sep+"*")] # get all subject folders
         elif mode == type(""): target_subjects = [control.target] # only a string
         else: raise ValueError
+        control.warning(f"target subjects: {target_subjects}")
 
         # Combine datasets for each class and shuffle
         file_paths = []
@@ -110,12 +118,18 @@ class cnn:
         for subject in target_subjects:
             file_paths += glob.glob(os.path.join(self.stft_path, subject, "*", "*.npy"))
             labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
+        control.warning(f"training and testing off thes file paths with these labels:")
+        for i in range(len(file_paths)):
+            control.warning(f"{file_paths[i]} : {labels[i]}")
 
         combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(32)
 
+        control.warning(f"combined dataset size is {len(combined_dataset)}")
         # if more than one subject, take the average number of samples 
         if len(target_subjects) > 1: 
             combined_dataset = combined_dataset.take(len(combined_dataset) // len(target_subjects))
+            control.warning(f"divided dataset by {len(target_subjects)} to equal {len(combined_dataset)} datapoints")
+
         
 
         # split into testing and training 
@@ -123,6 +137,9 @@ class cnn:
         self.train_dataset = combined_dataset.take(train_size)
         self.test_dataset = combined_dataset.skip(train_size) 
         self.test_dataset = self.test_dataset.take(min(1000, len(self.test_dataset)))
+        control.warning(f"testing / training split is {control.train_percentage}")
+        control.warning(f"train dataset size is {len(self.train_dataset)}")
+        control.warning(f"test dataset size is {len(self.test_dataset)}")
 
         train_paths = []
         train_labels = []
@@ -149,7 +166,7 @@ class cnn:
         self.dense_layer_size = dense_layer_size 
 
         if num_dense_layers < 1 or num_conv_layers < 0: 
-            print("$$ Layer count cannot be less than 1")
+            control.warning("Layer count cannot be less than 1")
             raise ValueError
 
         model = models.Sequential()
@@ -171,9 +188,11 @@ class cnn:
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         self.model = model
+        control.warning("model summary:")
+        control.warning(self.model.summary())
 
     def train(self):
-        print(f"$$ training: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
+        control.warning(f"training: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
         self.model.fit(self.train_generator, epochs=self.epochs, batch_size=self.batch_size)
 
         directory_path = os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/"))
@@ -181,9 +200,9 @@ class cnn:
         model_output_path = os.path.join(directory_path, f"{self.batch_size}.{self.epochs}")
         self.model.save(f"{model_output_path}.keras")
 
-        print(f"$$ testing: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
+        control.warning(f"testing: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
         result = self.model.evaluate(self.test_generator, batch_size=self.batch_size)
-        print(result)
+        control.warning(result)
 
         
 

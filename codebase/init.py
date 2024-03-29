@@ -45,7 +45,7 @@ def train_model(num_conv_layers=4, num_dense_layers=4, dense_layer_size=4):
     avaliable_models[control.model](control.stft_extraction_path, num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
 
 def tune_model():
-    print("$$ starting model tuning")
+    print("starting model tuning")
     for conv in control.hyperparam_limits["model_parameters"]["num_conv_layers"]:
         for dense in control.hyperparam_limits["model_parameters"]["num_dense_layers"]:
             for dense_size in control.hyperparam_limits["model_parameters"]["dense_layer_size"]:
@@ -61,7 +61,7 @@ def tune_model():
                                             "--batch-size", 
                                             str(batch_size)], check=True)
                         except AttributeError as e:
-                            control.warning(f"\n\n $$ target subjects: {control.target} ;\n traceback for error while tuning {conv}.{dense}.{dense_size}.{epoch}.{batch_size}\n")
+                            control.warning(f"\n\ntarget subjects: {control.target} ;\n traceback for error while tuning {conv}.{dense}.{dense_size}.{epoch}.{batch_size}\n")
                             control.warning(traceback.format_exec())
                             continue 
 
@@ -82,11 +82,11 @@ def main():
         extract_features(loaded_chb)
 
     if (control.train_model or control.load_model) and not control.tune_model:
-        print("$$ training model")
+        print("training model")
         train_model()
 
     if control.tune_model:
-        print("$$ tuning model")
+        print("tuning model")
         tune_model()
 
 if __name__ == "__main__":

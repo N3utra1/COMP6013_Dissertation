@@ -1,0 +1,17 @@
+**/__pycache__/
+.vscode/
+
+chb-mit-scalp-eeg-database-1.0.0/
+csv-chb-mit-scalp-eeg-database/
+<<<<<<< HEAD
+**/*.keras
+=======
+>>>>>>> 4934c722317d0dd396316a240f93459d053539be
+**/*.h5
+**/*.h3
+
+venv
+<<<<<<< HEAD
+control.py
+=======
+>>>>>>> 4934c722317d0dd396316a240f93459d053539be

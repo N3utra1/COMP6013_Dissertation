@@ -3,8 +3,9 @@ from glob import glob
 
 def warning(message):
     with open(warnings_path, "a") as file:
-        print(message)
-        file.write(f"{message}\n")
+        time = datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+        print(f" $$ {time} {message}")
+        file.write(f"{time} {message}\n")
 
 def init():
     global seed
