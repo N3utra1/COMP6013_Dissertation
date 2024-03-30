@@ -72,11 +72,12 @@ with ui.row().classes("w-full justify-around"):
 def update_prediction(prediction):
     global predicted_class_toggle
     print("recieved prediction:")
+    print("['interictal', 'preictal', 'ictal']")
     print(prediction)
-    predicted_class_toggle.value = 1 
+    predicted_class_toggle.value = (np.argmax(prediction[0]) + 1)
 
 
-model_path = "/data/results/2.4.128/16.8.keras"
+model_path = "/data/results/2.8.64/16.8.keras"
 print(f"loading model: {model_path}")
 print(os.path.exists(model_path))
 model = tf.keras.models.load_model(model_path)
@@ -99,6 +100,12 @@ def update():
     stft_plot = stft(raw.get_data(), 7680)
     stft_image = np.expand_dims(stft_plot, axis=0)
     print(stft_plot.shape)
+    try:
+        prediction_results = model.predict(stft_image)
+        update_prediction(prediction_results)
+    except Exception as e: 
+        print(e)
+        pass
 
     ui_container.clear()
     with ui_container: 
@@ -106,7 +113,7 @@ def update():
             with ui.pyplot(figsize=(8, 8)):
                 for channel in raw.get_data():
                     downsampled_data = channel[::30]
-                    plt.plot(downsampled_data, "-k", linewidth=0.1)
+                    plt.plot(downsampled_data, "-k", linewidth=0.2)
                 plt.title('EEG Data')
                 plt.xlabel('Time (Hz)')
                 plt.ylabel('Amplitude (mV)')
@@ -124,7 +131,6 @@ def update():
                 plt.ylabel('Frequency (Hz)')
                 plt.ylim([0,128])
 
-    update_prediction(model.predict(stft_image))
 
 change_current_class()
 update()
