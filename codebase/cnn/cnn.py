@@ -101,7 +101,6 @@ class cnn:
         labels = [integer_mapping[c] for c in classes]
         one_hot_matrix = to_categorical(labels, num_classes=len(classes))
         control.warning("one hot matrix:")
-        control.warning(labels)
         control.warning(one_hot_matrix)
 
         # generates a array of subject names called target_subjects
@@ -118,9 +117,6 @@ class cnn:
         for subject in target_subjects:
             file_paths += glob.glob(os.path.join(self.stft_path, subject, "*", "*.npy"))
             labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
-        control.warning(f"training and testing off thes file paths with these labels:")
-        for i in range(len(file_paths)):
-            control.warning(f"{file_paths[i]} : {labels[i]}")
 
         combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(32)
 
