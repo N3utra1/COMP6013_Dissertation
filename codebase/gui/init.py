@@ -67,7 +67,7 @@ with ui.row().classes("w-full justify-around"):
         ui.label("PREDICTED CLASS:").classes("font-bold")
         predicted_class_toggle = ui.toggle({1: 'interictal', 2: 'preictal', 3: 'ictal'}).classes("disabled, pointer-events-none")
 
-with ui.row().classes("w-full justify-around"):
+with ui.row().classes("w-3/5 justify-around"):
     window_slider = ui.slider(min=0, max=30, value=0)
 
 
@@ -93,7 +93,10 @@ def update():
     global common_columns
     global current_data
     global model
+    global window_slider
     print("updating the GUI")
+    print(f"window slider value {window_slider.value} -> {(window_slider.value + 5) % 30}")
+    window_slider.set_value((window_slider.value + 5) % 30)
 
     current_data = pd.concat([current_data, pd.DataFrame(current_generator.get_lines())], ignore_index=True)
     info = mne.create_info(ch_names=common_columns, sfreq=256)
@@ -128,7 +131,7 @@ def update():
                 plt.ylim(-600, 600)
 
             with ui.pyplot(figsize=(8, 8)):
-                try:
+                if len(current_data) == 30:
                     time_vector = np.linspace(0, 15, 3841)
                     freq_vector = np.linspace(0, 128, 17)
 
@@ -138,7 +141,5 @@ def update():
                     plt.xlabel('Time (s)')
                     plt.ylabel('Frequency (Hz)')
                     plt.ylim([0,128])
-                except Exception as e:
-                    pass
 change_current_class()
 ui.run(favicon="🧠", title="Real-time Simulation", reload=False)
