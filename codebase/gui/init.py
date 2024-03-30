@@ -95,7 +95,7 @@ def update():
     global model
     print("updating the GUI")
 
-    current_data = pd.concat([current_data, current_generator.get_lines()], ignore_index=True)
+    current_data = pd.concat([current_data, pd.DataFrame(current_generator.get_lines())], ignore_index=True)
     info = mne.create_info(ch_names=common_columns, sfreq=256)
     raw = mne.io.RawArray(current_data.transpose(), info, verbose=True)
     if len(current_data) > 30: 
