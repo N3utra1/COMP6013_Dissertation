@@ -105,8 +105,6 @@ def update():
         current_data = current_data.iloc[len(current_data)-30:,]
 
     if len(current_data) == 30:
-        info = mne.create_info(ch_names=common_columns, sfreq=256)
-        raw = mne.io.RawArray(current_data.transpose(), info, verbose=True)
         stft_plot = stft(raw.get_data(), 7680)
         stft_image = np.expand_dims(stft_plot, axis=0)
         print(stft_plot.shape)
