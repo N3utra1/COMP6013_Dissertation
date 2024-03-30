@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+!/usr/bin/env python3
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,7 +34,7 @@ class FileLinesGenerator:
         del self.lines[0]
         print(f"file opened with {len(self.lines)} lines")
     def get_lines(self):
-        return_value = self.lines[self.index: self.index + 30*256]
+        return_value = self.lines[self.index: self.index + 5*256]
         self.index += len(return_value)
         if self.index >= len(self.lines):
             self.index = 0  # reset index if end of file is reached
@@ -52,9 +52,7 @@ def change_current_class():
     update()
 
 
-# set up the timer which runs on an speed of 30 seconds 
-# timer can be turned on and off with the "toggle" button
-timer = ui.timer(30, lambda: update())
+timer = ui.timer(5, lambda: update())
 
 with ui.row().classes("w-full justify-around"):
     with ui.column():
@@ -68,6 +66,11 @@ with ui.row().classes("w-full justify-around"):
     with ui.column():
         ui.label("PREDICTED CLASS:").classes("font-bold")
         predicted_class_toggle = ui.toggle({1: 'interictal', 2: 'preictal', 3: 'ictal'}).classes("disabled, pointer-events-none")
+
+with ui.row().classes("w-full justify-around"):
+    window_slider = ui.slider(min=0, max=30, value=0)
+
+
 def update_prediction(prediction):
     global predicted_class_toggle
     print("recieved prediction:")
@@ -83,7 +86,7 @@ model = tf.keras.models.load_model(model_path)
 
 
 ui_container = ui.row().classes("w-full justify-around")
-
+current_data = pd.DataFrame()
 def update():
     global current_class_toggle
     global current_generator
@@ -91,20 +94,22 @@ def update():
     global model
     print("updating the GUI")
 
-    current_data = pd.DataFrame(current_generator.get_lines())
-    print(current_data)
-    info = mne.create_info(ch_names=common_columns, sfreq=256)
-    raw = mne.io.RawArray(current_data.transpose(), info, verbose=True)
+    current_data.append(pd.DataFrame(current_generator.get_lines()))
+    if len(current_data) > 30: 
+        current_data = current_data.iloc[len(current_data)-30:,]
 
-    stft_plot = stft(raw.get_data(), 7680)
-    stft_image = np.expand_dims(stft_plot, axis=0)
-    print(stft_plot.shape)
-    try:
-        prediction_results = model.predict(stft_image)
-        update_prediction(prediction_results)
-    except Exception as e: 
-        print(e)
-        pass
+    if len(current_data) == 30:
+        info = mne.create_info(ch_names=common_columns, sfreq=256)
+        raw = mne.io.RawArray(current_data.transpose(), info, verbose=True)
+        stft_plot = stft(raw.get_data(), 7680)
+        stft_image = np.expand_dims(stft_plot, axis=0)
+        print(stft_plot.shape)
+        try:
+            prediction_results = model.predict(stft_image)
+            update_prediction(prediction_results)
+        except Exception as e: 
+            print(e)
+            pass
 
     ui_container.clear()
     with ui_container: 
@@ -120,14 +125,17 @@ def update():
                 plt.ylim(-600, 600)
 
             with ui.pyplot(figsize=(8, 8)):
-                time_vector = np.linspace(0, 15, 3841)
-                freq_vector = np.linspace(0, 128, 17)
+                try:
+                    time_vector = np.linspace(0, 15, 3841)
+                    freq_vector = np.linspace(0, 128, 17)
 
-                plt.imshow(np.abs(np.mean(stft_plot, axis=0)), origin='lower', aspect='auto', cmap='hot', norm=LogNorm(), extent=[time_vector.min(), time_vector.max(), freq_vector.min(), freq_vector.max()])
-                plt.colorbar(label='Color scale')
-                plt.title('STFT plot')
-                plt.xlabel('Time (s)')
-                plt.ylabel('Frequency (Hz)')
-                plt.ylim([0,128])
-
+                    plt.imshow(np.abs(np.mean(stft_plot, axis=0)), origin='lower', aspect='auto', cmap='hot', norm=LogNorm(), extent=[time_vector.min(), time_vector.max(), freq_vector.min(), freq_vector.max()])
+                    plt.colorbar(label='Color scale')
+                    plt.title('STFT plot')
+                    plt.xlabel('Time (s)')
+                    plt.ylabel('Frequency (Hz)')
+                    plt.ylim([0,128])
+                except Exception as e:
+                    pass
+change_current_class()
 ui.run(favicon="🧠", title="Real-time Simulation")
