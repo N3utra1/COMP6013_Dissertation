@@ -1,4 +1,4 @@
-!/usr/bin/env python3
+#!/usr/bin/env python3
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
@@ -91,6 +91,7 @@ def update():
     global current_class_toggle
     global current_generator
     global common_columns
+    global current_data
     global model
     print("updating the GUI")
 
@@ -138,4 +139,4 @@ def update():
                 except Exception as e:
                     pass
 change_current_class()
-ui.run(favicon="🧠", title="Real-time Simulation")
+ui.run(favicon="🧠", title="Real-time Simulation", reload=False)
