@@ -32,20 +32,19 @@ class FileLinesGenerator:
         with open(filename, 'r') as f:
             self.lines = f.readlines()
         del self.lines[0]
+        print(f"file opened with {len(self.lines)} lines")
     def get_lines(self):
-        try:
-            return_value = self.lines[self.index: self.index + 30*256]
-            self.index += len(return_value)
-            return [line.split(",") for line in return_value] 
-        except StopIteration:
-            self.index = 0
-            self.get_lines()
+        return_value = self.lines[self.index: self.index + 30*256]
+        self.index += len(return_value)
+        if self.index >= len(self.lines):
+            self.index = 0  # reset index if end of file is reached
+        return [line.split(",") for line in return_value] 
     def get_index(self): 
         return self.index
-eeg_file_prefix = os.path.normpath("/data/csv-chb-mit/chb06/chb06_01")
-generators = {1 : FileLinesGenerator(os.path.join(eeg_file_prefix, "interictal", "master.csv")), 
-              2 : FileLinesGenerator(os.path.join(eeg_file_prefix, "preictal", "master.csv")),
-              3 : FileLinesGenerator(os.path.join(eeg_file_prefix, "ictal", "master.csv"))}
+eeg_file_prefix = os.path.normpath("/data/csv-chb-mit/chb06")
+generators = {1 : FileLinesGenerator(os.path.join(eeg_file_prefix, "chb06_01", "interictal", "master.csv")), 
+              2 : FileLinesGenerator(os.path.join(eeg_file_prefix, "chb06_09", "preictal", "master.csv")),
+              3 : FileLinesGenerator(os.path.join(eeg_file_prefix, "chb06_01", "ictal", "master.csv"))}
 def change_current_class():
     global current_generator 
     global current_class_toggle
@@ -131,7 +130,5 @@ def update():
                 plt.ylabel('Frequency (Hz)')
                 plt.ylim([0,128])
 
-
-change_current_class()
-update()
+app.on_startup(lambda: change_current_class)
 ui.run()
