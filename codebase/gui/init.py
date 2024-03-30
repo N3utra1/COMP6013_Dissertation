@@ -11,6 +11,8 @@ from mne.time_frequency import stft
 import mne
 import tensorflow as tf
 
+# helps with OOM errors:
+
 
 # simulating controls the model
 simulating = False
@@ -36,7 +38,7 @@ class FileLinesGenerator:
             self.get_lines()
     def get_index(self): 
         return self.index
-eeg_file_prefix = os.path.normpath("D:\csv-chb-mit\chb06\chb06_01")
+eeg_file_prefix = os.path.normpath("/data/csv-chb-mit/chb06/chb06_01")
 generators = {1 : FileLinesGenerator(os.path.join(eeg_file_prefix, "interictal", "master.csv")), 
               2 : FileLinesGenerator(os.path.join(eeg_file_prefix, "preictal", "master.csv")),
               3 : FileLinesGenerator(os.path.join(eeg_file_prefix, "ictal", "master.csv"))}
@@ -70,9 +72,8 @@ def update_prediction(prediction):
     predicted_class_toggle.value = 1 
 
 
-model_path = "D:\\results\\2.4.128\\16.8.keras"
-print(f"opening {model_path}")
-print("exists? : ")
+model_path = "/data/results/2.4.128/16.8.keras"
+print(f"loading model: {model_path}")
 print(os.path.exists(model_path))
 model = tf.keras.models.load_model(model_path)
 
@@ -91,7 +92,8 @@ def update():
     info = mne.create_info(ch_names=common_columns, sfreq=256)
     raw = mne.io.RawArray(current_data.transpose(), info, verbose=True)
 
-    stft_plot= stft(raw.get_data(), 7680)
+    stft_plot = stft(raw.get_data(), 7680)
+    stft_image = np.expand_dims(stft_plot, axis=0)
     print(stft_plot.shape)
 
     ui_container.clear()
@@ -118,7 +120,7 @@ def update():
                 plt.ylabel('Frequency (Hz)')
                 plt.ylim([0,128])
 
-    update_prediction(model.predict(stft_plot))
+    update_prediction(model.predict(stft_image))
 
 change_current_class()
 update()
