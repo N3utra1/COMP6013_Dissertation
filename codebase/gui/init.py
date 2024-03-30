@@ -130,5 +130,4 @@ def update():
                 plt.ylabel('Frequency (Hz)')
                 plt.ylim([0,128])
 
-app.on_startup(lambda: change_current_class)
-ui.run()
+ui.run(favicon="🧠", title="Real-time Simulation")
