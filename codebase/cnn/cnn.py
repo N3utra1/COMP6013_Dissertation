@@ -118,15 +118,16 @@ class cnn:
             file_paths += glob.glob(os.path.join(self.stft_path, subject, "*", "*.npy"))
             labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
 
-        combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(32)
+        combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(1000)
 
         control.warning(f"combined dataset size is {len(combined_dataset)}")
         # if more than one subject, take the average number of samples 
-        if len(target_subjects) > 1: 
-            combined_dataset = combined_dataset.take(len(combined_dataset) // len(target_subjects))
-            control.warning(f"divided dataset by {len(target_subjects)} to equal {len(combined_dataset)} datapoints")
+        # if len(target_subjects) > 1: 
+        #     combined_dataset = combined_dataset.take(len(combined_dataset) // len(target_subjects))
+        #     control.warning(f"divided dataset by {len(target_subjects)} to equal {len(combined_dataset)} datapoints")
 
         
+        combined_dataset.shuffle(1000)
 
         # split into testing and training 
         train_size = int(len(combined_dataset) * control.train_percentage)
