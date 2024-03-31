@@ -40,7 +40,10 @@ class Generator(Sequence):
 
         batch_images = []
         for file in batch_files:
-            image = np.load(file.decode("utf-8"), allow_pickle=True)
+            try:
+                image = np.load(file.decode("utf-8"), allow_pickle=True)
+            except AttributeError as e:
+                image = np.load(file, allow_pickle=True)
             batch_images.append(image)
 
         batch_images = np.array(batch_images)
