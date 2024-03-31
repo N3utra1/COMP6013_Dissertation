@@ -28,6 +28,8 @@ def init():
     global extract_features # this balances the 3 ictal periods and generates spectograph images for each channel in 30 second segments
     extract_features = False 
 
+    global metrics_batch_size
+    metrics_batch_size = 32
     global calculate_metrics # generates .results files for all possible models
     calculate_metrics = True
 
