@@ -48,6 +48,13 @@ class Generator(Sequence):
 
 class calculate_metrics:
     def __init__(self):
+        try:
+            physical_devices = tf.config.list_physical_devices('GPU') 
+            if physical_devices: tf.config.experimental.set_memory_growth(physical_devices[0], True)
+        except:
+            pass
+
+
         self.classes = ["interictal", "preictal", "ictal"]
         self.stft_path = control.stft_extraction_path
         models = glob.glob(os.path.join(control.model_save_path, "*", "*.keras"))
@@ -85,10 +92,9 @@ class calculate_metrics:
             print("Classification Report:")
             print(classification_report(y_true, y_pred))
             with open(results_file, "w") as file:
-                file.write("Confusion Matrix:")
+                file.write("Confusion Matrix:\n")
                 file.write(str(cm))
-                file.write("\n")
-                file.write(f"Accuracy: {accuracy}")
+                file.write(f"\nAccuracy: {accuracy}")
                 file.write("Classification Report:")
                 file.write(classification_report(y_true, y_pred))
 
