@@ -81,7 +81,7 @@ def main():
     if control.extract_features:
         extract_features(loaded_chb)
 
-    if (control.train_model or control.load_model) and not control.tune_model:
+    if (control.train_single_model or control.load_model) and not control.tune_model:
         print("training model")
         train_model()
 
