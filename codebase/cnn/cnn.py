@@ -119,21 +119,13 @@ class cnn:
             labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
 
         combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(1000)
-
-        control.warning(f"combined dataset size is {len(combined_dataset)}")
-        # if more than one subject, take the average number of samples 
-        # if len(target_subjects) > 1: 
-        #     combined_dataset = combined_dataset.take(len(combined_dataset) // len(target_subjects))
-        #     control.warning(f"divided dataset by {len(target_subjects)} to equal {len(combined_dataset)} datapoints")
-
-        
         combined_dataset.shuffle(1000)
+        control.warning(f"combined dataset size is {len(combined_dataset)}")
 
         # split into testing and training 
         train_size = int(len(combined_dataset) * control.train_percentage)
         self.train_dataset = combined_dataset.take(train_size)
         self.test_dataset = combined_dataset.skip(train_size) 
-        self.test_dataset = self.test_dataset.take(min(1000, len(self.test_dataset)))
         control.warning(f"testing / training split is {control.train_percentage}")
         control.warning(f"train dataset size is {len(self.train_dataset)}")
         control.warning(f"test dataset size is {len(self.test_dataset)}")
@@ -145,7 +137,14 @@ class cnn:
             train_labels.append(label.numpy())
         train_paths = np.array(train_paths)
         train_labels = np.array(train_labels) 
-        self.train_generator = Generator(train_paths, train_labels, self.batch_size)
+        if ([0., 0., 1.] in train_labels) and  ([0., 1., 0.] in train_labels) and ([1., 0., 0.] in train_labels):
+            self.train_generator = Generator(train_paths, train_labels, self.batch_size)
+        else: 
+            control.warning("not all paths were found when creating the cnn generator:\n")
+            control.warning(f"[0 0 1] : {[0., 0., 1.] in train_labels}")
+            control.warning(f"[0 1 0] : {[0., 1., 0.] in train_labels}")
+            control.warning(f"[1 0 0] : {[1., 0., 0.] in train_labels}")
+            raise RuntimeError
 
         test_paths = []
         test_labels = []
@@ -154,7 +153,9 @@ class cnn:
             test_labels.append(label.numpy())
         test_paths = np.array(test_paths)
         test_labels = np.array(test_labels) 
-        self.test_generator = Generator(test_paths, test_labels, self.batch_size)
+        if ([0., 0., 1.] in train_labels) and  ([0., 1., 0.] in train_labels) and ([1., 0., 0.] in train_labels):
+            self.test_generator = Generator(test_paths, test_labels, self.batch_size)
+        else: raise RuntimeError
 
 
     def compile_model(self, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64):
