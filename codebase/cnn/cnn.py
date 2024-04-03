@@ -171,7 +171,13 @@ class cnn:
 
         # add convolutional layers
         model.add(layers.Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(17, 3841, 2)))
-        for i in range(1, num_conv_layers):
+
+        for i in range(1, num_conv_layers-2):
+            model.add(layers.Conv2D(32 * (2**i), kernel_size=(3, 3), activation='relu', padding="same"))
+            model.add(layers.BatchNormalization())
+
+        i = 0 
+        for i in range(1, 2):
             model.add(layers.Conv2D(32 * (2**i), kernel_size=(3, 3), activation='relu'))
             model.add(layers.BatchNormalization())
 

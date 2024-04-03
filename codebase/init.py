@@ -60,10 +60,11 @@ def tune_model():
                                             "--epochs", str(epoch), 
                                             "--batch-size", 
                                             str(batch_size)], check=True)
-                        except AttributeError as e:
+                        except Exception as e:
                             control.warning(f"\n\ntarget subjects: {control.target} ;\n traceback for error while tuning {conv}.{dense}.{dense_size}.{epoch}.{batch_size}\n")
                             control.warning(traceback.format_exec())
                             continue 
+    print("finished training!")
 
 
 
