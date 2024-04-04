@@ -50,6 +50,12 @@ class Generator(Sequence):
 
 
 class cnn:
+    def log(self, message):
+        path = self.model_output_path + ".log"
+        mode = "a" if os.path.exists(path) else "w+"
+        with open(path, mode) as f:
+            f.write(message)
+
     def __init__(self, stft_path, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64, epochs=1, batch_size=64):
         set_random_seed(control.seed)
         self.stft_path = stft_path
@@ -59,12 +65,16 @@ class cnn:
         self.epochs = epochs 
         self.batch_size = batch_size
 
-        exists = glob.glob(os.path.join(os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/")), f"{self.batch_size}.{self.epochs}.*"))
-        if exists: 
+        # if a keras model is already in place, skip
+        if os.path.exists(os.path.join(os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/")), f"{self.batch_size}.{self.epochs}.keras")):
             control.warning(f"skipping {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
             return
+        
+        directory_path = os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/"))
+        if not os.path.exists(directory_path): os.mkdir(directory_path)
+        self.model_output_path = os.path.join(directory_path, f"{self.batch_size}.{self.epochs}")
     
-        control.warning(f"""
+        config_message = f"""
        ---------------------------------------------
                     current configuration
 
@@ -76,7 +86,9 @@ class cnn:
                                 batch_size  :   {self.batch_size}
 
             
-                """)
+                """
+        control.warning(config_message)
+        self.log(f"{config_message}\n")
 
         try:
             physical_devices = tf.config.list_physical_devices('GPU') 
@@ -86,10 +98,14 @@ class cnn:
 
         # get classification and test datasets
         control.warning("generating dataset")
+        self.log(f"dataset generation start : {datetime.datetime.now()}\n")
         self.generate_datasets()
+        self.log(f"dataset generation end : {datetime.datetime.now()}\n")
         # compile model
         control.warning("compiling model")
+        self.log(f"compiling model start : {datetime.datetime.now()}\n")
         self.compile_model(num_conv_layers=num_conv_layers, num_dense_layers=num_dense_layers, dense_layer_size=dense_layer_size)
+        self.log(f"compiling model end : {datetime.datetime.now()}\n")
         # train model
         control.warning("training model")
         self.train()
@@ -102,6 +118,7 @@ class cnn:
         one_hot_matrix = to_categorical(labels, num_classes=len(classes))
         control.warning("one hot matrix:")
         control.warning(one_hot_matrix)
+        self.log(f"one hot matrix:\n{classes}\n{labels}\n{one_hot_matrix}" )
 
         # generates a array of subject names called target_subjects
         mode = type(control.target)
@@ -110,6 +127,7 @@ class cnn:
         elif mode == type(""): target_subjects = [control.target] # only a string
         else: raise ValueError
         control.warning(f"target subjects: {target_subjects}")
+        self.log("target subjects : {target_subjects}")
 
         # Combine datasets for each class and shuffle
         file_paths = []
@@ -197,15 +215,22 @@ class cnn:
 
     def train(self):
         control.warning(f"training: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
-        self.model.fit(self.train_generator, epochs=self.epochs, batch_size=self.batch_size)
+        self.log("training start : {datetime.datetime.now()}\n")
+        history = self.model.fit(self.train_generator, epochs=self.epochs, batch_size=self.batch_size)
+        self.log(f"training accuracy: {history.history['accuracy']}\n")
+        self.log(f"training loss: {history.history['loss']}\n")
 
-        directory_path = os.path.normpath(os.path.join(control.model_save_path, f"{self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/"))
-        if not os.path.exists(directory_path): os.mkdir(directory_path)
-        model_output_path = os.path.join(directory_path, f"{self.batch_size}.{self.epochs}")
-        self.model.save(f"{model_output_path}.keras")
+
+        self.log(f"saving model start : {datetime.datetime.now()}\n")
+        self.model.save(f"{self.model_output_path}.keras")
+        self.log(f"saving model end : {datetime.datetime.now()}\n")
 
         control.warning(f"testing: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
+        self.log("testing start : {datetime.datetime.now()}\n")
         result = self.model.evaluate(self.test_generator, batch_size=self.batch_size)
+        self.log("testing end: {datetime.datetime.now()}\n")
+        self.log(f"training val accuracy: {history.history['val_accuracy']}\n")
+        self.log(f"training val accuracy: {history.history['val_loss']}\n")
         control.warning(result)
 
         
