@@ -18,8 +18,36 @@ script_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
 if script_dir not in sys.path:
     sys.path.append(script_dir)
 import control
-import control
-from cnn.cnn import Generator
+
+
+class Generator(Sequence):
+    def __init__(self, image_filenames, labels, batch_size):
+        self.image_filenames = image_filenames
+        self.labels = labels
+        self.batch_size = batch_size
+
+    def __len__(self):
+        return (len(self.image_filenames) + self.batch_size - 1) // self.batch_size
+
+    def __getitem__(self, i):
+        batch_start = i * self.batch_size
+        batch_end = (i + 1) * self.batch_size
+        batch_files = self.image_filenames[batch_start:batch_end]
+        batch_labels = self.labels[batch_start:batch_end]
+
+        batch_images = []
+        for file in batch_files:
+            try:
+                image = np.load(file.decode("utf-8"), allow_pickle=True)
+            except AttributeError as e:
+                image = np.load(file, allow_pickle=True)
+            batch_images.append(image)
+
+        batch_images = np.array(batch_images)
+        batch_labels = np.array(batch_labels)
+
+        return batch_images, batch_labels
+
 
 class calculate_metrics:
     def __init__(self, model_path):
