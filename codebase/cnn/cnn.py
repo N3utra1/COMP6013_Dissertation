@@ -231,6 +231,17 @@ class cnn:
         self.log(f"testing end: {datetime.datetime.now()}\n")
         self.log(f"training val accuracy: {history.history['val_accuracy']}\n")
         self.log(f"training val accuracy: {history.history['val_loss']}\n")
+
+        self.log(f"cmatrix prediction start : {datetime.datetime.now()}\n")
+        predictions = self.model.predict(self.test_generator)
+        self.log(f"cmatrix prediction end : {datetime.datetime.now()}\n")
+        predictions_classes = np.argmax(predictions, axis = 1)
+        y_true =  ["interictal", "preictal", "ictal"]
+        cm = confusion_matrix(y_true, predictions_classes)
+
+        self.log('Confusion Matrix:')
+        self.log(cm)
+
         control.warning(result)
 
         
