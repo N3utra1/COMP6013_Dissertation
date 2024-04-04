@@ -5,13 +5,11 @@ import os
 from random import sample, shuffle
 import sys
 import tensorflow as tf
-from tensorflow.keras import layers, models
 from tensorflow.keras import backend as K 
 from tensorflow.keras.utils import to_categorical, Sequence
 from tensorflow.keras.models import load_model
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report, accuracy_score
-import threading
 import argparse
 
 script_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
@@ -53,6 +51,13 @@ class calculate_metrics:
     def __init__(self, model_path):
         self.classes = ["interictal", "preictal", "ictal"]
         self.stft_path = control.stft_extraction_path
+
+        try:
+            physical_devices = tf.config.list_physical_devices('GPU') 
+            if physical_devices: tf.config.experimental.set_memory_growth(physical_devices[0], True)
+        except:
+            pass
+
         self.get_metrics(model_path)
 
     def get_metrics(self, model):
@@ -104,5 +109,4 @@ if __name__ == "__main__":
     parser.add_argument('--model', type=str)
     args = parser.parse_args()
     control.init()
-    
-    model = calculate_metrics(args.smodel)
+    model = calculate_metrics(args.model)
