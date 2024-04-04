@@ -333,6 +333,7 @@ It should be noted, that Mirowski et al. training this model for a per patient b
 \subsubsection{Approach}
 
 Through the analysis of various \acrshort{ml} models an \acrshort{cnn} will be used for this project. Mirowski et al. were able to achieve an accuracy that meets the project's requirements making it a valid choice. <paper> also used an \acrshort{cnn}, but with an image classification. This approach was able to achieve similar results while being less computationally intense. This combination was therefore chosen as the base for this project. 
+%more detailed information about the cnn is discussed in section \paragraph{\acrfull{cnn}}\mbox{}\\
 
 From the datasets discussed the \acrfull{chb} \acrshort{eeg} dataset has been chosen due to the large amount of continuous data, suitable for extracting the preictal period. The dataset also has \acrshort{eeg} nodes positioned on the subject's scalps, fitting with the use case of this project. Furthermore, the \acrshort{chb} \acrshort{eeg} dataset has produced summary plain-text files for each of the subject's recordings, stating when every seizure began and ended. 
 
@@ -378,6 +379,7 @@ The schedule describes the way the Waterfall methodology has affected the projec
 \subsection{Development}
 
 \subsubsection{Raw Data Extraction}
+%include diagram for output
 
 The \acrfull{edf} \cite{kemp1992simple} is a computer file format that was originally designed for archival and exchange  of ... recordings. \cite{kemp2013european}. This was the chosen format from the \acrshort{chb} \acrshort{eeg} dataset along with corresponding summary files see \ref{lst:summary-file}. From these summary files and the data stored in the \acrshort{edf} files an OOP representation of the dataset was created, containing the channels (individual \acrshort{eeg} nodes), recording frequency, and seizure start and end times. With this OOP representation the raw data was extracted from the \acrshort{edf} files. Using the OOP representation the ictal, preictal and interictal periods for each recording were extracted and saved in corresponding directories. Furthermore, only the common channels between all subjects were extracted, following the international 10-20 layout, these were the 17 channel names: FP1-F7, F7-T7,T7-P7, P7-O1, FP1-F3, F3-C3, C3-P3, P3-O1, FP2-F4, F4-C4, C4-P4, P4-O2, FP2-F8, F8-T8, P8-O2, FZ-CZ, CZ-PZ.
 
@@ -433,7 +435,7 @@ There was also a need to synthesize data in order to fix the class imbalance. Fo
 \subsubsection{\acrfull{cnn}}
 
 asdf
-
+% also describe the tuning setup and models configurations
 
 
 
@@ -445,11 +447,11 @@ When attempting to gain access to the prediction applicable datasets that were d
 
 Feature extraction has not been fully implemented yet, one of the concerns of feature extraction however will be the speed of the extraction in relation to time, particularly, if the extraction of the statistical features can be done within the frequency of the EEG recording. As the ``CHB-MIT Scalp EEG'' dataset has a frequency of 256hz, feature extraction and also the writing of said features all has to occur within 3.9ms. Due to this a solution will have to be realized. The current approach is to develop a Python3 program to achieve this and benchmark the speed, the expectation is that the Python3 program will be drastically too slow, but gives an indication to if feature extraction can be achieved for each frequency through possibly a C program. If not, other avenues will have to be explored, such as creating hash maps for faster approximated feature extraction, or even sampling a smaller number of recorded rows. \acrfull{pca} may have to be explored here, as extracting fewer features, but for a greater number of frequencies may lead to higher accuracy results, although tuning of features will have to take place after the \acrshort{ml} model experiment.
 
+\subsection{Results}
 
+%\subsection{Supervision}
 
-\subsection{Supervision}
-
-The project supervisor has aided the direction of the project, introducing the idea of setting up the \acrshort{ml} model experiment to evaluate the accuracy of each model. This has lead to further realizations such as \acrshort{pca} experiments which will help solve upcoming issues discussed in the ``Problems Encountered'' section. The project supervisor also gave literature review feedback which pushed me to analyse currently developed systems I would not of otherwise. Weekly meetings with the supervisor kept them informed on the progress of the project, allowing them to give guidance as discussed.
+%The project supervisor has aided the direction of the project, introducing the idea of setting up the \acrshort{ml} model experiment to evaluate the accuracy of each model. This has lead to further realizations such as \acrshort{pca} experiments which will help solve upcoming issues discussed in the ``Problems Encountered'' section. The project supervisor also gave literature review feedback which pushed me to analyse currently developed systems I would not of otherwise. Weekly meetings with the supervisor kept them informed on the progress of the project, allowing them to give guidance as discussed.
 
 
 \section{Professional Issues and Risks}
