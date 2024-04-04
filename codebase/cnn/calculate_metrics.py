@@ -105,4 +105,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     control.init()
     
-    model = calculate_metrics()
+    model = calculate_metrics(args.smodel)
