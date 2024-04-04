@@ -118,7 +118,7 @@ class cnn:
         one_hot_matrix = to_categorical(labels, num_classes=len(classes))
         control.warning("one hot matrix:")
         control.warning(one_hot_matrix)
-        self.log(f"one hot matrix:\n{classes}\n{labels}\n{one_hot_matrix}" )
+        self.log(f"one hot matrix:\n{classes}\n{integer_mapping}\n{one_hot_matrix}\n" )
 
         # generates a array of subject names called target_subjects
         mode = type(control.target)
@@ -127,7 +127,7 @@ class cnn:
         elif mode == type(""): target_subjects = [control.target] # only a string
         else: raise ValueError
         control.warning(f"target subjects: {target_subjects}")
-        self.log("target subjects : {target_subjects}")
+        self.log(f"target subjects : {target_subjects}\n")
 
         # Combine datasets for each class and shuffle
         file_paths = []
@@ -215,7 +215,7 @@ class cnn:
 
     def train(self):
         control.warning(f"training: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
-        self.log("training start : {datetime.datetime.now()}\n")
+        self.log(f"training start : {datetime.datetime.now()}\n")
         history = self.model.fit(self.train_generator, epochs=self.epochs, batch_size=self.batch_size)
         self.log(f"training accuracy: {history.history['accuracy']}\n")
         self.log(f"training loss: {history.history['loss']}\n")
@@ -226,9 +226,9 @@ class cnn:
         self.log(f"saving model end : {datetime.datetime.now()}\n")
 
         control.warning(f"testing: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
-        self.log("testing start : {datetime.datetime.now()}\n")
+        self.log(f"testing start : {datetime.datetime.now()}\n")
         result = self.model.evaluate(self.test_generator, batch_size=self.batch_size)
-        self.log("testing end: {datetime.datetime.now()}\n")
+        self.log(f"testing end: {datetime.datetime.now()}\n")
         self.log(f"training val accuracy: {history.history['val_accuracy']}\n")
         self.log(f"training val accuracy: {history.history['val_loss']}\n")
         control.warning(result)
