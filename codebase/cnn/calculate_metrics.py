@@ -70,6 +70,6 @@ class calculate_metrics:
             file_paths += glob.glob(os.path.join(self.stft_path, subject, "*", "*.npy"))
             labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
 
-        return Generator(file_paths, labels, control.metric_batch_size)
+        return Generator(file_paths[:50], labels, control.metric_batch_size)
         
 
