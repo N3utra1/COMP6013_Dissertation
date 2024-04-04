@@ -11,6 +11,7 @@ from tensorflow.keras.utils import to_categorical, Sequence
 from tensorflow.keras.models import load_model
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report, accuracy_score
+import threading
 
 
 import control
@@ -25,7 +26,11 @@ class calculate_metrics:
             if model[:-6]+".results" in results:
                 print(f"$$ results already exist for {model}")
                 continue
+            t = threading.Thread(target=self.get_metrics, args=(model, ))
+            t.start()
+            t.join()
 
+    def get_metrics(self, model):
             print(f"$$ calculating model metrics for {model}")
 
             self.generator = self.get_generator()
@@ -43,7 +48,6 @@ class calculate_metrics:
             print(f"Accuracy: {accuracy}")
             print("Classification Report:")
             print(classification_report(y_true, y_pred))
-
 
 
 
