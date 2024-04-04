@@ -5,6 +5,7 @@ from extract_data.Writer import Writer
 from extract_data.Extractor import Extractor 
 import subprocess
 import traceback
+import glob
 args = None
 
 def load_dataset():
@@ -67,7 +68,24 @@ def tune_model():
 
 def calculate_metrics():
     from cnn.calculate_metrics import calculate_metrics
-    c = calculate_metrics()
+    stft_path = control.stft_extraction_path
+    models = glob.glob(os.path.join(control.model_save_path, "*", "*.keras"))
+    results = glob.glob(os.path.join(control.model_save_path, "*", "*.results"))
+    for model in models:
+        if model[:-6]+".results" in results:
+            print(f"$$ results already exist for {model}")
+            continue
+        try:
+            subprocess.run(["python", 
+                            "./cnn/calculate_metrics.py",
+                            "--model", str(model)
+                        ], check=True)
+        except Exception as e:
+            control.warning(f"\n\n $$ target subjects: {control.target} ;\n traceback for error while calculating metrics for {model}\n")
+            control.warning(traceback.format_exc())
+            continue 
+
+
 
 
 def main():

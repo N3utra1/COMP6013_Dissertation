@@ -3251,3 +3251,310 @@ RAW CHANNELS:
         setting missing channel name to T8-P8-0
         setting missing channel name to FT10-T8
         issues when extracting the channel mapping for chb22_77.edf, falling back to raw channel names.
+04/04/2024 00:26:41 skipping 2.4.64/32.1
+04/04/2024 00:26:55 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   2
+                    dense layer count   :   4
+                        dense layer size    :   64
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 00:26:55 generating dataset
+04/04/2024 00:26:55 one hot matrix:
+04/04/2024 00:26:55 [[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+04/04/2024 00:26:55 target subjects: ['chb06']
+04/04/2024 00:27:15 combined dataset size is 23997
+04/04/2024 00:27:15 testing / training split is 0.8
+04/04/2024 00:27:15 train dataset size is 19197
+04/04/2024 00:27:15 test dataset size is 1000
+04/04/2024 00:27:22 compiling model
+04/04/2024 00:27:23 model summary:
+04/04/2024 00:27:23 None
+04/04/2024 00:27:23 training model
+04/04/2024 00:27:23 training: 2.4.64/128.1
+04/04/2024 00:31:27 skipping 2.4.64/32.1
+04/04/2024 00:31:42 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   2
+                    dense layer count   :   4
+                        dense layer size    :   64
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 00:31:42 generating dataset
+04/04/2024 00:31:42 one hot matrix:
+04/04/2024 00:31:42 [[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+04/04/2024 00:32:47 target subjects: ['chb06']
+04/04/2024 00:39:08 combined dataset size is 23997
+04/04/2024 00:39:08 testing / training split is 0.8
+04/04/2024 00:39:08 train dataset size is 19197
+04/04/2024 00:39:59 test dataset size is 1000
+04/04/2024 00:41:19 compiling model
+04/04/2024 00:41:20 model summary:
+04/04/2024 00:41:20 None
+04/04/2024 00:41:20 training model
+04/04/2024 00:41:20 training: 2.4.64/128.1
+04/04/2024 00:45:36 skipping 2.4.64/32.1
+04/04/2024 00:45:50 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   2
+                    dense layer count   :   4
+                        dense layer size    :   64
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 00:45:50 generating dataset
+04/04/2024 00:45:55 one hot matrix:
+04/04/2024 00:45:55 [[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+04/04/2024 00:45:55 target subjects: ['chb06']
+04/04/2024 00:46:13 combined dataset size is 23997
+04/04/2024 00:46:13 testing / training split is 0.8
+04/04/2024 00:46:13 train dataset size is 19197
+04/04/2024 00:46:25 test dataset size is 4800
+04/04/2024 00:49:45 compiling model
+04/04/2024 00:49:46 model summary:
+04/04/2024 00:49:46 None
+04/04/2024 00:49:46 training model
+04/04/2024 00:49:46 training: 2.4.64/128.1
+04/04/2024 01:11:14 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   1
+                    dense layer count   :   2
+                        dense layer size    :   4
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 01:11:14 generating dataset
+04/04/2024 01:11:22 one hot matrix:
+04/04/2024 01:11:22 [[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+04/04/2024 01:11:22 target subjects: ['chb06']
+04/04/2024 01:11:28 combined dataset size is 23997
+04/04/2024 01:11:28 testing / training split is 0.8
+04/04/2024 01:11:28 train dataset size is 19197
+04/04/2024 01:11:28 test dataset size is 4800
+04/04/2024 01:13:42 compiling model
+04/04/2024 01:13:43 model summary:
+04/04/2024 01:13:43 None
+04/04/2024 01:13:43 training model
+04/04/2024 01:13:43 training: 1.2.4/128.1
+04/04/2024 01:22:14 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:26:28 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:26:44 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:27:33 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:27:49 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:28:13 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:28:58 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   1
+                    dense layer count   :   2
+                        dense layer size    :   4
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 01:30:14 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:30:21 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:30:54 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:31:20 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:31:27 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:31:57 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   1
+                    dense layer count   :   2
+                        dense layer size    :   4
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 01:32:37 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:33:00 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   1
+                    dense layer count   :   2
+                        dense layer size    :   4
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 01:33:00 generating dataset
+04/04/2024 01:33:41 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:33:41 Traceback (most recent call last):
+  File "init.py", line 55, in tune_model
+    subprocess.run(["python",
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2288.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python', './cnn/cnn.py', '--conv', '1', '--dense', '2', '--dense-size', '4', '--epochs', '1', '--batch-size', '128']' returned non-zero exit status 1.
+
+04/04/2024 01:34:00 skipping 1.2.4/128.1
+04/04/2024 01:34:50 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   1
+                    dense layer count   :   2
+                        dense layer size    :   4
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 01:35:35 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:35:35 Traceback (most recent call last):
+  File "init.py", line 55, in tune_model
+    subprocess.run(["python",
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2288.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python', './cnn/cnn.py', '--conv', '1', '--dense', '2', '--dense-size', '4', '--epochs', '1', '--batch-size', '128']' returned non-zero exit status 1.
+
+04/04/2024 01:35:55 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   1
+                    dense layer count   :   2
+                        dense layer size    :   4
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 01:35:55 generating dataset
+04/04/2024 01:38:36 
+
+target subjects: chb06 ;
+ traceback for error while tuning 1.2.4.1.128
+
+04/04/2024 01:38:36 Traceback (most recent call last):
+  File "init.py", line 55, in tune_model
+    subprocess.run(["python",
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2288.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python', './cnn/cnn.py', '--conv', '1', '--dense', '2', '--dense-size', '4', '--epochs', '1', '--batch-size', '128']' returned non-zero exit status 1.
+
+04/04/2024 02:03:53 
+       ---------------------------------------------
+                    current configuration
+
+                conv layers count   :   1
+                    dense layer count   :   2
+                        dense layer size    :   4
+
+                            epochs  :   1
+                                batch_size  :   128
+
+            
+                
+04/04/2024 02:03:53 generating dataset
+04/04/2024 02:03:53 one hot matrix:
+04/04/2024 02:03:53 [[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+04/04/2024 02:03:53 target subjects: ['chb06']
+04/04/2024 02:03:55 combined dataset size is 23997
+04/04/2024 02:03:55 testing / training split is 0.8
+04/04/2024 02:03:55 train dataset size is 19197
+04/04/2024 02:03:55 test dataset size is 4800
+04/04/2024 02:04:03 compiling model
+04/04/2024 02:04:03 model summary:
+04/04/2024 02:04:03 None
+04/04/2024 02:04:03 training model
+04/04/2024 02:04:03 training: 1.2.4/128.1
