@@ -30,7 +30,7 @@ class calculate_metrics:
             self.generator = self.get_generator()
             self.model = load_model(model)
 
-            y_true = self.test_generator.classes
+            y_true = self.classes
             y_pred = self.model.predict(self.generator, verbose=0)
             y_pred = np.argmax(y_pred, axis=1)
 
@@ -47,10 +47,9 @@ class calculate_metrics:
 
     def get_generator(self):
         # generate one hot encoded matrix
-        classes = ["interictal", "preictal", "ictal"]
-        integer_mapping = {x: i for i,x in enumerate(classes)}
-        labels = [integer_mapping[c] for c in classes]
-        one_hot_matrix = to_categorical(labels, num_classes=len(classes))
+        integer_mapping = {x: i for i,x in enumerate(self.classes)}
+        labels = [integer_mapping[c] for c in self.classes]
+        one_hot_matrix = to_categorical(labels, num_classes=len(self.classes))
 
         mode = type(control.target)
         if  mode == type([]): target_subjects = control.target # already an array
@@ -62,7 +61,7 @@ class calculate_metrics:
         labels = []
         for subject in target_subjects:
             file_paths += glob.glob(os.path.join(self.stft_path, subject, "*", "*.npy"))
-            labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
+            labels += [one_hot_matrix[self.classes.index(path.split(os.sep)[-2])] for path in file_paths]
 
         return Generator(file_paths, labels, control.metric_batch_size)
         
