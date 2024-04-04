@@ -14,7 +14,10 @@ from sklearn.metrics import classification_report, accuracy_score
 import threading
 import argparse
 
-
+script_dir = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+import control
 import control
 from cnn.cnn import Generator
 
