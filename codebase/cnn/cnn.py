@@ -217,6 +217,7 @@ class cnn:
         control.warning(f"training: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
         self.log(f"training start : {datetime.datetime.now()}\n")
         history = self.model.fit(self.train_generator, epochs=self.epochs, batch_size=self.batch_size)
+        self.log(f"training end : {datetime.datetime.now()}\n")
         self.log(f"training accuracy: {history.history['accuracy']}\n")
         self.log(f"training loss: {history.history['loss']}\n")
 
@@ -227,10 +228,9 @@ class cnn:
 
         control.warning(f"testing: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
         self.log(f"testing start : {datetime.datetime.now()}\n")
-        result = self.model.evaluate(self.test_generator, batch_size=self.batch_size)
+        result = self.model.evaluate(self.test_generator, batch_size=self.batch_size, return_dict=True)
         self.log(f"testing end: {datetime.datetime.now()}\n")
-        self.log(f"training val accuracy: {history.history['val_accuracy']}\n")
-        self.log(f"training val accuracy: {history.history['val_loss']}\n")
+        self.log(f"testing results : {result}\n")
 
         self.log(f"cmatrix prediction start : {datetime.datetime.now()}\n")
         predictions = self.model.predict(self.test_generator)
