@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from tensorflow.keras import layers, models
 from tensorflow.keras import backend as K 
 from tensorflow.keras.utils import to_categorical, Sequence, set_random_seed
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, classification_report 
 
 import numpy as np
 import argparse
@@ -136,7 +136,7 @@ class cnn:
             file_paths += glob.glob(os.path.join(self.stft_path, subject, "*", "*.npy"))
             labels += [one_hot_matrix[classes.index(path.split(os.sep)[-2])] for path in file_paths]
 
-        combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths, labels)).shuffle(1000)
+        combined_dataset = tf.data.Dataset.from_tensor_slices((file_paths[:64], labels[:64])).shuffle(1000)
         combined_dataset.shuffle(1000)
         control.warning(f"combined dataset size is {len(combined_dataset)}")
 
@@ -221,28 +221,30 @@ class cnn:
         self.log(f"training accuracy: {history.history['accuracy']}\n")
         self.log(f"training loss: {history.history['loss']}\n")
 
-
         self.log(f"saving model start : {datetime.datetime.now()}\n")
         self.model.save(f"{self.model_output_path}.keras")
         self.log(f"saving model end : {datetime.datetime.now()}\n")
 
         control.warning(f"testing: {self.num_conv_layers}.{self.num_dense_layers}.{self.dense_layer_size}/{self.batch_size}.{self.epochs}")
-        self.log(f"testing start : {datetime.datetime.now()}\n")
-        result = self.model.evaluate(self.test_generator, batch_size=self.batch_size, return_dict=True)
-        self.log(f"testing end: {datetime.datetime.now()}\n")
-        self.log(f"testing results : {result}\n")
 
         self.log(f"cmatrix prediction start : {datetime.datetime.now()}\n")
         predictions = self.model.predict(self.test_generator)
         self.log(f"cmatrix prediction end : {datetime.datetime.now()}\n")
-        predictions_classes = np.argmax(predictions, axis = 1)
-        y_true =  ["interictal", "preictal", "ictal"]
-        cm = confusion_matrix(y_true, predictions_classes)
 
-        self.log('Confusion Matrix:')
-        self.log(cm)
+        labels = self.test_generator.labels
 
-        control.warning(result)
+        predictions = np.argmax(predictions, axis=1)
+        labels = np.argmax(labels, axis=1)
+        print(predictions)
+        print(labels)
+        cm = confusion_matrix(labels, predictions, labels=[1, 2, 3])
+        nrm_cm = confusion_matrix(labels, predictions, normalize="pred", labels=[1, 2, 3])
+        self.log('Confusion Matrix:\n')
+        self.log(str(cm)+"\n")
+        self.log('Normalized Confusion Matrix:\n')
+        self.log(str(nrm_cm)+"\n")
+        self.log('Classification Report:\n')
+        self.log(classification_report(labels, predictions, labels=[1, 2, 3]))
 
         
 

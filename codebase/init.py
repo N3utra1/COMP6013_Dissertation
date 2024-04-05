@@ -59,9 +59,9 @@ def tune_model():
                                             "--dense-size", str(dense_size), 
                                             "--epochs", str(epoch), 
                                             "--batch-size", 
-                                            str(batch_size)], check=True)
+                                            str(batch_size)], check=True, env=os.environ)
                         except Exception as e:
-                            control.warning(f"\n\ntarget subjects: {control.target} ;\n traceback for error while tuning {conv}.{dense}.{dense_size}.{epoch}.{batch_size}\n")
+                            control.warning(f"\n\ntarget subjects: {control.target} ; traceback for error while tuning {conv}.{dense}.{dense_size}.{epoch}.{batch_size}\n")
                             control.warning(traceback.format_exc())
                             continue 
     print("finished training!")

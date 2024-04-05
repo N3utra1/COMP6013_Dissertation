@@ -6,6 +6,7 @@ csv-chb-mit-scalp-eeg-database/
 **/*.keras
 **/*.h5
 **/*.h3
+**/warnings-*
 
 venv
 control.py
