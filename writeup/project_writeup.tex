@@ -293,16 +293,37 @@ A series of papers have been reviewed with the following \acrshort{ml} model typ
 	\item \acrfull{cnn}
 \end{itemize}
 
-\paragraph{\acrfull{knn}}\mbox{}\\
+\paragraph{\acrfull{knn} and \acrfull{svm}}\mbox{}\\
 
+\cite{savadkoohi2020machine} built a feature extraction process that extracted the "time domain" using the Butterworth filter (1-70 Hz) \ref{eq:butterworth}, the "frequency domain" using a Fourier transform  \ref{eq:fourier}, and the "time-frequency domain" using Wavelet decomposition for the entire dataset. The resulting data is then split into its 5 brain wave bands; Delta, Theta, Alpha, Beta, and Gamma. From these 4 variables were extracted, mean, variance, skewness, and kurtosis, leading to 60 total extracted features. 
 
-\cite{wang2013online} shows an \acrshort{knn} classifier being used which lead to a sensitivity of 73\% and a specificity of 67\% when using the estimation of short term maximum lyapunov exponent.
+\begin{figure}[H]
+\[ y(n) = \sum_{i=0}^{N} a_i \cdot x(n - i) + \sum_{j=1}^{N} b_j \cdot y(n - j) \]
+\caption{Third Order Butterworth bandpass filter}
+\label{eq:butterworth}
+\end{figure}
 
+\begin{figure}[H]
+\[ \widehat{f}(\xi) = \int_{-\infty}^{\infty} f(x)\ e^{-i 2\pi \xi x}\,dx. \]
+\caption{Fourier transform equation}
+\label{eq:fourier}
+\end{figure}
 
-\paragraph{\acrfull{svm}}\mbox{}\\
+A prediction was calculated from an \acrshort{knn} and \acrshort{svm} model for each separate domain. The results are shown in \ref{tab:svm_knn} showing the potential of each model.
 
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\multirow{2}{*}{Model}         & \multicolumn{3}{l}{Accuracy \%} \\
+                               & TD & FD & T-FD\\
+\protect\acrfull{svm} & 99.5        & 100              & 100                   \\
+\protect\acrfull{knn} & 99.5        & 99               & 99.5                 
+\end{tabular}
+\caption{Results from \protect\cite{savadkoohi2020machine} showing results for the Time Domain, Frequency Domain, and Time-Frequency Domain}
+\label{tab:svm_knn}
+\end{table}
 
-Various \acrshort{svm} classifiers were found to be used, one of which was by \cite{cho2016eeg} which used both clinical and generated data, where the training data was filtered using BPF, EMD, MEMD and NA-MEMD. Features were then extracted through \acrshort{emd}, \acrshort{memd}, and frequency selection.\cite{cho2016eeg} was able to achieve a classification rate of around 80\%.
+The classification times however were not included in the report. Extraction in real-time may not be applicable for an approach so extensive in its feature extraction. 
 
 \paragraph{\acrfull{lr}}\mbox{}\\
 
