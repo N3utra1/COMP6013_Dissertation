@@ -14,6 +14,8 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage[noabbrev,capitalize,nameinlink]{cleveref}
+\usepackage{amssymb}
+
 
 \graphicspath{ {./images/} }
 
@@ -86,6 +88,9 @@ scientific documents}
 \newacronym{stft}{STFT}{Short-Time Fourier Transform}
 \newacronym{chb}{CHB-MIT}{Children's Hospital Boston}
 \newacronym{edf}{EDF}{European Data Format}
+\newacronym{dstl}{DSTL}{Dynamical Entrainment; difference of short-term Lyapunov exponents}
+\newacronym{splv}{SPLV}{Phase-locking Synchrony}
+
 
 \title{Real-time preictal detection through the application of machine learning to Electroencephalogram signals.}
 \author{William Riddell}
@@ -152,13 +157,14 @@ Over the last 20 years, \acrfull{ai} has seen a large evolution through the use 
 This project will aim to develop an consistent \acrshort{ml} model trained to classify either preictal, interictal and ictal periods. The model will have to achieve a high degree of accuracy ($\geq90\%$) when being applied to \acrshort{eeg} data in real-time. Furthermore a real-time simulation will need to be developed along with an \acrshort{ml} pipeline and model parameter tuning. 
 
  
-\paragraph{Objectives}
+\paragraph{Objectives} \label{objectives}
 
 \begin{enumerate}
-        \item Create a preprocessing pipeline which extracts the dataset into an \acrshort{ml} format suitable for training. The process should be efficient enough to meet the real-time requirements. 
-        \item Review previous papers to compare previous \acrshort{ml} model approaches and compare their performance.
-        \item Tune the hyper-parameters of the selected \acrshort{ml} model approach.
-        \item Produce a simulation interface which streams \acrshort{eeg} data in real time through the preprocessing pipeline and into an model, showing the current classification to the user.
+	\item Research and find an suitable dataset allowing for the classification of the interictal, preictal, and ictal periods. 
+	\item Research and find an suitable \acrshort{ml} model approach.
+        \item Create a data preperation and preprocessing pipeline which extracts the dataset into an \acrshort{ml} format suitable for training and testing. 
+        \item Undergo parameter tuning and model architecture tuning of the selected \acrshort{ml} model approach..
+        \item Produce a simulation interface which streams \acrshort{eeg} data in real time through the preprocessing pipeline and into the optimal model. The simulation should show the current classification to the user every second.
 \end{enumerate}
 
 \subsection{Project Requirements}
@@ -169,7 +175,7 @@ The final product needs to have the ability to accept a stream of raw EEG data, 
 
 \section{Background Review}
 
-\subsection{Datasets}
+\subsection{Datasets}\label{datasets}
 
 \cite{wong2023eeg} reviews 10 datasets available to download. It evaluates the way the \acrshort{eegs} were physically setup on the subject, the subjects themselves and the data's properties. Wong et al. also states their opinion on what tasks suit what dataset, with the main two tasks being either detection or prediction. 
 
@@ -278,24 +284,39 @@ Helsinki University Hospital EEG     & Seizure detection/Prediction \\
 Siena Scalp EEG                      & Seizure detection/Predictio 
 \end{tabular}
 \caption{Suggested applications}
+\label{dataset_applications}
 \end{table} 
 
-\subsection{\acrfull{ml} Models}
+\subsection{\acrfull{ml} Models}\label{models}
 
-A series of papers have been reviewed with the following \acrshort{ml} model types being used:
+A series of papers have been reviewed with the following \acrshort{ml} model types and feature extraction processes being used:
 
 \begin{itemize}
-	\item \acrfull{knn}
-	\item \acrfull{svm}
-	\item \acrfull{lr}
-	\item \acrfull{rf}
-	\item \acrfull{ann}
-	\item \acrfull{cnn}
+	\item \acrfull{ml} models
+	\begin{itemize}
+	\item \acrfull{knn}.
+	\item \acrfull{svm}.
+	\item \acrfull{lr}.
+	\item \acrfull{cnn}.
+	\end{itemize}
+	\item Preprocessing Pipelines
+	\begin{itemize}
+	\item Time domain, using the third order Butterworth bandpass filter.
+	\item Frequency domain using the Fourier transform.
+	\item Time-Frequency domain using Wavelet Decomposition.
+	\item Cross-correlation.
+	\item Non-linear Interdependence.
+	\item \acrfull{dstl}.
+	\item \acrfull{splv}.
+	\item Entropy of the phase difference.
+	\item Wavelet Coherence.
+	\item \acrfull{stft}
+	\end{itemize}
 \end{itemize}
 
 \paragraph{\acrfull{knn} and \acrfull{svm}}\mbox{}\\
 
-\cite{savadkoohi2020machine} built a feature extraction process that extracted the "time domain" using the Butterworth filter (1-70 Hz) \ref{eq:butterworth}, the "frequency domain" using a Fourier transform  \ref{eq:fourier}, and the "time-frequency domain" using Wavelet decomposition for the entire dataset. The resulting data is then split into its 5 brain wave bands; Delta, Theta, Alpha, Beta, and Gamma. From these 4 variables were extracted, mean, variance, skewness, and kurtosis, leading to 60 total extracted features. 
+\cite{savadkoohi2020machine} built a feature extraction process that extracted the ``time domain" using the Butterworth filter (1-70 Hz) \ref{eq:butterworth}, the ``frequency domain" using a Fourier transform  \ref{eq:fourier}, and the ``time-frequency domain" using Wavelet decomposition for the entire dataset. The resulting data is then split into its 5 brain wave bands; Delta, Theta, Alpha, Beta, and Gamma. From these 4 variables were extracted, mean, variance, skewness, and kurtosis, leading to 60 total extracted features. 
 
 \begin{figure}[H]
 \[ y(n) = \sum_{i=0}^{N} a_i \cdot x(n - i) + \sum_{j=1}^{N} b_j \cdot y(n - j) \]
@@ -325,42 +346,141 @@ A prediction was calculated from an \acrshort{knn} and \acrshort{svm} model for 
 
 The classification times however were not included in the report. Extraction in real-time may not be applicable for an approach so extensive in its feature extraction. 
 
-\paragraph{\acrfull{lr}}\mbox{}\\
+\paragraph{\acrfull{lr}, \acrfull{svm}, and \acrfull{cnn}}\mbox{}\\
 
-Mirowski et al. used a combination of \acrshort{lr} and \acrshort{svm} classifiers to achieve a 71\% accuracy along with 0 false positives \cite{mirowski2009classification}.
+Mirowski et al. used the \cite{freiburg_eeg} dataset containing intracranial recordings and measured the performance of an \acrshort{lr}, \acrshort{svm}, and \acrshort{cnn} \acrshort{ml} models. They compiled 6 different preprocessing pipelines and tested the selected models against each. The preprocessing pipelines are as follows: 
 
-\paragraph{\acrfull{rf}}\mbox{}\\
+\begin{itemize}
+\item The Cross-correlation between pairs of EEG channels were calculated with delays ranging from -0.5 to 0.5. The delays allowed for the propagation and processing time of brainwaves. Cross-correlation describes the amount $f$ has to be shifted along the $x$ axis to equal $g$\ref{eq:crossCorrelation}. Only the maximum value of the cross-correlation values were retained for training.
 
-Jacobs et al. used a \acrshort{rf} derived approach which was a multistage classification system that used cross-frequency coupling. Jacobs et al. was able to achieve an impressive 87.9\% sensitivity, and an 93.4\% area-under-the-ROC \cite{jacobs2018classification}.
+\begin{figure}[H]
+\[ (f \star g)(\tau)\ \triangleq \int_{-\infty}^{\infty} \overline{f(t)} g(t+\tau)\,dt \]
+\caption{Cross-Correlation}
+\label{eq:crossCorrelation}
+\end{figure}
 
-\paragraph{\acrfull{ann}}\mbox{}\\
+\item Non-linear interdependence ``which measures the distance, in state-space, between time-delay embedded trajectories of two EEG channels'' was also extracted. This is an bivariate feature which ``measures the Euclidian distance, in reconstructed state-space, between trajectories described by two EEG channels''.
 
-\acrshort{ann} have enabled researchers to develop increasingly accurate models. \cite{sharma2018epileptic} shows this in their results boasting an accuracy of 92.3\% and an sensitivity of 100\%. Sharma however did use 72 parameters for classification. 
+\item The third method was \acrfull{dstl}, where an Lyapunov exponent \ref{eq:lyapunov} describes the rate of separation for two trajectories, which in this report was based off  ``a common measure of the chaotic nature of a signal'' \cite{mirowski2009classification}
+
+\begin{figure}[H]
+\[ \lambda = \lim_{t \to \infty} \lim_{|\delta \mathbf{Z}_0| \to 0} \frac{1}{t} \ln\frac{| \delta\mathbf{Z}(t)|}{|\delta \mathbf{Z}_0|} \]
+\caption{Maximal Lyapunov ($\lambda$) exponent}
+\label{eq:lyapunov}
+\end{figure}
+
+\item The last 3 features were \acrfull{splv}, Entropy, and Coherence of the phase difference. These were extracted from the the wavelet transformation  The wavelet transformation extracts the frequency-specific and time-dependent phases. 
+
+\begin{figure}[H]
+\[ SPLV_{a,b}(f) = \frac{1}{N} \sum_{l=1}^{N} e^{i\left(\phi_{a,f}(l) - \phi_{b,f}(l)\right)} \]
+\caption{\acrfull{splv} extraction from the wavelet transformation}
+\label{eq:splv}
+\end{figure}
+
+\end{itemize}
+
+The following results show the number of patients with perfect seizure prediction results ``(no false positives, all seizures predicted)'' from \cite{mirowski2009classification} for each model, for each preprocessing pipeline.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\multicolumn{3}{l}{Cross-Correlation} \\
+\acrshort{lr}          & \acrshort{cnn}        & \acrshort{svm}        \\
+4           & 9          & 4          \\
+19\%        & 43\%       & 19\%      
+\end{tabular}
+\caption{Cross-Correlation results.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\multicolumn{3}{l}{Non-Linear interdependence} \\
+\acrshort{lr}          & \acrshort{cnn}        & \acrshort{svm}        \\
+3              & 10            & 5             \\
+19\%           & 48\%          & 24\%         
+\end{tabular}
+\caption{Non-Linear interdependence results.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l}
+\acrshort{dstl} \\
+\acrshort{svm}  \\
+1    \\
+5\% 
+\end{tabular}
+\caption{\acrfull{dstl} results.}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\multicolumn{3}{l}{\acrshort{splv}} \\
+\acrshort{lr}          & \acrshort{cnn}        & \acrshort{svm}        \\
+10     & 13     & 7      \\
+48\%   & 62\%   & 33\%  
+\end{tabular}
+\caption{\acrfull{splv} results.}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\multicolumn{3}{l}{Entropy of Phase Difference} \\
+\acrshort{lr}          & \acrshort{cnn}        & \acrshort{svm}        \\
+9              & 11             & 7             \\
+43\%           & 52\%           & 33\%         
+\end{tabular}
+\caption{Entropy of Phase Difference results. }
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\multicolumn{3}{l}{Distribution of Wavelet Coherence} \\
+\acrshort{lr}          & \acrshort{cnn}        & \acrshort{svm}        \\
+11               & 15               & 8               \\
+52\%             & 71\%             & 38\%           
+\end{tabular}
+\caption{Distribution of Wavelet Coherence results.}
+\end{table}
+
+These results show the strength of an \acrshort{cnn} when compared to other \acrshort{ml} models as it's obtained the highest results across all tables. \acrshort{lr} however can also achieve strong results when paired with the correct preprocessing pipeline. Both methods would be applicable for this project assuming that the time from recording to final prediction is less that an second.
 
 \paragraph{\acrfull{cnn}}\mbox{}\\
 
-Various \acrshort{cnn} have been developed, with most of them showing promising results. An example of this was from \cite{mirowski2009classification}, using the same dataset Mirowski et al. used to train their \acrshort{rf} based model off, they were able to achieve a 100\% prediction rate for 15 out of their 21 patients, along with 0 false positives. 
+Another \acrshort{cnn} approach was implemented by Truong et al. \cite{truong2018convolutional} who applied an \acrfull{stft} transform \ref{eq:stft} on 30 seconds of \acrshort{eeg} data. Interference was then removed from the produced matrices by applying an notch filter. The final result was then fed into an \acrshort{cnn} producing these results: 
 
-It should be noted, that Mirowski et al. training this model for a per patient basic, and suggested that each patient has their own compilation of models trained to them for the highest chance of prediction, along with minimal false positives. 
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+No. of seizures & Sensitivity (\%) & False Positive Rate (/h) \\
+59              & $81.4 \pm 0.0$   & $0.06 \pm 0.00$         
+\end{tabular}
+\caption{Cross-Correlation results. }
+\label{tab:my-table}
+\end{table}
 
 
-
-
-
-\section{Project Methodology and Development}
+\section{Project Methodology and Development}\label{development}
 
 \subsection{Decisions}
 
 \subsubsection{Approach}
 
-Through the analysis of various \acrshort{ml} models an \acrshort{cnn} will be used for this project. Mirowski et al. were able to achieve an accuracy that meets the project's requirements making it a valid choice. <paper> also used an \acrshort{cnn}, but with an image classification. This approach was able to achieve similar results while being less computationally intense. This combination was therefore chosen as the base for this project. 
+From the datasets discussed in \ref{datasets} the \acrfull{chb} \acrshort{eeg} dataset has been chosen due to the large amount of continuous data, suitable for extracting the preictal period \ref{dataset_applications}. The dataset also has \acrshort{eeg} nodes positioned on the subject's scalps, fitting with the use case of this project. Furthermore, the \acrshort{chb} \acrshort{eeg} dataset has produced summary plain-text files for each of the subject's recordings, stating when every seizure began and ended allowing for an straightforward methodology when configuring the \acrshort{eeg} tuning and training environment. 
+
+Through the analysis of various \acrshort{ml} models an \acrshort{cnn} will be used for this project. Both \cite{truong2018convolutional} and \cite{mirowski2009classification} shows the potential \acrshort{cnn} have when being used in preictal prediction. The approach described in \cite{truong2018convolutional} was able to achieve similar or better results in comparison with other preprocessing pipelines and / or \acrshort{ml} model configurations while using an less computationally intense preprocessing method. This method was based around an \acrshort{stft} extraction and is described in \cite{truong2018convolutional}. This may allow for the classification to be done in real time, meeting the project's objectives \ref{objectives}. To ensure this requirement is met an real-time simulation will be developed, showing the raw EEG data and the final prediction every second. 
 %more detailed information about the cnn is discussed in section \paragraph{\acrfull{cnn}}\mbox{}\\
 
-From the datasets discussed the \acrfull{chb} \acrshort{eeg} dataset has been chosen due to the large amount of continuous data, suitable for extracting the preictal period. The dataset also has \acrshort{eeg} nodes positioned on the subject's scalps, fitting with the use case of this project. Furthermore, the \acrshort{chb} \acrshort{eeg} dataset has produced summary plain-text files for each of the subject's recordings, stating when every seizure began and ended. 
+
 
 \subsubsection{Development System}
 
-Due to the linear nature of this project an Waterfall methodology will be used. Waterfall ensures that previous stages of the software are complete before moving on, this will keep the project on track and moving in an forward direction, crucial for the time-limited aspect of this project. Furthermore, due to the analysis undergone through literature reviews the direction and therefore the goals of the project are clearly defined; this further supports the choice of an Waterfall approach.  
+Due to the linear nature of this project an Waterfall methodology will be used. Waterfall ensures that previous stages of the software are complete before moving on, this will keep the project on track and moving in an forward direction, crucial for the time-limited aspect of this project. Furthermore, due to the analysis undergone through literature reviews the direction and therefore the goals of the project are clearly defined; this further supports the choice of an Waterfall approach. 
 
 \subsubsection{Version Control}
 
@@ -375,7 +495,7 @@ Name:              & Use case:                                                  
 Google Cloud       & Used to download the \acrshort{chb} \acrshort{eeg} dataset                                                                            \\
 Keras (TensorFlow) & Used to build, train and test the \acrshort{ml} models.                                                                \\
 Matplotlib         & Used in the real-time simulation to plot the Spectrogram and \acrshort{chb} \acrshort{eeg} data.                                       \\
-MNE                & Provides classes for loading \acrshort{eeg} data from both CSV and \acrshort{edf} files. Also used for running an \textbackslash{}acrfull\{stft\} extraction. \\
+MNE                & Provides classes for loading \acrshort{eeg} data from both CSV and \acrshort{edf} files. Also used for running an \acrfull{stft} extraction. \\
 NumPy              & Utilized functions and classes to store and manipulate loaded data.                                                                     \\
 Pandas             & Utilized functions and classes to store and manipulate loaded data.                                                                     \\
 scikit-learn       & Provides functions used to produce performance metrics for trained \acrshort{ml} models.                              
@@ -385,7 +505,7 @@ scikit-learn       & Provides functions used to produce performance metrics for 
 \end{table}
 
 
-\subsubsection{Schedule}
+\subsubsection{Schedule}\label{schedule}
 
 The schedule describes the way the Waterfall methodology has affected the project; it shows how it's been broken down into smaller, distinct stages with progress being blocked until the previous stage has been completed. The overlap in March and April is when the models are being tuned, therefore the only active development is on the real-time simulation. 
 
@@ -399,7 +519,8 @@ The schedule describes the way the Waterfall methodology has affected the projec
 
 \subsection{Development}
 
-\subsubsection{Raw Data Extraction}
+
+\subsubsection{\acrfull{eeg} Data Extraction}
 %include diagram for output
 
 The \acrfull{edf} \cite{kemp1992simple} is a computer file format that was originally designed for archival and exchange  of ... recordings. \cite{kemp2013european}. This was the chosen format from the \acrshort{chb} \acrshort{eeg} dataset along with corresponding summary files see \ref{lst:summary-file}. From these summary files and the data stored in the \acrshort{edf} files an OOP representation of the dataset was created, containing the channels (individual \acrshort{eeg} nodes), recording frequency, and seizure start and end times. With this OOP representation the raw data was extracted from the \acrshort{edf} files. Using the OOP representation the ictal, preictal and interictal periods for each recording were extracted and saved in corresponding directories. Furthermore, only the common channels between all subjects were extracted, following the international 10-20 layout, these were the 17 channel names: FP1-F7, F7-T7,T7-P7, P7-O1, FP1-F3, F3-C3, C3-P3, P3-O1, FP2-F4, F4-C4, C4-P4, P4-O2, FP2-F8, F8-T8, P8-O2, FZ-CZ, CZ-PZ.
@@ -408,8 +529,11 @@ The \acrfull{edf} \cite{kemp1992simple} is a computer file format that was origi
 
 For each subject \acrshort{stft} is applied to the data collected from the \acrshort{eegs} to produce an spectrogram of length 30 seconds. These images contains only a single class and were the input into the \acrshort{cnn}. \acrshort{stft} can be expressed mathematically;\\ 
 
-$$ \mathbf{STFT}\{x(t)\}(\tau,\omega) \equiv X(\tau, \omega) = \int_{-\infty}^{\infty} x(t) w(t-\tau) e^{-i \omega t} \, d t  $$
-
+\begin{figure}[H]
+\[  \mathbf{STFT}\{x(t)\}(\tau,\omega) \equiv X(\tau, \omega) = \int_{-\infty}^{\infty} x(t) w(t-\tau) e^{-i \omega t} \, d t   \]
+\caption{\acrfull{stft} Window Extraction}
+\label{eq:stft}
+\end{figure}
 
 Where $w(\tau)$ is an window function and $x(t)$ is the input signal from the \acrshort{eegs}.\\
 
