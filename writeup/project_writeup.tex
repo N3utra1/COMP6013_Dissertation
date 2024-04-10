@@ -90,6 +90,8 @@ scientific documents}
 \newacronym{edf}{EDF}{European Data Format}
 \newacronym{dstl}{DSTL}{Dynamical Entrainment; difference of short-term Lyapunov exponents}
 \newacronym{splv}{SPLV}{Phase-locking Synchrony}
+\newacronym{oop}{OOP}{Object-oriented Programming}
+\newacronym{csv}{CSV}{Comma-separated values}
 
 
 \title{Real-time preictal detection through the application of machine learning to Electroencephalogram signals.}
@@ -523,7 +525,41 @@ The schedule describes the way the Waterfall methodology has affected the projec
 \subsubsection{\acrfull{eeg} Data Extraction}
 %include diagram for output
 
-The \acrfull{edf} \cite{kemp1992simple} is a computer file format that was originally designed for archival and exchange  of ... recordings. \cite{kemp2013european}. This was the chosen format from the \acrshort{chb} \acrshort{eeg} dataset along with corresponding summary files see \ref{lst:summary-file}. From these summary files and the data stored in the \acrshort{edf} files an OOP representation of the dataset was created, containing the channels (individual \acrshort{eeg} nodes), recording frequency, and seizure start and end times. With this OOP representation the raw data was extracted from the \acrshort{edf} files. Using the OOP representation the ictal, preictal and interictal periods for each recording were extracted and saved in corresponding directories. Furthermore, only the common channels between all subjects were extracted, following the international 10-20 layout, these were the 17 channel names: FP1-F7, F7-T7,T7-P7, P7-O1, FP1-F3, F3-C3, C3-P3, P3-O1, FP2-F4, F4-C4, C4-P4, P4-O2, FP2-F8, F8-T8, P8-O2, FZ-CZ, CZ-PZ.
+The \acrfull{edf} \cite{kemp1992simple} is a file format which was designed for the archival and exchange of \acrshort{eeg} recordings \cite{kemp2013european} and was the format of the \acrshort{chb} \acrshort{eeg} dataset. \acrshort{edf} file's contain raw \acrshort{eeg} signals plotted against an time axis and contain metadata such as the name and recording frequency for each node. \ref{fig:eegPlot} shows an plot of raw \acrshort{eeg} data. 
+
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{eeg_raw_continuous}
+\centering
+\caption{Extracted raw \acrshort{eeg} data. \protect\cite{neuraldatascience2024}}
+\label{fig:eegPlot}
+\end{figure}
+
+Each node's name describes it's position within the internationally accepted 10-20 system shown in \ref{fig:10-20}. The 10-20 system was popularized due to it's ability to cover all brain regions in an method proportional to the skull size and shape. This ensures that the inter-electrode spacing is equal, allowing for consistent measurements to be taken regardless of subject. \cite{morley201610}
+
+
+
+\begin{figure}[H]
+\includegraphics[width=0.6\textwidth]{10-20}
+\centering
+\caption{Diagram of the 10-20 International System. \protect\cite{tomaton1242010}}
+\label{fig:10-20}
+\end{figure}
+
+
+
+
+The \acrshort{chb} dataset also contained summary files (see \ref{lst:summary-file}). From these summary files an \acrfull{oop} representation of the dataset was created. This \acrshort{oop} representation was generated for every recording and shows which subject it belonged too, the name of each \acrshort{eeg} node within the recording, also representing each node's position in the 10-20 system, the recording frequency of the \acrshort{eeg}, and any seizure's start and end times contained within that recording. This \acrshort{oop} representation allowed for the labelling of the ictal, preictal and interictal periods.
+
+For this project the \acrshort{eeg} signals were extracted and stored in an \acrshort{csv} file. This allowed for an more flexible configuration of tuning scenarios such as \acrshort{eeg} node combinations or subject specific tuning, further discussed in \ref{advancements}. Within the \acrshort{chb} \acrshort{eeg} dataset each \acrshort{eeg} configuration was not equal as some recordings contained nodes not present in other recordings. Due to this the common channels were extracted to allow for an fair comparison of the results. There were 17 channels with the names: FP1-F7, F7-T7,T7-P7, P7-O1, FP1-F3, F3-C3, C3-P3, P3-O1, FP2-F4, F4-C4, C4-P4, P4-O2, FP2-F8, F8-T8, P8-O2, FZ-CZ, CZ-PZ. An example of the extracted data can be seen at \ref{fig:rawData}. For each recording 3 \acrshort{csv} files were created, ``/ictal/master.csv'', ``/preictal/master.csv'' and ``/interictal/master.csv''. If a period appeared more than once in an single recording it was concatenated to it's corresponding ``master.csv'' file.
+
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{rawData}
+\centering
+\caption{Head of extracted \acrshort{eeg} data in \acrshort{csv} format. Approx $1/5$ second.}
+\label{fig:rawData}
+\end{figure}
+
 
 \subsubsection{\acrfull{stft}}
 
@@ -710,7 +746,6 @@ asdf
 
 \section{Final Thoughts}
 
-\cite{test}
 
 
 
