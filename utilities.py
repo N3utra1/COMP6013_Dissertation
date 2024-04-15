@@ -1,6 +1,7 @@
 """
     This is used to debug files written by the program. It is not needed when running the finished product
 """
+from pprint import pprint
 import mne
 from mne.time_frequency import stft
 import pandas as pd
@@ -10,6 +11,7 @@ import numpy as np
 import os
 import glob
 from codebase import control
+import subprocess
 
 files_to_check = glob.glob("D:\\stft-chb-mit\\chb06\\*\\*.npy")
 
@@ -126,5 +128,97 @@ def method_menu():
         print("Invalid choice. Please try again.")
         method_menu()
 
+
+def calculate_class_size():
+    classes = ["interictal", "ictal", "preictal"]
+    raw_recording_path = "/data/csv-chb-mit/"
+    subjects = [path.split(os.sep)[-1] for path in glob.glob(os.path.join(raw_recording_path, "*"))]
+    d = dict.fromkeys(subjects)
+    for subject in d.keys():
+        d[subject] = dict.fromkeys(classes)
+
+
+    for subject in subjects:
+        print(f"calculating values for {subject}")
+        for c in classes:
+            paths = glob.glob(os.path.join(raw_recording_path, subject, "*", c, "master.csv"))
+            total_size = 0
+            i = 0
+            for path in paths:
+                i += 1
+                total_size += int(subprocess.run(["wc", "-l", path], capture_output=True, text=True).stdout.split()[0])
+                print(f"{c} file {i} / {len(paths)}", end="\r")
+            print(c) 
+            d[subject][c] = {
+                "num_files" : len(paths),
+                "line_count" : total_size,
+                "num_seconds" : (total_size / 256),
+                "num_mins" : ((total_size / 256 ) / 60),
+            }
+        
+    pprint(d)
+
+
+import matplotlib.pyplot as plt
+import re
+import datetime
+
+class DataExtractor:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.data = self.extract_data()
+
+    def extract_data(self):
+        data = {}
+        with open(self.file_path, 'r') as file:
+            lines = file.readlines()
+            for line in lines:
+                if ':' in line:
+                    key, value = line.split(':')
+                    data[key.strip()] = value.strip()
+                elif 'accuracy' in line:
+                    data['training accuracy'] = [float(x) for x in re.findall(r"[-+]?\d*\.\d+|\d+", line)]
+                elif 'loss' in line:
+                    data['training loss'] = [float(x) for x in re.findall(r"[-+]?\d*\.\d+|\d+", line)]
+        return data
+
+    def plot_metrics(self):
+        fig, axs = plt.subplots(2)
+        fig.suptitle('Training Metrics')
+        axs[0].plot(self.data['training accuracy'], label='accuracy')
+        axs[0].set_ylabel('Accuracy')
+        axs[0].legend()
+        axs[1].plot(self.data['training loss'], label='loss', color='orange')
+        axs[1].set_ylabel('Loss')
+        axs[1].set_xlabel('Epoch')
+        axs[1].legend()
+        plt.show()
+
+# data_extractor = DataExtractor('path_to_your_file.txt')
+# data_extractor.plot_metrics()
+
+
+def plot_resutls():
+    reports = glob.glob("/data/results-test/*/*.log")
+    good_reports = []
+    for report in reports:
+        print(report)
+        lines = []
+        with open(report, "r") as f:
+            lines = f.readlines()
+        try:
+            l = lines[35]
+        except:
+            continue 
+            
+        if re.search("\[.*\]", l):
+            good_reports.append(lines)
+
+    for report in good_reports:
+        print(len(report))
+
+
+
 control.init()
-method_menu()
+# method_menu()
+plot_resutls()

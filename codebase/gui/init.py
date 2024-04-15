@@ -186,7 +186,7 @@ def init():
     global generators
     print("\n\ninit function running...")
 
-    model_path = "/data/results/2.8.64/16.8.keras"
+    model_path = "/data/results-test/2.4.64/48.32.keras"
     print(f"loading model: {model_path}")
     model = tf.keras.models.load_model(model_path)
 
