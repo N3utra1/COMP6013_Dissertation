@@ -12,6 +12,9 @@ import os
 import glob
 from codebase import control
 import subprocess
+import ast
+# from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
 
 files_to_check = glob.glob("D:\\stft-chb-mit\\chb06\\*\\*.npy")
 
@@ -164,58 +167,425 @@ import re
 import datetime
 
 class DataExtractor:
-    def __init__(self, file_path):
-        self.file_path = file_path
-        self.data = self.extract_data()
+    def __init__(self, path):
+        self.path = path
+        self.lines = self.load_lines()
+        self.metrics = {
+            "configuration" : self.get_configuration(),
+            "training" : {
+                "dataset_generation_start" : self.get_date(self.lines[13]),
+                "dataset_generation_end" : self.get_date(self.lines[23]),
+                "dataset_generation_duration" : self.get_date(self.lines[23]) - self.get_date(self.lines[22]),
+                "model_compiling_start" :  self.get_date(self.lines[22]),
+                "model_compiling_end" :  self.get_date(self.lines[23]),
+                "model_compiling_duration" : self.get_date(self.lines[23]) - self.get_date(self.lines[22]),
+                "model_saving_start" :  self.get_date(self.lines[28]),
+                "model_saving_end" :  self.get_date(self.lines[29]),
+                "model_saving_duration" : self.get_date(self.lines[29]) - self.get_date(self.lines[28]),
+                "accuracy" : self.get_training_metric(self.lines[26]),
+                "loss" : self.get_training_metric(self.lines[27])
+            },
+            "testing" : {
+                "testing_start" : self.get_date(self.lines[30]),
+                "testing_end" : self.get_date(self.lines[31]),
+                "testing_duration" : self.get_date(self.lines[31]) - self.get_date(self.lines[30]),
+                "confusion_matrix" : self.get_confusion_matrix(self.lines[33:36]),
+                "normalized_confusion_matrix" : self.get_confusion_matrix(self.lines[37:40]),
+                "precision" : self.get_report_values(1),
+                "recall" : self.get_report_values(2),
+                "f1" : self.get_report_values(3),
+                "accuracy": self.get_testing_accuracy()
+            }
+        }
+    
+    def __repr__(self):
+        return str(self.metrics)
+    
+    def get_date(self, x):
+        return datetime.datetime.strptime(" ".join(x.split()[-2:]), "%Y-%m-%d %H:%M:%S.%f")
 
-    def extract_data(self):
-        data = {}
-        with open(self.file_path, 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                if ':' in line:
-                    key, value = line.split(':')
-                    data[key.strip()] = value.strip()
-                elif 'accuracy' in line:
-                    data['training accuracy'] = [float(x) for x in re.findall(r"[-+]?\d*\.\d+|\d+", line)]
-                elif 'loss' in line:
-                    data['training loss'] = [float(x) for x in re.findall(r"[-+]?\d*\.\d+|\d+", line)]
-        return data
+    def load_lines(self):
+        lines = [] 
+        with open(self.path, "r") as f:
+            lines = f.readlines()
+        return lines
+    
+    def get_configuration(self):
+        def get_value(x): return x.split()[-1]
+        a = self.lines[4:7]
+        m = self.lines[8:11]
+        return f"{get_value(a[0])}.{get_value(a[1])}.{get_value(a[2])}/{get_value(m[1])}.{get_value(m[0])}" # deliberate flipped index 
 
-    def plot_metrics(self):
-        fig, axs = plt.subplots(2)
-        fig.suptitle('Training Metrics')
-        axs[0].plot(self.data['training accuracy'], label='accuracy')
-        axs[0].set_ylabel('Accuracy')
-        axs[0].legend()
-        axs[1].plot(self.data['training loss'], label='loss', color='orange')
-        axs[1].set_ylabel('Loss')
-        axs[1].set_xlabel('Epoch')
-        axs[1].legend()
-        plt.show()
+    def get_training_metric(self, x):
+        a = ast.literal_eval(" ".join(x.split()[2:]))
+        return sum(a) / len(a)
+    
+    def get_confusion_matrix(self, x):
+        return ast.literal_eval(re.sub(r"\[\,\s", "[", re.sub(r"\s+", ", ", "".join(x).replace("\n", ""))))
 
-# data_extractor = DataExtractor('path_to_your_file.txt')
-# data_extractor.plot_metrics()
-
+    def get_report_values(self, c):
+        l = [l.strip().split() for l in self.lines[41:51] if l != '\n']
+        r = {
+            "interictal" : l[1][c],
+            "preictal" : l[2][c],
+            "ictal" : l[3][c],
+            "macro_average" : l[5][c+1],
+            "weighted_average" : l[6][c+1]
+        }
+        return r
+    
+    def get_testing_accuracy(self):
+        return self.lines[47].strip().split()[1]
 
 def plot_resutls():
+
+    def build_timings_table(reports):
+        prefix_table_template = """
+\\begin{table}[H]
+\centering
+\\begin{tabular}{llll}
+Model & Compiling & Saving & Testing \\\\
+"""
+        suffix_table_template = """
+\end{tabular}
+\caption{Time duration metrics for each model in format \\%H:\\%M:\\%S.\\%f.}
+\label{tab:my-table}
+\end{table}"""
+        middle = []
+        for report in reports:
+            m = report.metrics
+            middle.append(f"  {m['configuration']}    &      {m['training']['model_compiling_duration']}       &     {m['training']['model_saving_duration']}       &     {m['testing']['testing_duration']}        \\")
+        s = prefix_table_template + "\n".join(middle) + suffix_table_template
+        with open("../recorded-metrics/timings-table", "w+") as f:
+            f.writelines(s)
+        print("timings table written")
+
+    def build_training_metrics_table(reports):
+        prefix_table_template = """
+\\begin{table}[H]
+\centering
+\\begin{tabular}{lll}
+Model & Training Accuracy & Training Loss \\\\
+"""
+        suffix_table_template = """
+\end{tabular}
+\caption{Accuracy and Loss metrics (average across epochs) during model training.}
+\label{tab:training-metrics}
+\end{table}"""
+        middle = []
+        for report in reports:
+            m = report.metrics
+            middle.append(f"  {m['configuration']}    &      {m['training']['accuracy']}       &     {m['training']['loss']} \\\\")
+        s = prefix_table_template + "\n".join(middle) + suffix_table_template
+        with open("../recorded-metrics/training-metrics-table", "w+") as f:
+            f.writelines(s)
+        print("training metrics table written")
+
+    def build_testing_accuracy_table(reports):
+        prefix_table_template = """
+\\begin{table}[H]
+\centering
+\\begin{tabular}{ll}
+Model & Testing Accuracy \\\\
+"""
+        suffix_table_template = """
+\end{tabular}
+\caption{Accuracy metrics obtained during testing.}
+\label{tab:testing-accuracy}
+\end{table}"""
+        middle = []
+        for report in reports:
+            m = report.metrics
+            middle.append(f"  {m['configuration']}    &      {m['testing']['accuracy']}   \\\\")
+        s = prefix_table_template + "\n".join(middle) + suffix_table_template
+        with open("../recorded-metrics/testing-accuracy-table", "w+") as f:
+            f.writelines(s)
+        print("testing accuracy table written")
+
+    def build_cmatrix_table(reports):
+        prefix_table_template = """
+\\begin{table}[H]
+\centering
+\centering
+\\begin{tabular}{llll}
+Model                    & \multicolumn{3}{l}{Confusion Matrix} \\\\
+"""
+        suffix_table_template = """
+\end{tabular}
+\caption{Generated Confusion Matrix during the model tuning process.}
+\label{tab:cmatrix}
+\end{table}"""
+        middle = []
+        for report in reports:
+            m = report.metrics
+            middle.append(f"""\multirow{{3}}{{*}}{{{m["configuration"]}}}   &  {m['testing']['confusion_matrix'][0][0]} & {m['testing']['confusion_matrix'][0][1]} & {m['testing']['confusion_matrix'][0][2]} \\\\
+                                                                            &  {m['testing']['confusion_matrix'][1][0]} & {m['testing']['confusion_matrix'][1][1]} & {m['testing']['confusion_matrix'][1][2]} \\\\
+                                                                            &  {m['testing']['confusion_matrix'][2][0]} & {m['testing']['confusion_matrix'][2][1]} & {m['testing']['confusion_matrix'][2][2]} \\\\ \\hline""")
+        s = prefix_table_template + "\n".join(middle) + suffix_table_template
+        with open("../recorded-metrics/cmatrix-table", "w+") as f:
+            f.writelines(s)
+        print("cmatrix table written")
+
+    def build_normed_cmatrix_table(reports):
+        prefix_table_template = """
+\\begin{table}[H]
+\centering
+\centering
+\\begin{tabular}{llll}
+Model                    & \multicolumn{3}{l}{Normalized Confusion Matrix} \\\\ 
+"""
+        suffix_table_template = """
+\end{tabular}
+\caption{Generated Normalized Confusion Matrix during the model tuning process.}
+\label{tab:normed-cmatrix}
+\end{table}"""
+        middle = []
+        for report in reports:
+            m = report.metrics
+            middle.append(f"""\multirow{{3}}{{*}}{{{m["configuration"]}}}   &  {m['testing']['normalized_confusion_matrix'][0][0]} & {m['testing']['normalized_confusion_matrix'][0][1]} & {m['testing']['normalized_confusion_matrix'][0][2]} \\\\
+                                                                            &  {m['testing']['normalized_confusion_matrix'][1][0]} & {m['testing']['normalized_confusion_matrix'][1][1]} & {m['testing']['normalized_confusion_matrix'][1][2]} \\\\
+                                                                            &  {m['testing']['normalized_confusion_matrix'][2][0]} & {m['testing']['normalized_confusion_matrix'][2][1]} & {m['testing']['normalized_confusion_matrix'][2][2]} \\\\ \\hline""")
+        s = prefix_table_template + "\n".join(middle) + suffix_table_template
+        with open("../recorded-metrics/normed-cmatrix-table", "w+") as f:
+            f.writelines(s)
+        print("normed cmatrix table written")
+
+    def build_metric_table(metric, reports):
+        prefix_table_template = """
+\\begin{table}[H]
+\centering
+\centering
+\\begin{tabular}{llllll}
+Model & Interictal & Preictal & Ictal & Macro Average & Weighted Average \\\\
+"""
+        suffix_table_template = f"""
+\end{{tabular}}
+\caption{{{metric} metrics obtained during testing.}}
+\label{{tab:normed-cmatrix}}
+\end{{table}}"""
+        middle = []
+        for report in reports:
+            m = report.metrics
+            middle.append(f" {m['configuration']} & {m['testing'][metric]['interictal']} & {m['testing'][metric]['preictal']} & {m['testing'][metric]['ictal']} & {m['testing'][metric]['macro_average']} & {m['testing'][metric]['weighted_average']} \\\\")
+        s = prefix_table_template + "\n".join(middle) + suffix_table_template
+        with open(f"../recorded-metrics/{metric}-metric-table", "w+") as f:
+            f.writelines(s)
+        print(f"{metric} table written")
+
+
+
+
+
+    def plot_timings(reports):
+        configurations = [report.metrics["configuration"] for report in reports]
+        compiling_duration = [report.metrics["training"]["model_compiling_duration"].total_seconds() for report in reports]
+        saving_duration = [report.metrics["training"]["model_saving_duration"].total_seconds() for report in reports]
+        testing_duration = [report.metrics["testing"]["testing_duration"].total_seconds() for report in reports]
+
+        barWidth = 0.25
+        
+        br1 = np.arange(len(compiling_duration)) 
+        br2 = [x + barWidth for x in br1] 
+        br3 = [x + barWidth for x in br2] 
+        
+        plt.barh(br1, compiling_duration, color ='r', height = barWidth, edgecolor ='grey', label ='Compiling') 
+        plt.barh(br2, saving_duration, color ='g', height = barWidth, edgecolor ='grey', label ='Saving') 
+        plt.barh(br3, testing_duration, color ='b', height = barWidth, edgecolor ='grey', label ='Testing') 
+        
+        plt.ylabel('Models', fontweight ='bold', fontsize = 15) 
+        plt.yticks([r + barWidth for r in range(len(compiling_duration))], configurations)
+        plt.xlabel('Time (Seconds)', fontweight ='bold', fontsize = 15) 
+        
+        plt.legend()
+        plt.savefig("./figs/timings.png", bbox_inches="tight") 
+        plt.close()
+
+    def plot_training_metrics(reports):
+        def create_accuracy_plots(reports):
+            accuracy_dict = {}
+
+            for obj in reports:
+                architecture, model = obj.metrics["configuration"].split('/')
+                accuracy = obj.metrics["training"]["accuracy"]
+
+                x_label, y_label = model.split('.')
+
+                if not architecture in accuracy_dict.keys(): accuracy_dict[architecture] = {}
+                accuracy_dict[architecture][(x_label, y_label)] =  accuracy
+            architectures = sorted(accuracy_dict.keys())
+            x_labels = sorted(set(x for arch in architectures for x, y in accuracy_dict[arch].keys()))
+            y_labels = sorted(set(y for arch in architectures for x, y in accuracy_dict[arch].keys()), reverse=True)
+            heatmap_values = np.zeros((len(architectures), len(x_labels), len(y_labels)))
+
+            for k, arch in enumerate(architectures):
+                for i, x_label in enumerate(x_labels):
+                    for j, y_label in enumerate(y_labels):
+                        heatmap_values[k, i, j] = accuracy_dict[arch].get((x_label, y_label), 0)
+
+            for k, arch in enumerate(architectures):
+                plt.figure(figsize=(6, 5))
+                plt.title(f"Heatmap for {arch}")
+                plt.xlabel("Batch Size")
+                plt.ylabel("Epochs")
+                plt.xticks(range(len(x_labels)), x_labels)
+                plt.yticks(range(len(y_labels)), y_labels)
+
+                plt.imshow(heatmap_values[k], cmap='hot', interpolation='nearest', vmin=0.5, vmax=1.0)
+                plt.colorbar(label="Accuracy")
+                plt.savefig(f"./figs/heatmap_training_accuracy_{arch}.png")
+                plt.close()
+                print(f"./figs/heatmap_training_accuracy_{arch}.png saved")
+
+        def create_loss_plots(reports):
+            loss_dict = {}
+
+            for obj in reports:
+                architecture, model = obj.metrics["configuration"].split('/')
+                loss = obj.metrics["training"]["loss"]
+
+                x_label, y_label = model.split('.')
+
+                if not architecture in loss_dict.keys(): loss_dict[architecture] = {}
+                loss_dict[architecture][(x_label, y_label)] = loss 
+            architectures = sorted(loss_dict.keys())
+            x_labels = sorted(set(x for arch in architectures for x, y in loss_dict[arch].keys()))
+            y_labels = sorted(set(y for arch in architectures for x, y in loss_dict[arch].keys()))
+            heatmap_values = np.zeros((len(architectures), len(x_labels), len(y_labels)))
+
+            for k, arch in enumerate(architectures):
+                for i, x_label in enumerate(x_labels):
+                    for j, y_label in enumerate(y_labels):
+                        heatmap_values[k, i, j] = loss_dict[arch].get((x_label, y_label), 0)
+
+            for k, arch in enumerate(architectures):
+                plt.figure(figsize=(6, 5))
+                plt.title(f"Heatmap for {arch}")
+                plt.xlabel("Batch Size")
+                plt.ylabel("Epochs")
+                plt.xticks(range(len(x_labels)), x_labels)
+                plt.yticks(range(len(y_labels)), y_labels)
+
+                plt.imshow(heatmap_values[k], cmap='hot', interpolation='nearest', vmin=0.5, vmax=1.0)
+                plt.colorbar(label="Loss")
+                plt.savefig(f"./figs/heatmap_training_loss_{arch}.png")
+                plt.close()
+                print(f"./figs/heatmap_training_loss_{arch}.png saved")
+
+        create_accuracy_plots(reports)
+        create_loss_plots(reports)
+
+    def plot_testing_accuracy(reports):
+        accuracy_dict = {}
+
+        for obj in reports:
+            architecture, model = obj.metrics["configuration"].split('/')
+            accuracy = obj.metrics["testing"]["accuracy"]
+
+            x_label, y_label = model.split('.')
+
+            if not architecture in accuracy_dict.keys(): accuracy_dict[architecture] = {}
+            accuracy_dict[architecture][(x_label, y_label)] =  accuracy
+        architectures = sorted(accuracy_dict.keys())
+        x_labels = sorted(set(x for arch in architectures for x, y in accuracy_dict[arch].keys()))
+        y_labels = sorted(set(y for arch in architectures for x, y in accuracy_dict[arch].keys()), reverse=True)
+        heatmap_values = np.zeros((len(architectures), len(x_labels), len(y_labels)))
+
+        for k, arch in enumerate(architectures):
+            for i, x_label in enumerate(x_labels):
+                for j, y_label in enumerate(y_labels):
+                    heatmap_values[k, i, j] = accuracy_dict[arch].get((x_label, y_label), 0)
+
+        # Create the heatmap using matplotlib
+        for k, arch in enumerate(architectures):
+            plt.figure(figsize=(6, 5))
+            plt.title(f"Heatmap for {arch}")
+            plt.xlabel("Batch Size")
+            plt.ylabel("Epochs")
+            plt.xticks(range(len(x_labels)), x_labels)
+            plt.yticks(range(len(y_labels)), y_labels)
+
+            plt.imshow(heatmap_values[k], cmap='hot', interpolation='nearest', vmin=0.5, vmax=1.0)
+            plt.colorbar(label="Accuracy")
+            plt.savefig(f"./figs/heatmap_testing_accuracy_{arch}.png")
+            plt.close()
+            print(f"./figs/heatmap_testing_accuracy_{arch}.png saved")
+
+    def plot_metric(metric, reports):
+        for target in ["interictal", "preictal", "ictal", "macro_average", "weighted_average"]:
+            d = {}
+
+            for obj in reports:
+                architecture, model = obj.metrics["configuration"].split('/')
+                value = obj.metrics["testing"][metric][target]
+
+                x_label, y_label = model.split('.')
+
+                if not architecture in d.keys(): d[architecture] = {}
+                d[architecture][(x_label, y_label)] = value 
+            architectures = sorted(d.keys())
+            x_labels = sorted(set(x for arch in architectures for x, y in d[arch].keys()))
+            y_labels = sorted(set(y for arch in architectures for x, y in d[arch].keys()), reverse=True)
+            heatmap_values = np.zeros((len(architectures), len(x_labels), len(y_labels)))
+
+            for k, arch in enumerate(architectures):
+                for i, x_label in enumerate(x_labels):
+                    for j, y_label in enumerate(y_labels):
+                        heatmap_values[k, i, j] = d[arch].get((x_label, y_label), 0)
+
+            # Create the heatmap using matplotlib
+            for k, arch in enumerate(architectures):
+                plt.figure(figsize=(6, 5))
+                plt.title(f"Heatmap for {arch}")
+                plt.xlabel("Batch Size")
+                plt.ylabel("Epochs")
+                plt.xticks(range(len(x_labels)), x_labels)
+                plt.yticks(range(len(y_labels)), y_labels)
+
+                plt.imshow(heatmap_values[k], cmap='hot', interpolation='nearest', vmin=0.5, vmax=1.0)
+                plt.colorbar(label=f"{target}")
+                plt.savefig(f"./figs/heatmap_{metric}_{target}_{arch}.png")
+                plt.close()
+                print(f"./figs/heatmap_{metric}_{target}_{arch}.png saved")
+
+
+
     reports = glob.glob("/data/results-test/*/*.log")
     good_reports = []
     for report in reports:
-        print(report)
         lines = []
         with open(report, "r") as f:
             lines = f.readlines()
         try:
             l = lines[35]
         except:
+            print(f"removed {report} (line count)")
             continue 
-            
-        if re.search("\[.*\]", l):
-            good_reports.append(lines)
 
-    for report in good_reports:
-        print(len(report))
+        if ast.literal_eval(re.sub(r"\[\,\s", "[", re.sub(r"\s+", ", ", "".join(lines[33:36]).replace("\n", ""))))[-1][-1] == 0:
+            print(f"removed {report} (bad cmatrix)")
+            continue
+
+
+        if re.search("\[.*\]", l):
+            o = DataExtractor(report)
+            good_reports.append(o)
+    
+    # build_timings_table(good_reports)
+    # build_training_metrics_table(good_reports)
+    # build_testing_accuracy_table(good_reports)
+    # build_cmatrix_table(good_reports)
+    # build_normed_cmatrix_table(good_reports)
+    # build_metric_table("precision", good_reports)
+    # build_metric_table("recall", good_reports)
+    # build_metric_table("f1", good_reports)
+
+
+    # plot_timings(good_reports)
+    # plot_training_metrics(good_reports)
+    # plot_testing_accuracy(good_reports)
+    plot_metric("precision", good_reports)
+    plot_metric("recall", good_reports)
+    plot_metric("f1", good_reports)
 
 
 
