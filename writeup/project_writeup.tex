@@ -126,10 +126,9 @@ School of Engineering, Computing and Mathematics
 
 \section{Abstract}
 
-“Epilepsy is one of the most common serious brain conditions, affecting over 70 million people worldwide.” \cite{thijs2019epilepsy} Antiepileptic Drugs have been developed and are currently in widespread use, however “one third of people with epilepsy will not have adequate seizure control with the current medications [available Antiepileptic Drugs (AEDs)]. For these patients the situation has improved very little in the last few decades” \cite{galanopoulou2012identification}. Furthering this, 35\% of epilepsy patients become resistant to AED medication \cite{moghim2014predicting}. This paints a bleak situation for people suffering with epilepsy; “There is an urgent need for more effective and better-tolerated treatments'' \cite{loscher2011modern}. 
+“Epilepsy is one of the most common serious brain conditions, affecting over 70 million people worldwide.” \cite{thijs2019epilepsy} Antiepileptic Drugs have been developed and are currently in widespread use, however, “one third of people with epilepsy will not have adequate seizure control with the current medications [available Antiepileptic Drugs (AEDs)]. For these patients, the situation has improved very little in the last few decades” \cite{galanopoulou2012identification}. Furthering this, 35\% of epilepsy patients become resistant to AED medication \cite{moghim2014predicting}. This paints a bleak situation for people suffering from epilepsy; “There is an urgent need for more effective and better-tolerated treatments'' \cite{loscher2011modern}.
 
-This project describes a non-intrusive solution which classifies the current state of an patient in real time. An preprocessing and classification pipeline has been developed which classifies \acrfull{eeg} signals into one of three categories (interictal, preictal, or ictal) through the use of an \acrfull{cnn} and \acrfull{stft}. This project has also tuned an selection of models, with 15 different models boasting 100\% accuracy against an validation dataset. 
-
+This project describes a non-intrusive solution that classifies the current state of a patient in real-time. A preprocessing and classification pipeline has been developed which classifies \acrfull{eeg} signals into one of three categories (interictal, preictal, or ictal) through the use of an \acrfull{cnn} and \acrfull{stft}. This project has also tuned a selection of models, with 15 different models boasting 100\% accuracy against a validation dataset.
 
 
 
@@ -139,52 +138,50 @@ This project describes a non-intrusive solution which classifies the current sta
 I would like to thank my project supervisor, Kashinath Basu for his support throughout the project. Our weekly meetings gave invaluable advice and direction which helped me stay on track and encouraged me to develop a project which I am incredibly proud of. 
 
 
-
-
 \section{Introduction}
 
 
 Over the last 20 years, \acrfull{ai} has seen a large evolution through the use of \acrfull{ml}; the statistical analysis of data which leads to the unveiling of characteristics and connections. \cite{awad2015efficient}. There has been a large uptake of applying \acrshort{ml} techniques to biomedical data, increasing the speed and accuracy of prediction, detection, diagnosis, and prognosis. 
 
-\acrfull{eegs} measure the electrical signals in the brain. \acrshort{eegs} have a great use in giving an insight into the inner workings of the brain, for example allowing us to pick up abnormalities preceding and during their occurrence. ``A seizure is a burst of uncontrolled electrical activity between brain cells (also called neurons or nerve cells) that causes temporary abnormalities in muscle tone or movements (stiffness, twitching or limpness), behaviours, sensations or states of awareness.'' \cite{johnHopkinsTypesOfSeizures} Due to this, monitoring the brain's electrical activity through the use of an \acrshort{eeg}, and applying analysis through an \acrshort{ml} model may allow us to detect the preictal period. ``An automated accurate prediction of seizures will significantly improve the quality of life of patients and reduce the burden on caregivers'' \cite{acharya2018automated}
+\acrfull{eegs} measure the electrical signals in the brain. \acrshort{eegs} have a great use in giving an insight into the inner workings of the brain, for example allowing us to pick up abnormalities preceding and during their occurrence. ``A seizure is a burst of uncontrolled electrical activity between brain cells (also called neurons or nerve cells) that causes temporary abnormalities in muscle tone or movements (stiffness, twitching or limpness), behaviors, sensations or states of awareness.'' \cite{johnHopkinsTypesOfSeizures} Due to this, monitoring the brain's electrical activity through the use of an \acrshort{eeg}, and applying analysis through an \acrshort{ml} model may allow us to detect the preictal period. ``An automated accurate prediction of seizures will significantly improve the quality of life of patients and reduce the burden on caregivers'' \cite{acharya2018automated}
 
 
 \subsection{Background}
 
-``Because of their unpredictable nature, uncontrolled seizures represent a major personal handicap and source of worry for patients. In addition, persistent seizures constitute a considerable burden on healthcare resources.'' \cite{assi2017towards} Due to this both medication and surgery are available to applicable patients, although with ~30\% patients being refractory to drug therapy, and an equally bleak surgery success rate; ~75\% in lesional cases, and ~50\% in nonlesional cases for temporal lobe cases along with ~60\% in lesional cases and merely ~35\% in nonlesional for frontal lobse cases \cite{assi2017towards}, a large population of patients would therefore greatly benefit from a prediction system in their daily life. 
+``Because of their unpredictable nature, uncontrolled seizures represent a major personal handicap and source of worry for patients. In addition, persistent seizures constitute a considerable burden on healthcare resources.'' \cite{assi2017towards} Due to this both medication and surgery are available to applicable patients, although with ~30\% patients being refractory to drug therapy, and an equally bleak surgery success rate; ~75\% in lesional cases, and ~50\% in nonlesional cases for temporal lobe cases along with ~60\% in lesional cases and merely ~35\% in nonlesional for frontal lobe cases \cite{assi2017towards}, a large population of patients would therefore greatly benefit from a prediction system in their daily life. 
 
 \subsection{Aim and Objectives}
 
-This project will aim to develop an consistent \acrshort{ml} model trained to classify either preictal, interictal and ictal periods. The model will have to achieve a high degree of accuracy ($\geq90\%$) when being applied to \acrshort{eeg} data in real-time. Furthermore a real-time simulation will need to be developed along with an \acrshort{ml} pipeline and model parameter tuning. 
+This project will aim to develop a consistent \acrshort{ml} model trained to classify either preictal, interictal, and ictal periods. The model will have to achieve a high degree of accuracy ($\geq90\%$) when being applied to \acrshort{eeg} data in real time. Furthermore, a real-time simulation will need to be developed along with an \acrshort{ml} pipeline and model parameter tuning.
 
  
 \paragraph{Objectives} \label{objectives}
 
 \begin{enumerate}
-	\item Research and find an suitable dataset allowing for the classification of the interictal, preictal, and ictal periods. 
-	\item Research and find an suitable \acrshort{ml} model approach.
-        \item Create a data preperation and preprocessing pipeline which extracts the dataset into an \acrshort{ml} format suitable for training and testing. 
-        \item Undergo parameter tuning and model architecture tuning of the selected \acrshort{ml} model approach.
-        \item Produce a simulation interface which streams \acrshort{eeg} data in real time through the preprocessing pipeline and into the optimal model. The simulation should show the current classification to the user every second.
+\item Research and find a suitable dataset allowing for the classification of the interictal, preictal, and ictal periods.
+\item Research and find an suitable \acrshort{ml} model approach.
+\item Create a data preparation and preprocessing pipeline that extracts the dataset into an \acrshort{ml} format suitable for training and testing.
+\item Undergo parameter tuning and model architecture tuning of the selected \acrshort{ml} model approach.
+\item Produce a simulation interface that streams \acrshort{eeg} data in real-time through the preprocessing pipeline and into the optimal model. The simulation should show the current classification to the user every second.
 \end{enumerate}
 
 \subsection{Project Requirements}\label{requirements}
 
-The formal requirements of this project are stated in 
+The formal requirements of this project are stated in
 
-\begin{enumerate} 
-	\item{Develop and preprocessing pipeline which accepts raw \acrshort{eeg} data.}
-	\item{Tune an number of models to find the optimal variable configuration.}
-	\item{Ensure that the optimal model has an accuracy of $\geq90\%$ against an validation dataset.}
-	\item{From \acrshort{eeg} data extraction to prediction, the process must take at most 1 second.}
-	\item{Create an real-time simulation mimicking an real life application.}
+\begin{enumerate}
+\item{Develop and preprocessing pipeline which accepts raw \acrshort{eeg} data.}
+\item{Tune a number of models to find the optimal variable configuration.}
+\item{Ensure that the optimal model has an accuracy of $\geq90\%$ against a validation dataset.}
+\item{From \acrshort{eeg} data extraction to prediction, the process must take at most 1 second.}
+\item{Create a real-time simulation mimicking a real-life application.}
 \end{enumerate}
 
 \section{Background Review}
 
 \subsection{Datasets}\label{datasets}
 
-\cite{wong2023eeg} reviews 10 datasets available to download. It evaluates the way the \acrshort{eegs} were physically setup on the subject, the subjects themselves and the data's properties. Wong et al. also states their opinion on what tasks suit what dataset, with the main two tasks being either detection or prediction. 
+\cite{wong2023eeg} reviews 10 datasets available to download. It evaluates the way the \acrshort{eegs} were physically setup on the subject, the subjects themselves, and the data's properties. Wong et al. also state their opinion on what tasks suit what dataset, with the main two tasks being either detection or prediction. 
 
 \begin{table}[H]
 \centering
@@ -204,7 +201,7 @@ Helsinki University Hospital EEG
 \caption{The Datasets analysed}
 \end{table}
 
-Within these datasets Wong et al. was also able to find the way the EEG nodes were positioned on the subject's cranium, along with whether the EEG nodes were either placed intracranial or extracranial. Wong et al. also the number of channels that are contained in the raw EEG data for each dataset.
+Within these datasets, Wong et al. were also able to find the way the EEG nodes were positioned on the subject's cranium, along with whether the EEG nodes were either placed intracranial or extracranial. Wong et al. also the number of channels that are contained in the raw EEG data for each dataset.
 
 \begin{table}[H]
 \centering
@@ -249,7 +246,7 @@ Siena Scalp EEG                                                                 
 \caption{Temporal properties}
 \end{table}
 
-Wong et al. ordered the datasets into groups, either continuous or non continuous data. For the continuous data they separated out datasets which record for less that 24 hours in a single go, these were classified as ``Short-term continuous'' data.
+Wong et al. ordered the datasets into groups, either continuous or noncontinuous data. For the continuous data they separated out datasets that record for less than 24 hours in a single go, these were classified as ``Short-term continuous'' data.
 
 \begin{table}[H]
 \centering
@@ -269,9 +266,9 @@ Siena Scalp EEG                      & 14  & Human &
 \caption{Subject properties}
 \end{table}
 
-Wong et al. also was able to identify the number of subjects within each dataset. Within the two ``Kaggle'' datasets there are Canine subjects, making them unsuitable for this project. 
+Wong et al. also were able to identify the number of subjects within each dataset. Within the two ``Kaggle'' datasets there are Canine subjects, making them unsuitable for this project. 
 
-Within the review, they also produced tables displaying the segment information for each dataset, breaking down the recording length and frequency, along with the number of events and segments. This information should not weight into which dataset suits the idea of preictal prediction so shall be left out in this background review. Wong et al. also discussed the idea of the class imbalance problem, where the number and length of each ictal period is unbalanced. Two datasets, ``University of Bonn'' and the ``Neurology and Sleep Centre Hauz Khas'' have addressed this issue and have balanced their data between ictal, preictal, interictal and nonictal periods.
+Within the review, they also produced tables displaying the segment information for each dataset, breaking down the recording length and frequency, along with the number of events and segments. This information should not weigh into which dataset suits the idea of preictal prediction so shall be left out in this background review. Wong et al. also discussed the idea of the class imbalance problem, where the number and length of each ictal period are unbalanced. Two datasets, ``University of Bonn'' and the ``Neurology and Sleep Centre Hauz Khas'' have addressed this issue and have balanced their data between ictal, preictal, interictal, and neonatal periods.
 
 Taking the research into account Wong et al. suggested which dataset suits either prediction or detection. ``Since the aim of seizure prediction is to forecast impending seizures, EEG recordings that include preictal and interictal data should be used for the study, while the aim of seizure detection is to detect ongoing seizure events, hence, EEG recordings that contain ictal and interictal data should be used.'' \cite{wong2023eeg}.
 
@@ -358,7 +355,7 @@ The classification times however were not included in the report. Extraction in 
 Mirowski et al. used the \cite{freiburg_eeg} dataset containing intracranial recordings and measured the performance of an \acrshort{lr}, \acrshort{svm}, and \acrshort{cnn} \acrshort{ml} models. They compiled 6 different preprocessing pipelines and tested the selected models against each. The preprocessing pipelines are as follows: 
 
 \begin{itemize}
-\item The Cross-correlation between pairs of EEG channels were calculated with delays ranging from -0.5 to 0.5. The delays allowed for the propagation and processing time of brainwaves. Cross-correlation describes the amount $f$ has to be shifted along the $x$ axis to equal $g$\ref{eq:crossCorrelation}. Only the maximum value of the cross-correlation values were retained for training.
+\item The Cross-correlation between pairs of EEG channels was calculated with delays ranging from -0.5 to 0.5. The delays allowed for the propagation and processing time of brainwaves. Cross-correlation describes the amount $f$ has to be shifted along the $x$ axis to equal $g$\ref{eq:crossCorrelation}. Only the maximum value of the cross-correlation values was retained for training.
 
 \begin{figure}[H]
 \[ (f \star g)(\tau)\ \triangleq \int_{-\infty}^{\infty} \overline{f(t)} g(t+\tau)\,dt \]
@@ -366,9 +363,9 @@ Mirowski et al. used the \cite{freiburg_eeg} dataset containing intracranial rec
 \label{eq:crossCorrelation}
 \end{figure}
 
-\item Non-linear interdependence ``which measures the distance, in state-space, between time-delay embedded trajectories of two EEG channels'' was also extracted. This is an bivariate feature which ``measures the Euclidian distance, in reconstructed state-space, between trajectories described by two EEG channels''.
+\item Non-linear interdependence ``which measures the distance, in state-space, between time-delay embedded trajectories of two EEG channels'' was also extracted. This is a bivariate feature that ``measures the Euclidian distance, in reconstructed state-space, between trajectories described by two EEG channels''.
 
-\item The third method was \acrfull{dstl}, where an Lyapunov exponent \ref{eq:lyapunov} describes the rate of separation for two trajectories, which in this report was based off  ``a common measure of the chaotic nature of a signal'' \cite{mirowski2009classification}
+\item The third method was \acrfull{dstl}, where a Lyapunov exponent \ref{eq:lyapunov} describes the rate of separation for two trajectories, which in this report was based off ``a common measure of the chaotic nature of a signal'' \cite{mirowski2009classification}
 
 \begin{figure}[H]
 \[ \lambda = \lim_{t \to \infty} \lim_{|\delta \mathbf{Z}_0| \to 0} \frac{1}{t} \ln\frac{| \delta\mathbf{Z}(t)|}{|\delta \mathbf{Z}_0|} \]
@@ -376,7 +373,7 @@ Mirowski et al. used the \cite{freiburg_eeg} dataset containing intracranial rec
 \label{eq:lyapunov}
 \end{figure}
 
-\item The last 3 features were \acrfull{splv}, Entropy, and Coherence of the phase difference. These were extracted from the the wavelet transformation  The wavelet transformation extracts the frequency-specific and time-dependent phases. 
+\item The last 3 features were \acrfull{splv}, Entropy, and Coherence of the phase difference. These were extracted from the wavelet transformation The wavelet transformation extracts the frequency-specific and time-dependent phases.
 
 \begin{figure}[H]
 \[ SPLV_{a,b}(f) = \frac{1}{N} \sum_{l=1}^{N} e^{i\left(\phi_{a,f}(l) - \phi_{b,f}(l)\right)} \]
@@ -455,11 +452,12 @@ The following results show the number of patients with perfect seizure predictio
 \caption{Distribution of Wavelet Coherence results.}
 \end{table}
 
-These results show the strength of an \acrshort{cnn} when compared to other \acrshort{ml} models as it's obtained the highest results across all tables. \acrshort{lr} however can also achieve strong results when paired with the correct preprocessing pipeline. Both methods would be applicable for this project assuming that the time from recording to final prediction is less that an second.
+
+These results show the strength of an \acrshort{cnn} when compared to other \acrshort{ml} models as it's obtained the highest results across all tables. \acrshort{lr} however can also achieve strong results when paired with the correct preprocessing pipeline. Both methods would be applicable for this project assuming that the time from recording to final prediction is less than a second.
 
 \paragraph{\acrfull{cnn}}\mbox{}\\
 
-Another \acrshort{cnn} approach was implemented by Truong et al. \cite{truong2018convolutional} who applied an \acrfull{stft} transform \ref{eq:stft} on 30 seconds of \acrshort{eeg} data. Interference was then removed from the produced matrices by applying an notch filter. The final result was then fed into an \acrshort{cnn} producing these results: 
+Another \acrshort{cnn} approach was implemented by Truong et al. \cite{truong2018convolutional} who applied an \acrfull{stft} transform \ref{eq:stft} on 30 seconds of \acrshort{eeg} data. Interference was then removed from the produced matrices by applying a notch filter. The final result was then fed into an \acrshort{cnn} producing these results:
 
 \begin{table}[H]
 \centering
@@ -478,20 +476,20 @@ No. of seizures & Sensitivity (\%) & False Positive Rate (/h) \\
 
 \subsubsection{Approach}
 
-From the datasets discussed in \ref{datasets} the \acrfull{chb} \acrshort{eeg} dataset has been chosen due to the large amount of continuous data, suitable for extracting the preictal period \ref{dataset_applications}. The dataset also has \acrshort{eeg} nodes positioned on the subject's scalps, fitting with the use case of this project. Furthermore, the \acrshort{chb} \acrshort{eeg} dataset has produced summary plain-text files for each of the subject's recordings, stating when every seizure began and ended allowing for an straightforward methodology when configuring the \acrshort{eeg} tuning and training environment. 
+From the datasets discussed in \ref{datasets}, the \acrfull{chb} \acrshort{eeg} dataset has been chosen due to the large amount of continuous data, suitable for extracting the preictal period \ref{dataset_applications}. The dataset also has \acrshort{eeg} nodes positioned on the subject's scalps, fitting with the use case of this project. Furthermore, the \acrshort{chb} \acrshort{eeg} dataset has produced summary plain-text files for each of the subject's recordings, stating when every seizure began and ended allowing for a straightforward methodology when configuring the \acrshort{eeg} tuning and training environment.
 
-Through the analysis of various \acrshort{ml} models an \acrshort{cnn} will be used for this project. Both \cite{truong2018convolutional} and \cite{mirowski2009classification} shows the potential \acrshort{cnn} have when being used in preictal prediction. The approach described in \cite{truong2018convolutional} was able to achieve similar or better results in comparison with other preprocessing pipelines and / or \acrshort{ml} model configurations while using an less computationally intense preprocessing method. This method was based around an \acrshort{stft} extraction and is described in \cite{truong2018convolutional}. This may allow for the classification to be done in real time, meeting the project's objectives \ref{objectives}. To ensure this requirement is met an real-time simulation will be developed, showing the raw EEG data and the final prediction every second. 
+Through the analysis of various \acrshort{ml} models an \acrshort{cnn} will be used for this project. Both \cite{truong2018convolutional} and \cite{mirowski2009classification} show the potential \acrshort{cnn} have when being used in preictal prediction. The approach described in \cite{truong2018convolutional} was able to achieve similar or better results in comparison with other preprocessing pipelines and/or \acrshort{ml} model configurations while using a less computationally intense preprocessing method. This method was based around an \acrshort{stft} extraction and is described in \cite{truong2018convolutional}. This may allow for the classification to be done in real-time, meeting the project's objectives \ref{objectives}. To ensure this requirement is met a real-time simulation will be developed, showing the raw EEG data and the final prediction every second.
 %more detailed information about the cnn is discussed in section \paragraph{\acrfull{cnn}}\mbox{}\\
 
 
 
 \subsubsection{Development System}
 
-Due to the linear nature of this project an Waterfall methodology will be used. Waterfall ensures that previous stages of the software are complete before moving on, this will keep the project on track and moving in an forward direction, crucial for the time-limited aspect of this project. Furthermore, due to the analysis undergone through literature reviews the direction and therefore the goals of the project are clearly defined; this further supports the choice of an Waterfall approach. 
+Due to the linear nature of this project, a Waterfall methodology will be used. Waterfall ensures that previous stages of the software are complete before moving on, this will keep the project on track and moving in a forward direction, crucial for the time-limited aspect of this project. Furthermore, due to the analysis undergone through literature reviews the direction and therefore the goals of the project are clearly defined; this further supports the choice of a Waterfall approach.
 
 \subsubsection{Version Control}
 
-This project will be under version control through the use of Git, along with GitHub as an remote repository. Both the dataset and the trained models will not be under version control. The use of an version control system and remote repository ensures that if anything goes awry an backup of all commits are stored remotely, securing any progress made in the project. Git also gives the benefit of many features; notably branches and stashing, allowing for developing on ideas, features, and bugs without affecting the ``main'' code, and merging allows for the combination of said branches. 
+This project will be under version control through the use of Git, along with GitHub as a remote repository. Both the dataset and the trained models will not be under version control. The use of a version control system and remote repository ensures that if anything goes awry a backup of all commits is stored remotely, securing any progress made in the project. Git also gives the benefit of many features; notably branches and stashing, allowing for developing ideas, features, and bugs without affecting the ``main'' code, and merging allows for the combination of said branches.
 
 \subsubsection{Software and Libraries Used}
 
@@ -533,7 +531,7 @@ The schedule describes the way the Waterfall methodology has affected the projec
 \subsubsection{\acrfull{eeg} Data Extraction}
 %include diagram for output
 
-The \acrfull{edf} \cite{kemp1992simple} is a file format which was designed for the archival and exchange of \acrshort{eeg} recordings \cite{kemp2013european} and was the format of the \acrshort{chb} \acrshort{eeg} dataset. \acrshort{edf} file's contain raw \acrshort{eeg} signals plotted against an time axis and contain metadata such as the name and recording frequency for each node. \ref{fig:eegPlot} shows an plot of raw \acrshort{eeg} data. 
+The \acrfull{edf} \cite{kemp1992simple} is a file format that was designed for the archival and exchange of \acrshort{eeg} recordings \cite{kemp2013european} and was the format of the \acrshort{chb} \acrshort{eeg} dataset. \acrshort{edf} files contain raw \acrshort{eeg} signals plotted against a time axis and contain metadata such as the name and recording frequency for each node. \ref{fig:eegPlot} shows an plot of raw \acrshort{eeg} data.
 
 \begin{figure}[H]
 \includegraphics[width=0.8\textwidth]{eeg_raw_continuous}
@@ -542,7 +540,7 @@ The \acrfull{edf} \cite{kemp1992simple} is a file format which was designed for 
 \label{fig:eegPlot}
 \end{figure}
 
-Each node's name describes it's position within the internationally accepted 10-20 system shown in \ref{fig:10-20}. The 10-20 system was popularized due to it's ability to cover all brain regions in an method proportional to the skull size and shape. This ensures that the inter-electrode spacing is equal, allowing for consistent measurements to be taken regardless of subject. \cite{morley201610}
+Each node's name describes its position within the internationally accepted 10-20 system shown in \ref{fig:10-20}. The 10-20 system was popularized due to its ability to cover all brain regions in a method proportional to the skull size and shape. This ensures that the inter-electrode spacing is equal, allowing for consistent measurements to be taken regardless of subject. \cite{morley201610}
 
 
 
@@ -554,11 +552,9 @@ Each node's name describes it's position within the internationally accepted 10-
 \end{figure}
 
 
+The \acrshort{chb} dataset also contained summary files (see \ref{lst:summary-file}). From these summary files an \acrfull{oop} representation of the dataset was created. This \acrshort{oop} representation was generated for every recording and shows which subject it belonged to, the name of each \acrshort{eeg} node within the recording, also representing each node's position in the 10-20 system, the recording frequency of the \acrshort{eeg}, and any seizure's start and end times contained within that recording. This \acrshort{oop} representation allowed for the labeling of the ictal, preictal, and interictal periods.
 
-
-The \acrshort{chb} dataset also contained summary files (see \ref{lst:summary-file}). From these summary files an \acrfull{oop} representation of the dataset was created. This \acrshort{oop} representation was generated for every recording and shows which subject it belonged too, the name of each \acrshort{eeg} node within the recording, also representing each node's position in the 10-20 system, the recording frequency of the \acrshort{eeg}, and any seizure's start and end times contained within that recording. This \acrshort{oop} representation allowed for the labelling of the ictal, preictal and interictal periods.
-
-For this project the \acrshort{eeg} signals were extracted and stored in an \acrshort{csv} file. This allowed for an more flexible configuration of tuning scenarios such as \acrshort{eeg} node combinations or subject specific tuning, further discussed in \ref{advancements}. Within the \acrshort{chb} \acrshort{eeg} dataset each \acrshort{eeg} configuration was not equal as some recordings contained nodes not present in other recordings. Due to this the common channels were extracted to allow for an fair comparison of the results. There were 17 channels with the names: FP1-F7, F7-T7,T7-P7, P7-O1, FP1-F3, F3-C3, C3-P3, P3-O1, FP2-F4, F4-C4, C4-P4, P4-O2, FP2-F8, F8-T8, P8-O2, FZ-CZ, CZ-PZ. An example of the extracted data can be seen at \ref{fig:rawData}. For each recording 3 \acrshort{csv} files were created, ``/ictal/master.csv'', ``/preictal/master.csv'' and ``/interictal/master.csv''. If a period appeared more than once in an single recording it was concatenated to it's corresponding ``master.csv'' file.
+For this project, the \acrshort{eeg} signals were extracted and stored in an \acrshort{csv} file. This allowed for a more flexible configuration of tuning scenarios such as \acrshort{eeg} node combinations or subject-specific tuning, further discussed in \ref{advancements}. Within the \acrshort{chb} \acrshort{eeg} dataset each \acrshort{eeg} configuration was not equal as some recordings contained nodes not present in other recordings. Due to this, the common channels were extracted to allow for a fair comparison of the results. There were 17 channels with the names: FP1-F7, F7-T7,T7-P7, P7-O1, FP1-F3, F3-C3, C3-P3, P3-O1, FP2-F4, F4-C4, C4-P4, P4-O2, FP2-F8, F8-T8, P8-O2, FZ-CZ, CZ-PZ. An example of the extracted data can be seen at \ref{fig:rawData}. For each recording 3 \acrshort{csv} files were created, ``/ictal/master.csv'', ``/preictal/master.csv'' and ``/interictal/master.csv''. If a period appeared more than once in a single recording it was concatenated to its corresponding ``master.csv'' file.
 
 
 \begin{figure}[H]
@@ -571,7 +567,7 @@ For this project the \acrshort{eeg} signals were extracted and stored in an \acr
 
 \subsubsection{\acrfull{stft}}
 
-\acrshort{stft} extraction is applied against  \acrshort{stft} is applied to the data collected from the \acrshort{eegs} to produce an spectrogram of length 30 seconds. These images contains only a single class and were the input into the \acrshort{cnn}. \acrshort{stft} can be expressed mathematically;\\ 
+\acrshort{stft} extraction is applied against \acrshort{stft} is applied to the data collected from the \acrshort{eegs} to produce an spectrogram of length 30 seconds. These images contain only a single class and were the input into the \acrshort{cnn}. \acrshort{stft} can be expressed mathematically;\\
 
 \begin{figure}[H]
 \[  \mathbf{STFT}\{x(t)\}(\tau,\omega) \equiv X(\tau, \omega) = \int_{-\infty}^{\infty} x(t) w(t-\tau) e^{-i \omega t} \, d t   \]
@@ -582,7 +578,7 @@ For this project the \acrshort{eeg} signals were extracted and stored in an \acr
 Where $w(\tau)$ is an window function and $x(t)$ is the input signal from the \acrshort{eegs}.\\
 
 
-This can also be explained as taking an Fourier transform of the \acrshort{eeg} signals after an window function has been applied, and then sliding an window across the result. The sliding window transforms the one-dimensional output from the Fourier transform into two-dimensional data allowing for visual analysis. 
+This can also be explained as taking a Fourier transform of the \acrshort{eeg} signals after a window function has been applied, and then sliding a window across the result. The sliding window transforms the one-dimensional output from the Fourier transform into two-dimensional data allowing for visual analysis.
 
 
 There are various parameters for an \acrshort{stft} transformation: 
@@ -614,7 +610,7 @@ See \ref{fig:stft2} for an Spectrogram produced with these parameters.
 
 \subsubsection{Notch Filter}
 
-``Power line interference may severely corrupt neural recordings at 50/60 Hz and harmonic frequencies. The interference is usually non-stationary and can vary in frequency, amplitude and phase.'' \cite{keshtkaran2014fast} This poses a large issue when training an \acrshort{ml} model against \acrshort{eeg} recordings as the interference may affect the model's ability to pick up on characteristics, or may mislead the model. 
+``Power line interference may severely corrupt neural recordings at 50/60 Hz and harmonic frequencies. The interference is usually non-stationary and can vary in frequency, amplitude, and phase.'' \cite{keshtkaran2014fast} This poses a large issue when training an \acrshort{ml} model against \acrshort{eeg} recordings as the interference may affect the model's ability to pick up on characteristics, or may mislead the model.
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{stft1}
@@ -623,12 +619,12 @@ See \ref{fig:stft2} for an Spectrogram produced with these parameters.
 \label{fig:stft1}
 \end{figure}
 
-\ref{fig:stft1} clearly shows power line interference with an horizontal bands around 60 Hz. \cite{keshtkaran2014fast} discusses the different methods for removing power line interference, although due to the objectives stated in \ref{objectives}, an compute-intensive method needed to be avoided to allow the project to meet the real-time requirement. Through analysis done by Keshtkaran et al. an notch filter is fairly computationally light, although it does however have drawbacks such as not entirely removing the interference \cite{keshtkaran2014fast}. An notch filter was therefore applied to the raw data during the application of the \acrshort{stft} function.
+\ref{fig:stft1} clearly shows power line interference with a horizontal band around 60 Hz. \cite{keshtkaran2014fast} discusses the different methods for removing power line interference, although due to the objectives stated in \ref{objectives}, a compute-intensive method needed to be avoided to allow the project to meet the real-time requirement. Through analysis done by Keshtkaran et al., a notch filter is fairly computationally light, although it does however have drawbacks such as not entirely removing the interference \cite{keshtkaran2014fast}. A notch filter was therefore applied to the raw data during the application of the \acrshort{stft} function.
 
 
 \subsubsection{Synthesize Data}\label{synthesize-data}
 
-Within the \acrshort{chb} dataset there was an class imbalance with the interictal period dwarfing all other classes for every subject. An visualization of the data can be see bellow in \ref{tab:class-size} which was generated from the extracted data. All subjects have very little data for the preictal and ictal classes, with most of them having under 30 seconds of recorded data. If an model was trained off synthesized data for these subjects, regardless of synthesization method, the results would be greatly misleading and the models would not work in an real-life application. Therefore it was decided that only subjects ``chb06'' and ``chb12'' will be utilized for the training and tuning of \acrshort{ml} models within this project. 
+Within the \acrshort{chb} dataset there was a class imbalance with the interictal period dwarfing all other classes for every subject. A visualization of the data can be seen bellow in \ref{tab:class-size} which was generated from the extracted data. All subjects have very little data for the preictal and ictal classes, with most of them having under 30 seconds of recorded data. If a model was trained off synthesized data for these subjects, regardless of the synthesization method, the results would be greatly misleading and the models would not work in a real-life application. Therefore it was decided that only subjects ``chb06'' and ``chb12'' will be utilized for the training and tuning of \acrshort{ml} models within this project.
 
 
 \begin{table}[H]
@@ -636,7 +632,7 @@ Within the \acrshort{chb} dataset there was an class imbalance with the interict
 \begin{center}
 \begin{tabular}{l|lll|lll|lll}
       & \multicolumn{3}{l|}{Recordings} & \multicolumn{3}{l|}{Line Count} & \multicolumn{3}{l}{Length (Seconds)} \\
-      & Ictal     & Pre     & Inter     & Ictal   & Pre     & Inter       & Ictal     & Pre       & Inter        \\ \hline
+      & Ictal     & Pre     & Inter     & Ictal   & Pre     & Inter       & Ictal     & Pre       & Inter        \\ 
 chb01 & 7         & 7       & 42        & 456     & 9334    & 37352484    & 1.78      & 36.46     & 145908.14    \\
 chb02 & 3         & 3       & 36        & 15      & 3118    & 32489237    & 0.059     & 12.18     & 126911.08    \\
 chb03 & 7         & 7       & 38        & 416     & 8201    & 35004081    & 1.625     & 32.04     & 136734.69    \\
@@ -667,10 +663,10 @@ chb23 & 3         & 3       & 9         & 12020   & 6111    & 24455749    & 46.9
 \end{table}
 
 
-An sliding window method was used to synthesize the data for subject ``chb06'' and ``chb12''. The sliding window method moves an window of 30s across the data at speed $x$. Variable speed allows for the generation of an specific number of windows, see \ref{fig:slidingWindow} for an diagram of this process. \ref{eq:window-size}, \ref{eq:step}, and \ref{eq:windows} were taken from the project's implementation and describe the algorithm used to synthesize the data. 
+A sliding window method was used to synthesize the data for subjects ``chb06'' and ``chb12''. The sliding window method moves a window of 30s across the data at speed $x$. Variable speed allows for the generation of a specific number of windows, see \ref{fig:slidingWindow} for a diagram of this process. \ref{eq:window-size}, \ref{eq:step}, and \ref{eq:windows} were taken from the project's implementation and describe the algorithm used to synthesize the data.
 
 \begin{figure}[H]
-\includegraphics[width=0.5\textwidth]{slidingWindow}
+\includegraphics[width=0.8\textwidth]{slidingWindow}
 \centering
 \caption{Sliding Window technique for synthesizing data spectrogram images}
 \label{fig:slidingWindow}
@@ -699,7 +695,7 @@ An sliding window method was used to synthesize the data for subject ``chb06'' a
 
 \paragraph{Overview}\mbox{}\\
 
-Due to the lack of suitable subjects discussed in \ref{synthesize-data} this project focused on tuning an \acrshort{cnn} and it's architecture. The number of convolutional blocks and dense layers, as well as the dense layer's complexity were setup as the model's architecture tuning variables, this is further disused in \ref{variables} along with the other variables used for tuning. The loss function and optimizer however were not changed between model iterations and were set to Categorical Cross-Entropy and the Adam Optimizer respectively. Categorical Cross Entropy \ref{eq:cat-ce} is a common loss function for multi class classification applications such as this project, therefore all models within this project utilized the same Categorical Cross Entropy function allowing for the comparison of the loss metrics.
+Due to the lack of suitable subjects discussed in \ref{synthesize-data} this project focused on tuning an \acrshort{cnn} and its architecture. The number of convolutional blocks and dense layers, as well as the dense layer's complexity, were setup as the model's architecture tuning variables, this is further disused in \ref{variables} along with the other variables used for tuning. The loss function and optimizer however were not changed between model iterations and were set to Categorical Cross-Entropy and the Adam Optimizer respectively. Categorical Cross Entropy \ref{eq:cat-ce} is a common loss function for multi-class classification applications such as this project, therefore all models within this project utilized the same Categorical Cross Entropy function allowing for the comparison of the loss metrics.
 
 \begin{figure}[H]
 \[ H(y, \hat{y}) = -\sum_{i} y_i \log(\hat{y}_i)  \]
@@ -707,8 +703,7 @@ Due to the lack of suitable subjects discussed in \ref{synthesize-data} this pro
 \label{eq:cat-ce}
 \end{figure}
 
-The Adam optimizer combines two different versions of stochastic gradient descent; Adaptive Gradient Algorithm and Root Mean Square Propagation. Both of these optimizer functions handle the learning rate for each node within an neural network allowing for more efficient training. The two functions manage the learning rates differently with Adaptive Gradient Algorithm being more applicable for natural language and computer vision problems, Root Mean Square Propagation however suites online learning and non-stationary problems \cite{brownlee2021adam}. Adam combines these two approaches, realizing the benefit of each of them and configures the learning rates accordingly. The performance of Adam when compared to other optimizer functions can be seen in \ref{fig:adam} \cite{brownlee2021adam}.
-
+The Adam optimizer combines two different versions of stochastic gradient descent; Adaptive Gradient Algorithm and Root Mean Square Propagation. Both of these optimizer functions handle the learning rate for each node within a neural network allowing for more efficient training. The two functions manage the learning rates differently with the Adaptive Gradient Algorithm being more applicable for natural language and computer vision problems, Root Mean Square Propagation however suites online learning and non-stationary problems \cite{brownlee2021adam}. Adam combines these two approaches, realizing the benefit of each of them, and configures the learning rates accordingly. The performance of Adam when compared to other optimizer functions can be seen in \ref{fig:adam} \cite{brownlee2021adam}.
 
 
 \begin{figure}[H]
@@ -719,13 +714,15 @@ The Adam optimizer combines two different versions of stochastic gradient descen
 \end{figure}
 
 
-With only a single machine and the time available specified in \ref{gantt}, applying \acrfull{loocv} for all architecture and variable configurations would of been impossible. Therefore an testing training split ratio needed to be decided on. The time costs of running testing, especially on complex \acrshort{cnn} models were high, consequently an large split for testing would be impractical as it would further drive up the training testing times. Due to the nature of the way the data was synthesized as well, an smaller testing split would be representative of all the available data for each class, this therefore lead the project to use an 80\% training and 20\% testing split. 
+With only a single machine and the time available specified in \ref{gantt}, applying \acrfull{loocv} for all architecture and variable configurations would have been impossible. Therefore a testing training split ratio needed to be decided on. The time costs of running testing, especially on complex \acrshort{cnn} models were high, consequently, a large split for testing would be impractical as it would further drive up the training testing times. Due to the nature of the way the data was synthesized as well, a smaller testing split would be representative of all the available data for each class, this therefore led the project to use an 80\% training and 20\% testing split. 
 
 \paragraph{Architecture}\mbox{}\\
 
-The \acrshort{cnn} was dynamically built in accordance to the current variable configuration. By default an single 2 dimensional convolutional block was included with an input shape of $(17\times3841\times2)$ such that the model would accept an 30 second \acrshort{stft} window. This convolutional block had 32 filters with an kernel size of $(3\times3\times3)$. The dynamic convolutional blocks were then built, increasing the number of filters following the formula $32 \times (2^i)$ where $i$ is the convolutional block index. Each convolutional block is followed by an batch normalization, and after all convolutional blocks an 2 dimensional Max Pooling layer with an pool size of $(2\times2)$ is applied, along with an Flatten layer preparing the data to be passed to the dense layers. 
 
-After the convolutional blocks and related layers have been added the dense layers are built. Again, an single dense layer is added by default which has an output shape of $(1, 3)$, preceding this dense layer is the dynamically generated dense layers. These layers have an set output shape specified in the architecture tuning variables. 
+The \acrshort{cnn} was dynamically built in accordance with the current variable configuration. By default, a single 2-dimensional convolutional block was included with an input shape of $(17\times3841\times2)$ such that the model would accept a 30-second \acrshort{stft} window. This convolutional block had 32 filters with a kernel size of $(3\times3\times3)$. The dynamic convolutional blocks were then built, increasing the number of filters following the formula $32 \times (2^i)$ where $i$ is the convolutional block index. Each convolutional block is followed by a batch normalization, and after all convolutional blocks, a 2 dimensional Max Pooling layer with a pool size of $(2\times2)$ is applied, along with a Flatten layer preparing the data to be passed to the dense layers.
+
+After the convolutional blocks and related layers have been added the dense layers are built. Again, a single dense layer is added by default which has an output shape of $(1, 3)$, preceding this dense layer is the dynamically generated dense layers. These layers have a set output shape specified in the architecture tuning variables.
+
 
 \begin{lstlisting}[style=pythonstyle, caption={Function which dynamically builds an \acrshort{cnn} model from the specified parameters. Logging has been removed.}, label={lst:compile-model}]
     def compile_model(self, num_conv_layers=4, num_dense_layers=4, dense_layer_size=64):
@@ -757,7 +754,7 @@ After the convolutional blocks and related layers have been added the dense laye
 
 \paragraph{Tuning Variables}\label{variables}
 
-\ref{tab:variables} shows the different variables and their possible values used for model tuning. An model was trained for possible configurations of these variables.
+\ref{tab:variables} shows the different variables and their possible values used for model tuning. A model was trained for possible configurations of these variables.
 
 \begin{table}[H]
 \centering
@@ -775,11 +772,11 @@ Batch Size           & 16    & 32    & 48
 \label{tab:variables}
 \end{table}
 
-The number of convolutional layers had to be limited; as the filter size increased exponentially with each layer an \acrfull{oom} error would occour when the filter size was too large. Therefore only 2 and 3 convolutional layers were tested. The number of epochs were also limited due to training time. With this configuration of tuning variables, 162 models were required to be trained.
+The number of convolutional layers had to be limited; as the filter size increased exponentially with each layer an \acrfull{oom} error would occur when the filter size was too large. Therefore only 2 and 3 convolutional layers were tested. The number of epochs was also limited due to training time. With this configuration of tuning variables, 162 models were required to be trained.
 
 \paragraph{Metrics}
 
-For each model an plain text file was created during it's tuning process. This plain text file recorded the start and end times of each process, including its model compiling, model training and model testing. The file also contained metrics such as the training and testing accuracy and loss, the final confusion matrix and the normalized confusion matrix. An classification report was also generated which calculated the precision, recall, F1-score and support for each class. The classification report also calculated the accuracy for the model. An example of this file can be seen in \ref{lst:tuning-metrics}. The results are available along with an discussion in \ref{results}.
+For each model, a plain text file was created during its tuning process. This plain text file recorded the start and end times of each process, including its model compiling, model training, and model testing. The file also contained metrics such as the training and testing accuracy and loss, the final confusion matrix, and the normalized confusion matrix. A classification report was also generated which calculated the precision, recall, F1 score, and support for each class. The classification report also calculated the accuracy of the model. An example of this file can be seen in \ref{lst:tuning-metrics}. The results are available along with a discussion in \ref{results}.
 
 \begin{lstlisting}[style=logstyle, caption={Logging file programmatically generated during the tuning process. Training accuracy and loss lines have been trimmed for readability.}, label={lst:tuning-metrics}]
        ---------------------------------------------
@@ -836,7 +833,7 @@ weighted avg       1.00      1.00      1.00      4800
 
 \subsubsection{Real Time Simulation}
 
-An real-time simulation was built to show the potential of the preprocessing and prediction pipeline, proving it's ability to output an prediction from raw \acrshort{eeg} data each second. The real-time solution was built with ``NiceGui.py'' and the solution to setup model tuning was adapted to work in this new environment, implementing each step as defined above. The NiceGui solution has an hard-coded path to an saved keras model. This model is loaded before the simulation begins and is used to run the predictions. \ref{fig:real-time} contains an image of the real-time simulation. 
+A real-time simulation was built to show the potential of the preprocessing and prediction pipeline, proving its ability to output a prediction from raw \acrshort{eeg} data each second. The real-time solution was built with ``NiceGui.py'' and the solution to setup model tuning was adapted to work in this new environment, implementing each step as defined above. The NiceGui solution has a hard-coded path to a saved Keras model. This model is loaded before the simulation begins and is used to run the predictions. \ref{fig:real-time} contains an image of the real-time simulation.
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{real-time}
@@ -845,21 +842,19 @@ An real-time simulation was built to show the potential of the preprocessing and
 \label{fig:real-time}
 \end{figure}
 
-Within the simulation you can toggle which class the \acrshort{eeg} data is being pulled from, this then replaces the last 30 seconds of streamed data with data extracted from the newly selected class. This in turn refreshed the two plots on the webpage, with the left plot representing the signals from each \acrshort{eeg} node, and the right plot being the produced \acrshort{stft} window used for prediction. The predicted class then appears in the top right, and the accuracy bar, representing the accuracy as a percentage is updated. 
-
+Within the simulation you can toggle which class the \acrshort{eeg} data is being pulled from, this then replaces the last 30 seconds of streamed data with data extracted from the newly selected class. This, in turn, refreshed the two plots on the webpage, with the left plot representing the signals from each \acrshort{eeg} node, and the right plot being the produced \acrshort{stft} window used for prediction. The predicted class then appears in the top right, and the accuracy bar, representing the accuracy as a percentage is updated.
 
 
 \subsection{Problems Encountered}\label{issues}
 
 
-There have been many issues faced throughout the duration of this project. From the very start managing bodies of datasets would not respond, this impacted my decision making when selecting one of the datasets discussed in \ref{datasets}. Furthermore, once the \acrshort{chb} dataset was selected there were discrepancies within the summary files and the extracted data with channel names not matching. The \acrshort{chb} dataset also did not record the \acrshort{eeg} values in the same manner for all subjects, this lead to some data points from \acrshort{eeg} nodes to be discarded as those specific \acrshort{eeg} channels were not used for all subjects. On average this meant over 25\% of recorded data had to be removed. Of what was recorded, some subjects had very little data for certain classes with an overabundance of recorded interictal data. Having such little data for certain classes decreases the confidence of the synthesized data, as even though enough data points are available, the synthesized data may not be representative of an real-life situation. 
+There have been many issues faced throughout this project. From the very start managing bodies of datasets would not respond, this impacted my decision-making when selecting one of the datasets discussed in \ref{datasets}. Furthermore, once the \acrshort{chb} dataset was selected there were discrepancies within the summary files, and the extracted data with channel names not matching. The \acrshort{chb} dataset also did not record the \acrshort{eeg} values in the same manner for all subjects, this led to some data points from \acrshort{eeg} nodes to be discarded as those specific \acrshort{eeg} channels were not used for all subjects. On average this meant over 25\% of recorded data had to be removed. Of what was recorded, some subjects had very little data for certain classes with an overabundance of recorded interictal data. Having such little data for certain classes decreases the confidence of the synthesized data, as even though enough data points are available, the synthesized data may not be representative of a real-life situation.
 
-This project's approach changed substantially across its development. Originally development attempted to extract numeric and statistical features for each recorded point, more akin to traditional \acrshort{ann} methodologies, however this approach was abandoned as it would not of been able to meet the real-time objective of this project. 
+This project's approach changed substantially across its development. Originally development attempted to extract numeric and statistical features for each recorded point, more akin to traditional \acrshort{ann} methodologies, however, this approach was abandoned as it would not have been able to meet the real-time objective of this project.
 
-Tuning the models raised more problems than anything else in this project, with \acrshort{oom} issues being an common problem occurring throughout the model tuning process and the development of the real-time simulation. All code affected with \acrshort{oom} problems had to be carefully re-written to remove any memory leaks as well as implementing generator functions which for example would open the dataset paths used for training only when required. Some \acrshort{oom} errors were not avoidable however. Certain model architecture configurations would lead to memory errors with convolutional block complexity growing exponentially only an maximum of 3 convolutional blocks were able to be used. Dense layer count and complexity on top also added to the problem. 
+Tuning the models raised more problems than anything else in this project, with \acrshort{oom} issues being a common problem occurring throughout the model tuning process and the development of the real-time simulation. All code affected with \acrshort{oom} problems had to be carefully re-written to remove any memory leaks as well as implementing generator functions which for example would open the dataset paths used for training only when required. Some \acrshort{oom} errors were not avoidable, however. Certain model architecture configurations would lead to memory errors with convolutional block complexity growing exponentially only a maximum of 3 convolutional blocks were able to be used. Dense layer count and complexity on top also added to the problem.
 
-There were also many failed attempts at tuning the models. An re-occurring error was missing data points or even classes when tuning, this lead to many trained models being invalid as they would only predict 2, or even 1 class due to it's training data. Even when tuning was seemingly working this issue would appear with no exceptions being raised or problems being apparent. Over 250 trained models have been discarded due to this problem alone, this has drastically reduced the results avaliable for discussion. 
-
+There were also many failed attempts at tuning the models. A re-occurring error was missing data points or even classes when tuning, this led to many trained models being invalid as they would only predict 2, or even 1 class due to its training data. Even when tuning was seemingly working this issue would appear with no exceptions being raised or problems being apparent. Over 250 trained models \ref{lst:model-list} have been discarded due to this problem alone, this has drastically reduced the results available for discussion.
 
 \section{Review}
 
@@ -896,7 +891,7 @@ Index & Requirements                                                            
 \label{tab:requirements-review}
 \end{table}
 
-The above tables correspond to the items in \ref{requirements} and \ref{objectives}. Upon review, even with the tuning issues discussed in \ref{issues}, this project was able to achieve all of it's objectives and requirements. 
+The above tables correspond to the items in \ref{requirements} and \ref{objectives}. Upon review, even with the tuning issues discussed in \ref{issues}, this project was able to achieve all of its objectives and requirements.
 
 \subsection{Results}\label{results}
 
@@ -905,7 +900,36 @@ The above tables correspond to the items in \ref{requirements} and \ref{objectiv
 
 \subsection{Future Advancements}
 
-The risks proposed are for a final seizure detection product which is available to consumers and healthcare services. The current scope of the project does not contain the risks stated in the following sections and therefore the development goals of the project have not been changed to negate any of these risks.
+
+\subsubsection{Generic Model}
+
+All models have been trained against a single subject's data, this has allowed the \acrshort{cnn} to pick up on their own characteristics for each class. Moving forward, a generic model for all subjects should be trained and evaluated against a single-subject model. Through this evaluation, a definitive answer can be found, pointing towards either a generic model having the same capabilities as a single-subject model or if a model for this application would have to be developed on a per-subject basis.
+
+\subsubsection{\acrshort{eeg} node configuration}
+
+The current model utilizes 17 \acrshort{eeg} nodes which are all positioned on the subject's cranium. In a real-life application reducing the number of \acrshort{eeg} nodes will drastically increase the convenience of having an \acrshort{eeg} based prediction device. Therefore a tuning process, where models are developed with different configurations for all possible \acrshort{eeg} node combinations will need to be developed. Reducing the number of \acrshort{eeg} nodes will also decrease the price of a prediction system along with the chance of a node, and therefore the device failing.
+
+\subsubsection{\acrshort{stft} parameters}
+
+\acrshort{stft} has 2 variables, being the window size and the time step. The window size affects the time and frequency resolution of the final image see \ref{fig:stft2}. The time step defines the distance between two successive windows. Both of these variables should be tuned as a balance of the time and frequency resolution needs to be found to produce optimal results. This will be a lengthy process as different \acrshort{cnn} convolutional block configurations will need to be tested for each \acrshort{stft} parameter combination.
+
+
+
+\subsubsection{Model Architecture}
+
+This project attempts to find the optimal \acrshort{cnn} architecture, although due to issues discussed in \ref{issues} not all model architectures were tested. Therefore an approach that tunes the architecture would be beneficial as it may show that a less complex model will have the ability to produce just as successful metrics. Simplifying the model will allow it to run on a small or embedded device, perfect for a prediction system.
+
+
+\subsubsection{Prediction System}
+
+A prediction system prototype should be created to allow for real-life trials. OpenBCI is a company that produces \acrshort{eeg} devices that can stream data in real-time to a machine. OpenBCI advertises \acrshort{eeg} nodes, microcontrollers, and 3D printed models which hold the components on their website. OpenBCI has also made the STL files for their 3D models accessible through their GitHub \url{https://github.com/OpenBCI/Ultracortex/tree/master/Mark_IV}. Using these materials along with either their microcontroller or a custom one running off open source software such as \url{https://github.com/Pi-EEG/EEGwithRaspberryPI} should allow for an easy platform to create such a prediction device.
+
+
+\subsubsection{Online Learning}
+
+
+Due to a lack of datasets for this application, converting the model's training strategy to online learning, along with collecting data in real-time through the prediction system discussed above, will allow for a model to continuously refine itself, picking up on characteristics for that specific subject. This approach, if successful should allow for the highest confidence, with minimal false positives alleviating unneeded stress for the user.
+
 
 \section{Professional Issues and Risks}
 
@@ -914,28 +938,28 @@ The risks proposed are for a final seizure detection product which is available 
 \begin{enumerate}
     \item Legal Issues:
     \begin{itemize}
-        \item If the project was to be implemented into an seizure prediction system then GDPR legislation will have to be upheld; if the model is utilizing online learning then the data being stored will not be anonymous, meaning the data will have to be deleted when required and avaliable to send to the user on their request. If the data however was truly anonymous, akin to the \acrshort{chb} dataset used in this project, then the data does not fall under GDPR.
-        Another legal issue could arise if an seizure was not predicted correctly leading to an user suing the company producing the prediction system. This could be solved through an agreement which the end user has to accept, stating the producers of the product, including the developers are not liable.
+        \item If the project was to be implemented into a seizure prediction system then GDPR legislation would have to be upheld; if the model is utilizing online learning then the data being stored will not be anonymous, meaning the data will have to be deleted when required and available to send to the user on their request. If the data however was truly anonymous, akin to the \acrshort{chb} dataset used in this project, then the data does not fall under GDPR.
+Another legal issue could arise if a seizure was not predicted correctly leading to a user suing the company producing the prediction system. This could be solved through an agreement that the end user has to accept, stating the producers of the product, including the developers are not liable.
     \end{itemize}
     \item Social Issues:
     \begin{itemize}
-    	 \item People from all walks of life have epilepsy, and due to financial costs some may not be able to afford the prediction system. This will be an issue that may not be solvable by the producers of the software, and instead may need to rely on funding such as an governmental body, healthcare service or charity. The producers can make the software open source allowing for users to fit it onto their own hardware, although that will take time, money, and knowledge for the individual to setup an equivalent system. 
+    	 \item People from all walks of life have epilepsy, and due to financial costs, some may not be able to afford the prediction system. This will be an issue that may not be solvable by the producers of the software and instead may need to rely on funding such as a governmental body, healthcare service, or charity. The producers can make the software open source allowing users to fit it onto their own hardware, although that will take time, money, and knowledge for the individual to set up an equivalent system.
     \end{itemize}
         \item Ethical Issues:
     \begin{itemize}
-    	 \item The final product should attempt to achieve the same accuracy regardless of age or gender, although due to the differences in the way each persons brain functions and it's characteristics, this may be a difficult task to achieve. In an ideal world either an generic model would exist, or models would be trained off datasets specific to age or gender allowing for common characteristics between individuals in those groups to be picked up on, however there is an significant lack of data currently available make this unfeasible. 
+    	 \item The final product should attempt to achieve the same accuracy regardless of age or gender, although due to the differences in the way each person's brain functions and its characteristics, this may be a difficult task to achieve. In an ideal world either a generic model would exist, or models would be trained off datasets specific to age or gender allowing for common characteristics between individuals in those groups to be picked up on, however, there is a significant lack of data currently available making this unfeasible.
     \end{itemize}
         \item Environmental Issues:
     \begin{itemize}
-    	 \item EEG nodes are comparatively inexpensive to their possible benefits, due to the low price of EEG nodes the creation of an prediction device won't have a large material cost. The \acrshort{ml} model tuning process however will have a large energy cost. This will need to be taken into account when setting up an system that tunes models at an industry scale. Steps will have to be taken to minimise the energy consumption of the system.  
+    	 \item EEG nodes are comparatively inexpensive to their possible benefits, due to the low price of EEG nodes the creation of a prediction device won't have a large material cost. The \acrshort{ml} model tuning process however will have a large energy cost. This will need to be taken into account when setting up a system that tunes models at an industry scale. Steps will have to be taken to minimize the energy consumption of the system.
     \end{itemize}
             \item Intellectual Property Issues:
     \begin{itemize}
-    	 \item There will be an issue when deciding who owns the recorded data. If the company who produces the final product owns it then they can utilize the large amount of data to further refine and train more advanced models, allowing them to tackle other issues such as the ones discussed in ``Social Issues'', although this should be a choice for the end user. Another issue may be patenting the product and which components should or can be patented or copyrighted.  
+    	 \item There will be an issue when deciding who owns the recorded data. If the company that produces the final product owns it then they can utilize the large amount of data to further refine and train more advanced models, allowing them to tackle other issues such as the ones discussed in ``Social Issues'', although this should be a choice for the end user. Another issue may be patenting the product and which components should or can be patented or copyrighted.
     \end{itemize}
         \item Accessibility Issues:
     \begin{itemize}
-    	 \item As discussed epileptic patients come from all walks of life which means the final device needs to have an accessible interface, allowing everyone to have a clear indication of the state of the device, including the preictal period alert or even if the device is on. Different people will need different alert methods, and the final device should be extensible, allowing the final patient to fit it to their disability. Some variants of the device should have any combination of light, sound and vibration alerts, as well as notifications to any of their other devices. This will allow anyone, regardless of disability to be alerted if an preictal period has been detected. 
+    	 \item As discussed epileptic patients come from all walks of life which means the final device needs to have an accessible interface, allowing everyone to have a clear indication of the state of the device, including the preictal period alert or even if the device is on. Different people will need different alert methods, and the final device should be extensible, allowing the final patient to fit it to their disability. Some variants of the device should have any combination of light, sound, and vibration alerts, as well as notifications to any of their other devices. This will allow anyone, regardless of disability to be alerted if a preictal period has been detected.
     \end{itemize}
 \end{enumerate}
 
@@ -966,33 +990,50 @@ Rare                          & \multicolumn{1}{l|}{\cellcolor[HTML]{67FD9A}} & 
 
 
 
-\begin{table}[H]
-\centering
-\begin{tabular}{p{0.03\linewidth}p{0.3\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
-No. & Risk                                              & Impact                                                                                                                                                   & Mitigation Strategy                                                                                                                           \\
-1 & Personal data could be leaked through an attack   & Fail to adhere to GDPR. Criminal Offence                                                                                                                 & Implement encryption for data as well as increasing security measures                                                                          \\
-2 & Personal data is leaked by unauthorized employee  & Fail to adhere to GDPR. Criminal Offence                                                                                                                 & Tighten access controls. Educate employees about password and general security                                                                 \\
-3 & Personal data is leaked by an authorized employee & Fail to adhere to GDPR. Criminal Offence                                                                                                                 & Employ education techniques stating the importance of adhering to GDPR as well as minimizing access to sensitive data.                        \\
-4 & False Negatives for the individual                                   & End users will be unprepared for their seizures and may be caught in an unfavourable situation depending on reliance on the final product.               & Implement cross validation techniques. Request all missed seizures to be logged or automatically detected for further training and inspection. \\
-5 & False Positives for the individual                                  & A patient may experience un-needed stress or stop important activities due to false positives. Could have measurable knock on effects for an individual. & False positives should be recorded which will allow for further development of the model.                                                      \\
+%\begin{table}[H]
+%\centering
+%\begin{tabular}{p{0.03\linewidth}p{0.3\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
+\begin{longtable}{p{0.03\linewidth}p{0.3\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
+No. & Risk                                              & Impact                                                      & Mitigation Strategy                                          \\
+1 & Personal data could be leaked through an attack   & Fail to adhere to GDPR. Criminal Offence & Implement encryption for data as well as increasing security measures \\
+2 & Personal data is leaked by unauthorized employee  & Fail to adhere to GDPR. Criminal Offence& Tighten access controls. Educate employees about password and general security\\
+3 & Personal data is leaked by an authorized employee & Fail to adhere to GDPR. Criminal Offence& Employ education techniques stating the importance of adhering to GDPR as well as minimizing access to sensitive data.\\
+4 & False Negatives for the individual& End users will be unprepared for their seizures and may be caught in an unfavourable situation depending on reliance on the final product.& Implement cross validation techniques. Request all missed seizures to be logged or automatically detected for further training and inspection. \\
+5 & False Positives for the individual& A patient may experience un-needed stress or stop important activities due to false positives. Could have measurable knock on effects for an individual. & False positives should be recorded which will allow for further development of the model.\\
 6 & False Negatives in a healthcare environment & Staff may not be prepared for an seizure, increasing reaction times & See ``False Negatives for the individual''\\
-7 & False Positives in a healthcare environment & Staff may waste time preparing for a seizure which never occours, where their help may be needed elsewhere & See ``False Positives for the individual'' 
-\end{tabular}
+7 & False Positives in a healthcare environment & Staff may waste time preparing for a seizure which never occours, where their help may be needed elsewhere & See ``False Positives for the individual'' \\
+%\end{tabular}
 \caption{Risk Assessment}
 \label{tab:risk-assessment}
-\end{table}
+%\end{table}
+\end{longtable}
 
 
 
 \section{Conclusion}
 
-asdf
+\subsection{Objective Review}
 
 
-\section{Final Thoughts}
+\begin{enumerate}
+\item \textit{Research and find a suitable dataset allowing for the classification of the interictal, preictal, and ictal periods.} - Two literature reviews were undergone, evaluating 10 possible datasets; outlining where the \acrshort{eeg} nodes were positioned, their placement method, the recording style (continuous or non-continuous), their application, and even their subject type with some datasets evaluated containing canine subjects. This literature review allowed for the \acrshort{chb} dataset to be selected due to its appropriate node placement, recording style, and human-only subjects.
+	
+	
+\item \textit{Research and find an suitable \acrshort{ml} model approach.} - The second literature review successfully researched different preprocessing pipelines along with \acrshort{ml} models, this literature review was crucial in giving an insight into different approaches and which one would fit into a real-time application. Without these two literature reviews the project would have met serious issues when attempting to meet the accuracy and real-time requirements of this project.
+	
+	
+\item \textit{Create a data preparation and preprocessing pipeline that extracts the dataset into an \acrshort{ml} format suitable for training and testing. } - The pipeline was successfully implemented by using an \acrshort{stft} function along with a notch filter to remove interference. This approach was influenced by the \acrshort{ml} model literature review. This pipeline was chosen as the number of extracted features, steps, and compute-heavy functions was low, giving it the best chance to meet the real-time requirement. The \acrshort{stft} window exceeded expectations and fully meets this requirement, allowing for effective, but fast preprocessing.
+        
+        
+\item \textit{Undergo parameter tuning and model architecture tuning of the selected \acrshort{ml} model approach.} - For tuning \acrshort{ml} models the classes had to be balanced. The chosen approach was to synthesize data by using a sliding window technique, this was used to generate windows until all 3 classes had an equal number of data points. Once the data has been synthesized the pre-processing pipeline was then applied, generating thousands of spectrogram images. Through the use of ``sklearn'', ``Tensorflow'', and ``Keras'' these spectrograms could then be loaded and used for tuning, testing or running a real-time simulation. The tuning process however was slightly buggy, and with more time available this hopefully would of been resolved allowing for a greater number of models to be trained and evaluated. Nevertheless, the results obtained through the tuning process also exceeded my expectations with testing results being near perfect for all tuned models.
+        
+        
+\item \textit{Produce a simulation interface which streams \acrshort{eeg} data in real-time through the preprocessing pipeline and into the optimal model. The simulation should show the current classification to the user every second.} - The developed simulation proves the pipeline's ability to run in real-time which confirms that the project has met the real-time requirement. The simulation streams 17x256 data points each second for the currently selected class and produces a prediction using a trained model. In the future, this simulation can be easily modified to accept real recorded data from a physical \acrshort{eeg} setup. This is discussed in \ref{future-advancements}. At the beginning of this project, this integration was going to be incorporated into the requirements, however after evaluating the time given it was dropped.
+\end{enumerate}
 
+\subsection{Final Thoughts}
 
-
+This project has successfully achieved all requirements and objectives, producing the groundwork for a successful seizure prediction system. It's proved that the technology has the ability to accurately classify seizure periods, and predict seizures up to 20 minutes before they begin. If a detection system was to be developed it would alleviate large amounts of stress in the day-to-day lives of epileptic patients, something which would be invaluable for them. Even with this groundwork, there are still a lot of developments that can be done, however even with the state of the current project, if a prediction system was to be based on this paper it would be able to exceed expectations and even change the way people go about their day to day lives.
 
 \pagebreak
 \section{Bibliography}
@@ -1001,6 +1042,16 @@ asdf
 \pagebreak
 
 \appendix
+
+\section{Links}
+
+\subsection{GitHub}
+
+\url{https://github.com/N3utra1/COMP6013_Dissertation}
+
+\subsection{Video Demonstration}
+
+\url{https://drive.google.com/file/d/1VGSPdRVlAAZp02pIs3qw4FANiYk2peBG/view?usp=sharing}
 
 
 \section{Results}
@@ -1011,30 +1062,32 @@ Model key: [convolution block count].[dense layer count].[dense layer size]/[bat
 
 \subsection{Tables}
 
+
 \begin{table}[H]
 \centering
 \begin{tabular}{llll}
-Model & Compiling & Saving & Testing \\
-  2.4.128/16.1    &      0:00:00.166984       &     0:00:13.026372       &     0:02:29.318160        \\
-  2.4.128/16.32    &      0:00:00.180040       &     0:00:11.992944       &     0:02:36.181157        \\
-  2.4.128/16.8    &      0:00:00.183991       &     0:00:12.106965       &     0:02:28.278624        \\
-  2.4.128/32.1    &      0:00:00.177680       &     0:00:11.880910       &     0:02:58.134548        \\
-  2.4.128/32.32    &      0:00:00.178231       &     0:00:11.794346       &     0:03:17.328904        \\
-  2.4.128/32.8    &      0:00:00.166262       &     0:00:12.443413       &     0:02:50.145996        \\
-  2.4.128/48.1    &      0:00:00.169285       &     0:00:14.551886       &     0:02:57.700320        \\
-  2.4.128/48.8    &      0:00:00.182113       &     0:00:11.717746       &     0:02:31.724462        \\
-  2.4.64/16.1    &      0:00:00.186607       &     0:00:05.879324       &     0:02:20.833553        \\
-  2.4.64/16.32    &      0:00:00.167169       &     0:00:05.977051       &     0:02:40.019918        \\
-  2.4.64/16.8    &      0:00:00.166427       &     0:00:06.424271       &     0:02:55.648672        \\
-  2.4.64/32.1    &      0:00:00.162784       &     0:00:05.895562       &     0:02:30.918573        \\
-  2.4.64/32.32    &      0:00:00.173991       &     0:00:05.902261       &     0:03:07.540450        \\
-  2.4.64/32.8    &      0:00:00.164715       &     0:00:05.895772       &     0:02:32.670039        \\
-  2.4.64/48.1    &      0:00:00.161886       &     0:00:05.935214       &     0:02:59.123882        \\
-  2.4.64/48.32    &      0:00:00.168396       &     0:00:05.906412       &     0:02:40.036783        \\
-  2.4.64/48.8    &      0:00:00.160545       &     0:00:05.846560       &     0:02:46.982105        \\
+Model & Training & Testing & Total \\
+  2.4.128/16.1    &      0:09:34.252395       &     0:02:29.318160       &     0:12:16.936242        \\
+  2.4.128/16.32    &      4:55:14.648736       &     0:02:36.181157       &     4:58:03.207583        \\
+  2.4.128/16.8    &      1:13:53.250455       &     0:02:28.278624       &     1:16:34.098996        \\
+  2.4.128/32.1    &      0:10:16.908274       &     0:02:58.134548       &     0:13:27.358200        \\
+  2.4.128/32.32    &      4:59:13.034787       &     0:03:17.328904       &     5:02:42.546522        \\
+  2.4.128/32.8    &      1:21:12.806743       &     0:02:50.145996       &     1:24:15.803703        \\
+  2.4.128/48.1    &      0:10:53.791005       &     0:02:57.700320       &     0:14:06.449949        \\
+  2.4.128/48.32    &      5:04:12.389344       &     0:02:40.036783       &     5:06:58.710978        \\
+  2.4.128/48.8    &      1:21:59.435414       &     0:02:31.724462       &     1:24:43.405594        \\
+  2.4.64/16.1    &      0:09:16.671517       &     0:02:20.833553       &     0:11:43.794613        \\
+  2.4.64/16.32    &      4:49:23.103991       &     0:02:40.019918       &     4:52:09.480089        \\
+  2.4.64/16.8    &      1:18:51.356595       &     0:02:55.648672       &     1:21:53.885149        \\
+  2.4.64/32.1    &      0:09:53.286427       &     0:02:30.918573       &     0:12:30.448678        \\
+  2.4.64/32.32    &      5:01:06.399645       &     0:03:07.540450       &     5:04:20.224694        \\
+  2.4.64/32.8    &      1:21:48.011924       &     0:02:32.670039       &     1:24:27.044614        \\
+  2.4.64/48.1    &      0:09:58.299346       &     0:02:59.123882       &     0:13:03.698828        \\
+  2.4.64/48.32    &      5:04:12.389344       &     0:02:40.036783       &     5:06:58.710978        \\
+  2.4.64/48.8    &      1:20:23.212631       &     0:02:46.982105       &     1:23:16.378890        \\
 \end{tabular}
 \caption{Time duration metrics for each model in format \%H:\%M:\%S.\%f.}
-\label{tab:times}
+\label{tab:my-table}
 \end{table}
 
 
@@ -1308,9 +1361,293 @@ Model & Interictal & Preictal & Ictal & Macro Average & Weighted Average \\
 
 \subsection{Plots}
 
+\subsubsection{Timings}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{timings}
+\centering
+\caption{Recorded time metrics.}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\subsubsection{Training Loss}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_training_loss_2.4.64}
+\centering
+\caption{Heatmap of loss during training for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_training_loss_2.4.128}
+\centering
+\caption{Heatmap of loss during training for models with architecture 2.4.128}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\subsubsection{Training Accuracy}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_training_accuracy_2.4.64}
+\centering
+\caption{Heatmap of accuracy during training for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_training_accuracy_2.4.128}
+\centering
+\caption{Heatmap of accuracy during training for models with architecture 2.4.128}
+\label{fig:time-metrics}
+\end{figure}
 
 
 
+\subsubsection{Testing Accuracy}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_testing_accuracy_2.4.64}
+\centering
+\caption{Heatmap of accuracy during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_testing_accuracy_2.4.128}
+\centering
+\caption{Heatmap of accuracy during testing for models with architecture 2.4.128}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\subsubsection{Testing Recall}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_ictal_2.4.64}
+\centering
+\caption{Heatmap of recall for ictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_preictal_2.4.64}
+\centering
+\caption{Heatmap of recall for preictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_interictal_2.4.64}
+\centering
+\caption{Heatmap of recall for interictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_weighted_average_2.4.64}
+\centering
+\caption{Heatmap of recall (weighted average) during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_macro_average_2.4.64}
+\centering
+\caption{Heatmap of recall (macro average) during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_ictal_2.4.128}
+\centering
+\caption{Heatmap of recall for ictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_preictal_2.4.128}
+\centering
+\caption{Heatmap of recall for preictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_interictal_2.4.128}
+\centering
+\caption{Heatmap of recall for interictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_weighted_average_2.4.128}
+\centering
+\caption{Heatmap of recall (weighted average) during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_recall_macro_average_2.4.128}
+\centering
+\caption{Heatmap of recall (macro average) during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\subsubsection{Testing F1}
+
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_ictal_2.4.64}
+\centering
+\caption{Heatmap of F1 for ictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_preictal_2.4.64}
+\centering
+\caption{Heatmap of F1 for preictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_interictal_2.4.64}
+\centering
+\caption{Heatmap of F1 for interictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_weighted_average_2.4.64}
+\centering
+\caption{Heatmap of F1 (weighted average) during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_macro_average_2.4.64}
+\centering
+\caption{Heatmap of F1 (macro average) during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_ictal_2.4.128}
+\centering
+\caption{Heatmap of F1 for ictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_preictal_2.4.128}
+\centering
+\caption{Heatmap of F1 for preictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_interictal_2.4.128}
+\centering
+\caption{Heatmap of F1 for interictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_weighted_average_2.4.128}
+\centering
+\caption{Heatmap of F1 (weighted average) during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_f1_macro_average_2.4.128}
+\centering
+\caption{Heatmap of F1 (macro average) during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+
+
+\subsubsection{Testing Precision}
+
+
+
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_ictal_2.4.64}
+\centering
+\caption{Heatmap of precision for ictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_preictal_2.4.64}
+\centering
+\caption{Heatmap of precision for preictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_interictal_2.4.64}
+\centering
+\caption{Heatmap of recall for interictal class during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_weighted_average_2.4.64}
+\centering
+\caption{Heatmap of precision (weighted average) during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_macro_average_2.4.64}
+\centering
+\caption{Heatmap of precision (macro average) during testing for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_ictal_2.4.128}
+\centering
+\caption{Heatmap of precision for ictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_preictal_2.4.128}
+\centering
+\caption{Heatmap of precision for preictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_interictal_2.4.128}
+\centering
+\caption{Heatmap of precision for interictal class during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_weighted_average_2.4.128}
+\centering
+\caption{Heatmap of precision (weighted average) during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{heatmap_precision_macro_average_2.4.128}
+\centering
+\caption{Heatmap of precision (macro average) during testing for models with architecture 2.4.128.}
+\label{fig:time-metrics}
+\end{figure}
 
 
 
@@ -1425,8 +1762,289 @@ Seizure 1 End Time: 9403 seconds
 \end{figure}
 
 
+\begin{lstlisting}[style=logstyle, caption={List of failed trained models. See \ref{issues}}, label={lst:model-list}]
+/data/results-archive/2.4.128/16.1.keras
+/data/results-archive/2.4.128/16.32.keras
+/data/results-archive/2.4.128/16.8.keras
+/data/results-archive/2.4.128/32.1.keras
+/data/results-archive/2.4.128/32.32.keras
+/data/results-archive/2.4.128/32.8.keras
+/data/results-archive/2.4.128/48.1.keras
+/data/results-archive/2.4.128/48.8.keras
+/data/results-archive/2.4.256/16.1.keras
+/data/results-archive/2.4.256/16.32.keras
+/data/results-archive/2.4.256/16.8.keras
+/data/results-archive/2.4.256/32.1.keras
+/data/results-archive/2.4.256/32.32.keras
+/data/results-archive/2.4.256/32.8.keras
+/data/results-archive/2.4.256/48.1.keras
+/data/results-archive/2.4.256/48.32.keras
+/data/results-archive/2.4.256/48.8.keras
+/data/results-archive/2.4.64/16.1.keras
+/data/results-archive/2.4.64/16.32.keras
+/data/results-archive/2.4.64/16.8.keras
+/data/results-archive/2.4.64/32.1.keras
+/data/results-archive/2.4.64/32.32.keras
+/data/results-archive/2.4.64/32.8.keras
+/data/results-archive/2.4.64/48.1.keras
+/data/results-archive/2.4.64/48.32.keras
+/data/results-archive/2.4.64/48.8.keras
+/data/results-archive/2.8.64/16.1.keras
+/data/results-archive/2.8.64/16.32.keras
+/data/results-archive/2.8.64/16.8.keras
+/data/results-archive/2.8.64/32.1.keras
+/data/results-archive/2.8.64/32.32.keras
+/data/results-archive/2.8.64/32.8.keras
+/data/results-archive/2.8.64/48.1.keras
+/data/results-archive/2.8.64/48.8.keras
+/data/results-archive/48.32.keras
+/data/results-archive/ictal-only-prediction/2.12.128/16.1.keras
+/data/results-archive/ictal-only-prediction/2.12.128/16.8.keras
+/data/results-archive/ictal-only-prediction/2.12.128/32.1.keras
+/data/results-archive/ictal-only-prediction/2.12.128/32.8.keras
+/data/results-archive/ictal-only-prediction/2.12.256/16.1.keras
+/data/results-archive/ictal-only-prediction/2.12.256/16.8.keras
+/data/results-archive/ictal-only-prediction/2.12.256/32.1.keras
+/data/results-archive/ictal-only-prediction/2.12.256/32.8.keras
+/data/results-archive/ictal-only-prediction/2.12.64/16.1.keras
+/data/results-archive/ictal-only-prediction/2.12.64/16.8.keras
+/data/results-archive/ictal-only-prediction/2.12.64/32.1.keras
+/data/results-archive/ictal-only-prediction/2.12.64/32.8.keras
+/data/results-archive/ictal-only-prediction/2.4.128/16.1.keras
+/data/results-archive/ictal-only-prediction/2.4.128/16.8.keras
+/data/results-archive/ictal-only-prediction/2.4.128/32.1.keras
+/data/results-archive/ictal-only-prediction/2.4.128/32.8.keras
+/data/results-archive/ictal-only-prediction/2.4.256/16.1.keras
+/data/results-archive/ictal-only-prediction/2.4.256/16.8.keras
+/data/results-archive/ictal-only-prediction/2.4.256/32.1.keras
+/data/results-archive/ictal-only-prediction/2.4.256/32.8.keras
+/data/results-archive/ictal-only-prediction/2.4.64/16.1.keras
+/data/results-archive/ictal-only-prediction/2.4.64/16.8.keras
+/data/results-archive/ictal-only-prediction/2.4.64/32.1.keras
+/data/results-archive/ictal-only-prediction/2.4.64/32.8.keras
+/data/results-archive/ictal-only-prediction/2.8.128/16.1.keras
+/data/results-archive/ictal-only-prediction/2.8.128/16.8.keras
+/data/results-archive/ictal-only-prediction/2.8.128/32.1.keras
+/data/results-archive/ictal-only-prediction/2.8.128/32.8.keras
+/data/results-archive/ictal-only-prediction/2.8.256/16.1.keras
+/data/results-archive/ictal-only-prediction/2.8.256/16.8.keras
+/data/results-archive/ictal-only-prediction/2.8.256/32.1.keras
+/data/results-archive/ictal-only-prediction/2.8.256/32.8.keras
+/data/results-archive/ictal-only-prediction/2.8.64/16.1.keras
+/data/results-archive/ictal-only-prediction/2.8.64/16.8.keras
+/data/results-archive/ictal-only-prediction/2.8.64/32.1.keras
+/data/results-archive/ictal-only-prediction/2.8.64/32.8.keras
+/data/results-archive/imbalanced_training/2.4.64/16.1.keras
+/data/results-archive/imbalanced_training/2.4.64/16.8.keras
+/data/results-archive/imbalanced_training/2.4.64/32.1.keras
+/data/results-archive/imbalanced_training/2.4.64/32.8.keras
+/data/results-archive/imbalanced_training_2/2.12.128/16.1.keras
+/data/results-archive/imbalanced_training_2/2.12.128/16.8.keras
+/data/results-archive/imbalanced_training_2/2.12.128/32.1.keras
+/data/results-archive/imbalanced_training_2/2.12.128/32.8.keras
+/data/results-archive/imbalanced_training_2/2.12.256/16.1.keras
+/data/results-archive/imbalanced_training_2/2.12.256/16.8.keras
+/data/results-archive/imbalanced_training_2/2.12.256/32.1.keras
+/data/results-archive/imbalanced_training_2/2.12.256/32.8.keras
+/data/results-archive/imbalanced_training_2/2.12.64/16.1.keras
+/data/results-archive/imbalanced_training_2/2.12.64/16.8.keras
+/data/results-archive/imbalanced_training_2/2.12.64/32.1.keras
+/data/results-archive/imbalanced_training_2/2.12.64/32.8.keras
+/data/results-archive/imbalanced_training_2/2.4.128/16.1.keras
+/data/results-archive/imbalanced_training_2/2.4.128/16.8.keras
+/data/results-archive/imbalanced_training_2/2.4.128/32.1.keras
+/data/results-archive/imbalanced_training_2/2.4.128/32.8.keras
+/data/results-archive/imbalanced_training_2/2.4.256/16.1.keras
+/data/results-archive/imbalanced_training_2/2.4.256/16.8.keras
+/data/results-archive/imbalanced_training_2/2.4.256/32.1.keras
+/data/results-archive/imbalanced_training_2/2.4.256/32.8.keras
+/data/results-archive/imbalanced_training_2/2.4.64/16.1.keras
+/data/results-archive/imbalanced_training_2/2.4.64/16.8.keras
+/data/results-archive/imbalanced_training_2/2.4.64/32.1.keras
+/data/results-archive/imbalanced_training_2/2.4.64/32.8.keras
+/data/results-archive/imbalanced_training_2/2.8.128/16.1.keras
+/data/results-archive/imbalanced_training_2/2.8.128/16.8.keras
+/data/results-archive/imbalanced_training_2/2.8.128/32.1.keras
+/data/results-archive/imbalanced_training_2/2.8.128/32.8.keras
+/data/results-archive/imbalanced_training_2/2.8.256/16.1.keras
+/data/results-archive/imbalanced_training_2/2.8.256/16.8.keras
+/data/results-archive/imbalanced_training_2/2.8.256/32.1.keras
+/data/results-archive/imbalanced_training_2/2.8.256/32.8.keras
+/data/results-archive/imbalanced_training_2/2.8.64/16.1.keras
+/data/results-archive/imbalanced_training_2/2.8.64/16.8.keras
+/data/results-archive/imbalanced_training_2/2.8.64/32.1.keras
+/data/results-archive/imbalanced_training_2/2.8.64/32.8.keras
+/data/results-archive/results/2.4.64/16.1.keras
+/data/results-archive/results/2.4.64/16.8.keras
+/data/results-archive/results/2.4.64/32.1.keras
+/data/results-archive/results - Copy/2.4.64/32.1.keras
+/data/results-archive/results - Copy/4.4.64/32.4.keras
+/data/results-archive/training_data_broken/2.12.128/16.1.keras
+/data/results-archive/training_data_broken/2.12.128/16.32.keras
+/data/results-archive/training_data_broken/2.12.128/16.8.keras
+/data/results-archive/training_data_broken/2.12.128/32.1.keras
+/data/results-archive/training_data_broken/2.12.128/32.32.keras
+/data/results-archive/training_data_broken/2.12.128/32.8.keras
+/data/results-archive/training_data_broken/2.12.128/48.1.keras
+/data/results-archive/training_data_broken/2.12.128/48.32.keras
+/data/results-archive/training_data_broken/2.12.128/48.8.keras
+/data/results-archive/training_data_broken/2.12.256/16.1.keras
+/data/results-archive/training_data_broken/2.12.256/16.32.keras
+/data/results-archive/training_data_broken/2.12.256/16.8.keras
+/data/results-archive/training_data_broken/2.12.256/32.1.keras
+/data/results-archive/training_data_broken/2.12.256/32.32.keras
+/data/results-archive/training_data_broken/2.12.256/32.8.keras
+/data/results-archive/training_data_broken/2.12.256/48.1.keras
+/data/results-archive/training_data_broken/2.12.256/48.32.keras
+/data/results-archive/training_data_broken/2.12.256/48.8.keras
+/data/results-archive/training_data_broken/2.12.64/16.1.keras
+/data/results-archive/training_data_broken/2.12.64/16.32.keras
+/data/results-archive/training_data_broken/2.12.64/16.8.keras
+/data/results-archive/training_data_broken/2.12.64/32.1.keras
+/data/results-archive/training_data_broken/2.12.64/32.32.keras
+/data/results-archive/training_data_broken/2.12.64/32.8.keras
+/data/results-archive/training_data_broken/2.12.64/48.1.keras
+/data/results-archive/training_data_broken/2.12.64/48.32.keras
+/data/results-archive/training_data_broken/2.12.64/48.8.keras
+/data/results-archive/training_data_broken/2.4.256/16.1.keras
+/data/results-archive/training_data_broken/2.4.256/16.32.keras
+/data/results-archive/training_data_broken/2.4.256/16.8.keras
+/data/results-archive/training_data_broken/2.4.256/32.1.keras
+/data/results-archive/training_data_broken/2.4.256/32.32.keras
+/data/results-archive/training_data_broken/2.4.256/32.8.keras
+/data/results-archive/training_data_broken/2.4.256/48.1.keras
+/data/results-archive/training_data_broken/2.4.256/48.32.keras
+/data/results-archive/training_data_broken/2.4.256/48.8.keras
+/data/results-archive/training_data_broken/2.8.128/16.1.keras
+/data/results-archive/training_data_broken/2.8.128/16.32.keras
+/data/results-archive/training_data_broken/2.8.128/16.8.keras
+/data/results-archive/training_data_broken/2.8.128/32.1.keras
+/data/results-archive/training_data_broken/2.8.128/32.32.keras
+/data/results-archive/training_data_broken/2.8.128/32.8.keras
+/data/results-archive/training_data_broken/2.8.128/48.1.keras
+/data/results-archive/training_data_broken/2.8.128/48.32.keras
+/data/results-archive/training_data_broken/2.8.128/48.8.keras
+/data/results-archive/training_data_broken/2.8.256/16.1.keras
+/data/results-archive/training_data_broken/2.8.256/16.32.keras
+/data/results-archive/training_data_broken/2.8.256/16.8.keras
+/data/results-archive/training_data_broken/2.8.256/32.1.keras
+/data/results-archive/training_data_broken/2.8.256/32.32.keras
+/data/results-archive/training_data_broken/2.8.256/32.8.keras
+/data/results-archive/training_data_broken/2.8.256/48.1.keras
+/data/results-archive/training_data_broken/2.8.256/48.32.keras
+/data/results-archive/training_data_broken/2.8.256/48.8.keras
+/data/results-archive/training_data_broken/2.8.64/16.1.keras
+/data/results-archive/training_data_broken/2.8.64/16.32.keras
+/data/results-archive/training_data_broken/2.8.64/16.8.keras
+/data/results-archive/training_data_broken/2.8.64/32.1.keras
+/data/results-archive/training_data_broken/2.8.64/32.32.keras
+/data/results-archive/training_data_broken/2.8.64/32.8.keras
+/data/results-archive/training_data_broken/2.8.64/48.1.keras
+/data/results-archive/training_data_broken/2.8.64/48.32.keras
+/data/results-archive/training_data_broken/2.8.64/48.8.keras
+/data/results-archive/training_data_broken/3.12.128/16.1.keras
+/data/results-archive/training_data_broken/3.12.128/16.32.keras
+/data/results-archive/training_data_broken/3.12.128/16.8.keras
+/data/results-archive/training_data_broken/3.12.128/32.1.keras
+/data/results-archive/training_data_broken/3.12.128/32.32.keras
+/data/results-archive/training_data_broken/3.12.128/32.8.keras
+/data/results-archive/training_data_broken/3.12.128/48.1.keras
+/data/results-archive/training_data_broken/3.12.128/48.32.keras
+/data/results-archive/training_data_broken/3.12.128/48.8.keras
+/data/results-archive/training_data_broken/3.12.256/16.1.keras
+/data/results-archive/training_data_broken/3.12.256/16.32.keras
+/data/results-archive/training_data_broken/3.12.256/16.8.keras
+/data/results-archive/training_data_broken/3.12.256/32.1.keras
+/data/results-archive/training_data_broken/3.12.256/32.32.keras
+/data/results-archive/training_data_broken/3.12.256/32.8.keras
+/data/results-archive/training_data_broken/3.12.256/48.1.keras
+/data/results-archive/training_data_broken/3.12.256/48.32.keras
+/data/results-archive/training_data_broken/3.12.256/48.8.keras
+/data/results-archive/training_data_broken/3.12.64/16.1.keras
+/data/results-archive/training_data_broken/3.12.64/16.32.keras
+/data/results-archive/training_data_broken/3.12.64/16.8.keras
+/data/results-archive/training_data_broken/3.12.64/32.1.keras
+/data/results-archive/training_data_broken/3.12.64/32.32.keras
+/data/results-archive/training_data_broken/3.12.64/32.8.keras
+/data/results-archive/training_data_broken/3.12.64/48.1.keras
+/data/results-archive/training_data_broken/3.12.64/48.32.keras
+/data/results-archive/training_data_broken/3.12.64/48.8.keras
+/data/results-archive/training_data_broken/3.4.128/16.1.keras
+/data/results-archive/training_data_broken/3.4.128/16.32.keras
+/data/results-archive/training_data_broken/3.4.128/16.8.keras
+/data/results-archive/training_data_broken/3.4.128/32.1.keras
+/data/results-archive/training_data_broken/3.4.128/32.32.keras
+/data/results-archive/training_data_broken/3.4.128/32.8.keras
+/data/results-archive/training_data_broken/3.4.128/48.1.keras
+/data/results-archive/training_data_broken/3.4.128/48.32.keras
+/data/results-archive/training_data_broken/3.4.128/48.8.keras
+/data/results-archive/training_data_broken/3.4.256/16.1.keras
+/data/results-archive/training_data_broken/3.4.256/16.32.keras
+/data/results-archive/training_data_broken/3.4.256/16.8.keras
+/data/results-archive/training_data_broken/3.4.256/32.1.keras
+/data/results-archive/training_data_broken/3.4.256/32.32.keras
+/data/results-archive/training_data_broken/3.4.256/32.8.keras
+/data/results-archive/training_data_broken/3.4.256/48.1.keras
+/data/results-archive/training_data_broken/3.4.256/48.32.keras
+/data/results-archive/training_data_broken/3.4.256/48.8.keras
+/data/results-archive/training_data_broken/3.4.64/16.1.keras
+/data/results-archive/training_data_broken/3.4.64/16.32.keras
+/data/results-archive/training_data_broken/3.4.64/16.8.keras
+/data/results-archive/training_data_broken/3.4.64/32.1.keras
+/data/results-archive/training_data_broken/3.4.64/32.32.keras
+/data/results-archive/training_data_broken/3.4.64/32.8.keras
+/data/results-archive/training_data_broken/3.4.64/48.1.keras
+/data/results-archive/training_data_broken/3.4.64/48.32.keras
+/data/results-archive/training_data_broken/3.4.64/48.8.keras
+/data/results-archive/training_data_broken/3.8.128/16.1.keras
+/data/results-archive/training_data_broken/3.8.128/16.32.keras
+/data/results-archive/training_data_broken/3.8.128/16.8.keras
+/data/results-archive/training_data_broken/3.8.128/32.1.keras
+/data/results-archive/training_data_broken/3.8.128/32.32.keras
+/data/results-archive/training_data_broken/3.8.128/32.8.keras
+/data/results-archive/training_data_broken/3.8.128/48.1.keras
+/data/results-archive/training_data_broken/3.8.128/48.32.keras
+/data/results-archive/training_data_broken/3.8.128/48.8.keras
+/data/results-archive/training_data_broken/3.8.256/16.1.keras
+/data/results-archive/training_data_broken/3.8.256/16.32.keras
+/data/results-archive/training_data_broken/3.8.256/16.8.keras
+/data/results-archive/training_data_broken/3.8.256/32.1.keras
+/data/results-archive/training_data_broken/3.8.256/32.32.keras
+/data/results-archive/training_data_broken/3.8.256/32.8.keras
+/data/results-archive/training_data_broken/3.8.256/48.1.keras
+/data/results-archive/training_data_broken/3.8.256/48.32.keras
+/data/results-archive/training_data_broken/3.8.256/48.8.keras
+/data/results-archive/training_data_broken/3.8.64/16.1.keras
+/data/results-archive/training_data_broken/3.8.64/16.32.keras
+/data/results-archive/training_data_broken/3.8.64/16.8.keras
+/data/results-archive/training_data_broken/3.8.64/32.1.keras
+/data/results-archive/training_data_broken/3.8.64/32.32.keras
+/data/results-archive/training_data_broken/3.8.64/32.8.keras
+/data/results-archive/training_data_broken/3.8.64/48.1.keras
+/data/results-archive/training_data_broken/3.8.64/48.32.keras
+/data/results-archive/training_data_broken/3.8.64/48.8.keras
+/data/results-combined/2.4.16/16.1.keras
+/data/results-combined/2.4.16/16.32.keras
+/data/results-combined/2.4.16/16.8.keras
+/data/results-test/2.4.128/16.1.keras
+/data/results-test/2.4.128/16.32.keras
+/data/results-test/2.4.128/16.8.keras
+/data/results-test/2.4.128/32.1.keras
+/data/results-test/2.4.128/32.32.keras
+/data/results-test/2.4.128/32.8.keras
+/data/results-test/2.4.128/48.1.keras
+/data/results-test/2.4.128/48.8.keras
+/data/results-test/2.4.64/16.1.keras
+/data/results-test/2.4.64/16.32.keras
+/data/results-test/2.4.64/16.8.keras
+/data/results-test/2.4.64/32.1.keras
+/data/results-test/2.4.64/32.32.keras
+/data/results-test/2.4.64/32.8.keras
+/data/results-test/2.4.64/48.1.keras
+/data/results-test/2.4.64/48.32.keras
+/data/results-test/2.4.64/48.8.keras
+\end{lstlisting}
 
-\section{Accessed Material}
 
 
 
