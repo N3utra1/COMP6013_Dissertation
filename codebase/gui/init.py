@@ -63,7 +63,14 @@ def change_current_class():
     global current_class_toggle
     print(f"setting the current generator to {current_class_toggle.value}")
     current_generator = generators[current_class_toggle.value]
+    refresh_current_data()
 
+
+def refresh_current_data():
+    global current_data
+    current_data = pd.DataFrame()
+    while len(current_data) < (30 * 256):
+        pull_window()
 
 def update_prediction(prediction):
     global predicted_class_toggle
