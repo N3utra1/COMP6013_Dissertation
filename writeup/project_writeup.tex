@@ -101,7 +101,7 @@ scientific documents}
 \date{\parbox{\linewidth}{\centering
 \vspace{0.5cm}
 \today\endgraf\bigskip\vspace{0.5cm} 
-Word Count: 10,000 \\ \vspace{0.5cm}  
+Word Count: 9,133 \\ \vspace{0.5cm}  
 Supervised by Kashinath Basu}}
 
 
@@ -141,7 +141,7 @@ I would like to thank my project supervisor, Kashinath Basu for his support thro
 \section{Introduction}
 
 
-Over the last 20 years, \acrfull{ai} has seen a large evolution through the use of \acrfull{ml}; the statistical analysis of data which leads to the unveiling of characteristics and connections. \cite{awad2015efficient}. There has been a large uptake of applying \acrshort{ml} techniques to biomedical data, increasing the speed and accuracy of prediction, detection, diagnosis, and prognosis. 
+Over the last 20 years, \acrfull{ai} has seen an evolution through the use of \acrfull{ml}; the statistical analysis of data which leads to the unveiling of characteristics and connections. \cite{awad2015efficient}. There has been a large uptake of applying \acrshort{ml} techniques to biomedical data, increasing the speed and accuracy of prediction, detection, diagnosis, and prognosis. 
 
 \acrfull{eegs} measure the electrical signals in the brain. \acrshort{eegs} have a great use in giving an insight into the inner workings of the brain, for example allowing us to pick up abnormalities preceding and during their occurrence. ``A seizure is a burst of uncontrolled electrical activity between brain cells (also called neurons or nerve cells) that causes temporary abnormalities in muscle tone or movements (stiffness, twitching or limpness), behaviors, sensations or states of awareness.'' \cite{johnHopkinsTypesOfSeizures} Due to this, monitoring the brain's electrical activity through the use of an \acrshort{eeg}, and applying analysis through an \acrshort{ml} model may allow us to detect the preictal period. ``An automated accurate prediction of seizures will significantly improve the quality of life of patients and reduce the burden on caregivers'' \cite{acharya2018automated}
 
@@ -167,7 +167,7 @@ This project will aim to develop a consistent \acrshort{ml} model trained to cla
 
 \subsection{Project Requirements}\label{requirements}
 
-The formal requirements of this project are stated in
+The following are formal requirements based off \ref{objectives}.
 
 \begin{enumerate}
 \item{Develop and preprocessing pipeline which accepts raw \acrshort{eeg} data.}
@@ -201,7 +201,7 @@ Helsinki University Hospital EEG
 \caption{The Datasets analysed}
 \end{table}
 
-Within these datasets, Wong et al. were also able to find the way the EEG nodes were positioned on the subject's cranium, along with whether the EEG nodes were either placed intracranial or extracranial. Wong et al. also the number of channels that are contained in the raw EEG data for each dataset.
+Within these datasets, Wong et al. were also able to find the way the EEG nodes were positioned on the subject's cranium, along with whether the EEG nodes were either placed intracranial or extracranial. Wong et al. also found the number of channels that are contained in the raw EEG data for each dataset.
 
 \begin{table}[H]
 \centering
@@ -221,7 +221,7 @@ Siena Scalp EEG                                               & 20/29           
 \caption{Channel Characteristics}
 \end{table}
 
-Wong et al. also noted along with this data that the ``University of Bonn dataset contains a mixture of both scalp and intracranial EEG data where scalp EEG from healthy subjects was taken, while intracranial EEG was taken from subjects with a history of seizures.'' \cite{wong2023eeg}. This may present a skew on the \acrshort{ml} model during training.
+Wong et al. also noted along with this data that the ``University of Bonn dataset contains a mixture of both scalp and intracranial EEG data where scalp EEG from healthy subjects was taken, while intracranial EEG was taken from subjects with a history of seizures.'' \cite{wong2023eeg}. This may present a skew on the \acrshort{ml} model during training. 
 
 
 \begin{table}[H]
@@ -246,7 +246,7 @@ Siena Scalp EEG                                                                 
 \caption{Temporal properties}
 \end{table}
 
-Wong et al. ordered the datasets into groups, either continuous or noncontinuous data. For the continuous data they separated out datasets that record for less than 24 hours in a single go, these were classified as ``Short-term continuous'' data.
+Wong et al. ordered the datasets into groups; either continuous or noncontinuous data. The continuous data category was then further split by they separating out datasets which record for less than 24 hours in a single go, these were classified as ``Short-term continuous'' data.
 
 \begin{table}[H]
 \centering
@@ -268,7 +268,7 @@ Siena Scalp EEG                      & 14  & Human &
 
 Wong et al. also were able to identify the number of subjects within each dataset. Within the two ``Kaggle'' datasets there are Canine subjects, making them unsuitable for this project. 
 
-Within the review, they also produced tables displaying the segment information for each dataset, breaking down the recording length and frequency, along with the number of events and segments. This information should not weigh into which dataset suits the idea of preictal prediction so shall be left out in this background review. Wong et al. also discussed the idea of the class imbalance problem, where the number and length of each ictal period are unbalanced. Two datasets, ``University of Bonn'' and the ``Neurology and Sleep Centre Hauz Khas'' have addressed this issue and have balanced their data between ictal, preictal, interictal, and neonatal periods.
+Within the review, they also produced tables displaying the segment information for each dataset, breaking down the recording length and frequency, along with the number of events and segments. This information should not weigh into which dataset suits the idea of preictal prediction so shall be left out in this background review. Wong et al. also discussed the idea of the class imbalance problem, where the number and size of each ictal class (ictal, preictal, and interictal) are not equal. Two datasets, ``University of Bonn'' and the ``Neurology and Sleep Centre Hauz Khas'' have addressed this issue and have balanced their data between ictal, preictal, interictal, and neonatal periods.
 
 Taking the research into account Wong et al. suggested which dataset suits either prediction or detection. ``Since the aim of seizure prediction is to forecast impending seizures, EEG recordings that include preictal and interictal data should be used for the study, while the aim of seizure detection is to detect ongoing seizure events, hence, EEG recordings that contain ictal and interictal data should be used.'' \cite{wong2023eeg}.
 
@@ -293,7 +293,7 @@ Siena Scalp EEG                      & Seizure detection/Predictio
 
 \subsection{\acrfull{ml} Models}\label{models}
 
-A series of papers have been reviewed with the following \acrshort{ml} model types and feature extraction processes being used:
+A series of papers have been reviewed with the following \acrshort{ml} model types and feature extraction processes:
 
 \begin{itemize}
 	\item \acrfull{ml} models
@@ -320,7 +320,7 @@ A series of papers have been reviewed with the following \acrshort{ml} model typ
 
 \paragraph{\acrfull{knn} and \acrfull{svm}}\mbox{}\\
 
-\cite{savadkoohi2020machine} built a feature extraction process that extracted the ``time domain" using the Butterworth filter (1-70 Hz) \ref{eq:butterworth}, the ``frequency domain" using a Fourier transform  \ref{eq:fourier}, and the ``time-frequency domain" using Wavelet decomposition for the entire dataset. The resulting data is then split into its 5 brain wave bands; Delta, Theta, Alpha, Beta, and Gamma. From these 4 variables were extracted, mean, variance, skewness, and kurtosis, leading to 60 total extracted features. 
+\cite{savadkoohi2020machine} built a feature extraction process that extracted the ``time domain" using the Butterworth filter (1-70 Hz) \ref{eq:butterworth}, the ``frequency domain" using a Fourier transform  \ref{eq:fourier}, and the ``time-frequency domain" using Wavelet decomposition for the entire dataset. The resulting data is then split into its 5 brain wave bands; Delta, Theta, Alpha, Beta, and Gamma. From these, 4 variables were extracted, mean, variance, skewness, and kurtosis, leading to 60 total extracted features. 
 
 \begin{figure}[H]
 \[ y(n) = \sum_{i=0}^{N} a_i \cdot x(n - i) + \sum_{j=1}^{N} b_j \cdot y(n - j) \]
@@ -352,10 +352,10 @@ The classification times however were not included in the report. Extraction in 
 
 \paragraph{\acrfull{lr}, \acrfull{svm}, and \acrfull{cnn}}\mbox{}\\
 
-Mirowski et al. used the \cite{freiburg_eeg} dataset containing intracranial recordings and measured the performance of an \acrshort{lr}, \acrshort{svm}, and \acrshort{cnn} \acrshort{ml} models. They compiled 6 different preprocessing pipelines and tested the selected models against each. The preprocessing pipelines are as follows: 
+Mirowski et al. used the Freiburg dataset \cite{freiburg_eeg} containing intracranial recordings and measured the performance of an \acrshort{lr}, \acrshort{svm}, and \acrshort{cnn} \acrshort{ml} models. They compiled 6 different preprocessing pipelines and tested the selected models against each. The preprocessing pipelines are as follows: 
 
 \begin{itemize}
-\item The Cross-correlation between pairs of EEG channels was calculated with delays ranging from -0.5 to 0.5. The delays allowed for the propagation and processing time of brainwaves. Cross-correlation describes the amount $f$ has to be shifted along the $x$ axis to equal $g$\ref{eq:crossCorrelation}. Only the maximum value of the cross-correlation values was retained for training.
+\item The Cross-correlation between pairs of EEG channels was calculated with delays ranging from -0.5 to 0.5. The delays allowed for the propagation and processing time of brainwaves. Cross-correlation describes the amount $f$ has to be shifted along the $x$ axis to equal $g$, see \ref{eq:crossCorrelation}. Only the maximum value of the cross-correlation values was retained for training.
 
 \begin{figure}[H]
 \[ (f \star g)(\tau)\ \triangleq \int_{-\infty}^{\infty} \overline{f(t)} g(t+\tau)\,dt \]
@@ -363,9 +363,9 @@ Mirowski et al. used the \cite{freiburg_eeg} dataset containing intracranial rec
 \label{eq:crossCorrelation}
 \end{figure}
 
-\item Non-linear interdependence ``which measures the distance, in state-space, between time-delay embedded trajectories of two EEG channels'' was also extracted. This is a bivariate feature that ``measures the Euclidian distance, in reconstructed state-space, between trajectories described by two EEG channels''.
+\item Non-linear interdependence ``which measures the distance, in state-space, between time-delay embedded trajectories of two EEG channels'' \cite{mirowski2009classification} was also extracted. This is a bivariate feature that ``measures the Euclidian distance, in reconstructed state-space, between trajectories described by two EEG channels''. \cite{mirowski2009classification}
 
-\item The third method was \acrfull{dstl}, where a Lyapunov exponent \ref{eq:lyapunov} describes the rate of separation for two trajectories, which in this report was based off ``a common measure of the chaotic nature of a signal'' \cite{mirowski2009classification}
+\item The third method was \acrfull{dstl}, where a Lyapunov exponent \ref{eq:lyapunov} describes the rate of separation for two trajectories, which described ``a common measure of the chaotic nature of a signal'' \cite{mirowski2009classification}.
 
 \begin{figure}[H]
 \[ \lambda = \lim_{t \to \infty} \lim_{|\delta \mathbf{Z}_0| \to 0} \frac{1}{t} \ln\frac{| \delta\mathbf{Z}(t)|}{|\delta \mathbf{Z}_0|} \]
@@ -373,11 +373,11 @@ Mirowski et al. used the \cite{freiburg_eeg} dataset containing intracranial rec
 \label{eq:lyapunov}
 \end{figure}
 
-\item The last 3 features were \acrfull{splv}, Entropy, and Coherence of the phase difference. These were extracted from the wavelet transformation The wavelet transformation extracts the frequency-specific and time-dependent phases.
+\item The last 3 features were \acrfull{splv}, Entropy, and Coherence of the phase difference. These were extracted from the wavelet transformation. The wavelet transformation extracts the frequency-specific and time-dependent phases.
 
 \begin{figure}[H]
 \[ SPLV_{a,b}(f) = \frac{1}{N} \sum_{l=1}^{N} e^{i\left(\phi_{a,f}(l) - \phi_{b,f}(l)\right)} \]
-\caption{\acrfull{splv} extraction from the wavelet transformation}
+\caption{\acrfull{splv} extraction from the wavelet transformation.}
 \label{eq:splv}
 \end{figure}
 
@@ -457,7 +457,7 @@ These results show the strength of an \acrshort{cnn} when compared to other \acr
 
 \paragraph{\acrfull{cnn}}\mbox{}\\
 
-Another \acrshort{cnn} approach was implemented by Truong et al. \cite{truong2018convolutional} who applied an \acrfull{stft} transform \ref{eq:stft} on 30 seconds of \acrshort{eeg} data. Interference was then removed from the produced matrices by applying a notch filter. The final result was then fed into an \acrshort{cnn} producing these results:
+Another \acrshort{cnn} approach was implemented by Truong et al. \cite{truong2018convolutional} who applied an \acrfull{stft} \ref{eq:stft} on 30 seconds of \acrshort{eeg} data. Interference was then removed from the produced matrices by applying a notch filter. The final result was then fed into an \acrshort{cnn} producing these results:
 
 \begin{table}[H]
 \centering
@@ -476,9 +476,9 @@ No. of seizures & Sensitivity (\%) & False Positive Rate (/h) \\
 
 \subsubsection{Approach}
 
-From the datasets discussed in \ref{datasets}, the \acrfull{chb} \acrshort{eeg} dataset has been chosen due to the large amount of continuous data, suitable for extracting the preictal period \ref{dataset_applications}. The dataset also has \acrshort{eeg} nodes positioned on the subject's scalps, fitting with the use case of this project. Furthermore, the \acrshort{chb} \acrshort{eeg} dataset has produced summary plain-text files for each of the subject's recordings, stating when every seizure began and ended allowing for a straightforward methodology when configuring the \acrshort{eeg} tuning and training environment.
+From the datasets discussed in \ref{datasets}, the \acrfull{chb} \acrshort{eeg} dataset has been chosen due to the large amount of continuous data, suitable for extracting the preictal period \ref{dataset_applications}. The dataset also has \acrshort{eeg} nodes positioned on the subject's scalps, fitting with the use case of this project. Furthermore, the \acrshort{chb} \acrshort{eeg} dataset has produced summary plain-text files for each of the subject's recordings, stating when every seizure began and ended, allowing for a straightforward methodology when configuring the \acrshort{eeg} tuning and training environment.
 
-Through the analysis of various \acrshort{ml} models an \acrshort{cnn} will be used for this project. Both \cite{truong2018convolutional} and \cite{mirowski2009classification} show the potential \acrshort{cnn} have when being used in preictal prediction. The approach described in \cite{truong2018convolutional} was able to achieve similar or better results in comparison with other preprocessing pipelines and/or \acrshort{ml} model configurations while using a less computationally intense preprocessing method. This method was based around an \acrshort{stft} extraction and is described in \cite{truong2018convolutional}. This may allow for the classification to be done in real-time, meeting the project's objectives \ref{objectives}. To ensure this requirement is met a real-time simulation will be developed, showing the raw EEG data and the final prediction every second.
+Through the analysis of various \acrshort{ml} models an \acrshort{cnn} will be used for this project. Both \cite{truong2018convolutional} and \cite{mirowski2009classification} show the potential \acrshort{cnn} have when being used in preictal prediction. The approach described in \cite{truong2018convolutional} was able to achieve similar or better results in comparison with other preprocessing pipelines and/or \acrshort{ml} model configurations while using a less computationally intense preprocessing method. This method was based around an \acrshort{stft} extraction and is described in \cite{truong2018convolutional}. This may allow for the classification to be done in real-time, meeting the project's objectives \ref{objectives}. Once the pipeline is setup, testing can be done on the processing time for raw \acrshort{eeg} data.
 %more detailed information about the cnn is discussed in section \paragraph{\acrfull{cnn}}\mbox{}\\
 
 
@@ -489,7 +489,7 @@ Due to the linear nature of this project, a Waterfall methodology will be used. 
 
 \subsubsection{Version Control}
 
-This project will be under version control through the use of Git, along with GitHub as a remote repository. Both the dataset and the trained models will not be under version control. The use of a version control system and remote repository ensures that if anything goes awry a backup of all commits is stored remotely, securing any progress made in the project. Git also gives the benefit of many features; notably branches and stashing, allowing for developing ideas, features, and bugs without affecting the ``main'' code, and merging allows for the combination of said branches.
+This project will be under version control through the use of Git, along with GitHub as a remote repository. Both the dataset and the trained models will not be under version control. The use of a version control system and remote repository ensures that if anything goes awry a backup of all commits is stored remotely, securing any progress made in the project. Git also gives the benefit of many features; notably branches and stashing, allowing for developing ideas, features, and fixing bugs without affecting the ``main'' code, and merging allows for the combination of said branches.
 
 \subsubsection{Software and Libraries Used}
 
@@ -567,7 +567,7 @@ For this project, the \acrshort{eeg} signals were extracted and stored in an \ac
 
 \subsubsection{\acrfull{stft}}
 
-\acrshort{stft} extraction is applied against \acrshort{stft} is applied to the data collected from the \acrshort{eegs} to produce an spectrogram of length 30 seconds. These images contain only a single class and were the input into the \acrshort{cnn}. \acrshort{stft} can be expressed mathematically;\\
+An \acrshort{stft} is applied to the data collected from the \acrshort{eegs} to produce an spectrogram of length 30 seconds. These images contain only a single class and were the input into the \acrshort{cnn}. \acrshort{stft} can be expressed mathematically;\\
 
 \begin{figure}[H]
 \[  \mathbf{STFT}\{x(t)\}(\tau,\omega) \equiv X(\tau, \omega) = \int_{-\infty}^{\infty} x(t) w(t-\tau) e^{-i \omega t} \, d t   \]
@@ -578,7 +578,7 @@ For this project, the \acrshort{eeg} signals were extracted and stored in an \ac
 Where $w(\tau)$ is an window function and $x(t)$ is the input signal from the \acrshort{eegs}.\\
 
 
-This can also be explained as taking a Fourier transform of the \acrshort{eeg} signals after a window function has been applied, and then sliding a window across the result. The sliding window transforms the one-dimensional output from the Fourier transform into two-dimensional data allowing for visual analysis.
+This can also be explained as taking a Fourier transform of the \acrshort{eeg} signals after a window function has been applied, and then sliding a window across the result. The sliding window transforms the one-dimensional output from the Fourier transform into two-dimensional data, allowing for visual analysis.
 
 
 There are various parameters for an \acrshort{stft} transformation: 
@@ -619,7 +619,7 @@ See \ref{fig:stft2} for an Spectrogram produced with these parameters.
 \label{fig:stft1}
 \end{figure}
 
-\ref{fig:stft1} clearly shows power line interference with a horizontal band around 60 Hz. \cite{keshtkaran2014fast} discusses the different methods for removing power line interference, although due to the objectives stated in \ref{objectives}, a compute-intensive method needed to be avoided to allow the project to meet the real-time requirement. Through analysis done by Keshtkaran et al., a notch filter is fairly computationally light, although it does however have drawbacks such as not entirely removing the interference \cite{keshtkaran2014fast}. A notch filter was therefore applied to the raw data during the application of the \acrshort{stft} function.
+\ref{fig:stft1} clearly shows power line interference with a horizontal band around 60 Hz. \cite{keshtkaran2014fast} discusses the different methods for removing power line interference, although due to the objectives stated in \ref{objectives}, a compute-intensive method needed to be avoided. Through analysis done by Keshtkaran et al., a notch filter is fairly computationally light, although it does however have drawbacks such as not entirely removing the interference \cite{keshtkaran2014fast}. A notch filter was therefore applied to the raw data during the application of the \acrshort{stft} function.
 
 
 \subsubsection{Synthesize Data}\label{synthesize-data}
@@ -714,14 +714,14 @@ The Adam optimizer combines two different versions of stochastic gradient descen
 \end{figure}
 
 
-With only a single machine and the time available specified in \ref{gantt}, applying \acrfull{loocv} for all architecture and variable configurations would have been impossible. Therefore a testing training split ratio needed to be decided on. The time costs of running testing, especially on complex \acrshort{cnn} models were high, consequently, a large split for testing would be impractical as it would further drive up the training testing times. Due to the nature of the way the data was synthesized as well, a smaller testing split would be representative of all the available data for each class, this therefore led the project to use an 80\% training and 20\% testing split. 
+With only a single machine and the time available specified in \ref{schedule}, applying \acrfull{loocv} for all architecture and variable configurations would have been impossible. Therefore a testing training split ratio needed to be decided on. The time costs of running testing, especially on complex \acrshort{cnn} models were high, consequently, a large split for testing would be impractical as it would further drive up the training testing times. Due to the nature of the way the data was synthesized as well, a smaller testing split would be representative of all the available data for each class, this therefore led the project to use an 80\% training and 20\% testing split. 
 
 \paragraph{Architecture}\mbox{}\\
 
 
 The \acrshort{cnn} was dynamically built in accordance with the current variable configuration. By default, a single 2-dimensional convolutional block was included with an input shape of $(17\times3841\times2)$ such that the model would accept a 30-second \acrshort{stft} window. This convolutional block had 32 filters with a kernel size of $(3\times3\times3)$. The dynamic convolutional blocks were then built, increasing the number of filters following the formula $32 \times (2^i)$ where $i$ is the convolutional block index. Each convolutional block is followed by a batch normalization, and after all convolutional blocks, a 2 dimensional Max Pooling layer with a pool size of $(2\times2)$ is applied, along with a Flatten layer preparing the data to be passed to the dense layers.
 
-After the convolutional blocks and related layers have been added the dense layers are built. Again, a single dense layer is added by default which has an output shape of $(1, 3)$, preceding this dense layer is the dynamically generated dense layers. These layers have a set output shape specified in the architecture tuning variables.
+After the convolutional blocks and related layers have been added, the dense layers are built. Again, a single dense layer is added by default which has an output shape of $(1, 3)$, preceding this dense layer is the dynamically generated dense layers. These layers have a set output shape specified in the architecture tuning variables.
 
 
 \begin{lstlisting}[style=pythonstyle, caption={Function which dynamically builds an \acrshort{cnn} model from the specified parameters. Logging has been removed.}, label={lst:compile-model}]
@@ -752,9 +752,9 @@ After the convolutional blocks and related layers have been added the dense laye
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 \end{lstlisting}
 
-\paragraph{Tuning Variables}\label{variables}
+\paragraph{Tuning Variables}\label{variables}\mbox{}\\
 
-\ref{tab:variables} shows the different variables and their possible values used for model tuning. A model was trained for possible configurations of these variables.
+\ref{tab:variables} shows the different variables and their possible values used for model tuning. A model was trained for all possible configurations of these variables.
 
 \begin{table}[H]
 \centering
@@ -772,9 +772,9 @@ Batch Size           & 16    & 32    & 48
 \label{tab:variables}
 \end{table}
 
-The number of convolutional layers had to be limited; as the filter size increased exponentially with each layer an \acrfull{oom} error would occur when the filter size was too large. Therefore only 2 and 3 convolutional layers were tested. The number of epochs was also limited due to training time. With this configuration of tuning variables, 162 models were required to be trained.
+The number of convolutional layers had to be limited; as the filter size increased exponentially with each layer. \acrfull{oom} errors would occur when the filter size was too large, or the model was too complex. Therefore only 2 and 3 convolutional layers were tested. The number of epochs was also limited due to training time. With this configuration of tuning variables, 162 models were required to be trained.
 
-\paragraph{Metrics}
+\paragraph{Metrics}\mbox{}\\
 
 For each model, a plain text file was created during its tuning process. This plain text file recorded the start and end times of each process, including its model compiling, model training, and model testing. The file also contained metrics such as the training and testing accuracy and loss, the final confusion matrix, and the normalized confusion matrix. A classification report was also generated which calculated the precision, recall, F1 score, and support for each class. The classification report also calculated the accuracy of the model. An example of this file can be seen in \ref{lst:tuning-metrics}. The results are available along with a discussion in \ref{results}.
 
@@ -848,13 +848,13 @@ Within the simulation you can toggle which class the \acrshort{eeg} data is bein
 \subsection{Problems Encountered}\label{issues}
 
 
-There have been many issues faced throughout this project. From the very start managing bodies of datasets would not respond, this impacted my decision-making when selecting one of the datasets discussed in \ref{datasets}. Furthermore, once the \acrshort{chb} dataset was selected there were discrepancies within the summary files, and the extracted data with channel names not matching. The \acrshort{chb} dataset also did not record the \acrshort{eeg} values in the same manner for all subjects, this led to some data points from \acrshort{eeg} nodes to be discarded as those specific \acrshort{eeg} channels were not used for all subjects. On average this meant over 25\% of recorded data had to be removed. Of what was recorded, some subjects had very little data for certain classes with an overabundance of recorded interictal data. Having such little data for certain classes decreases the confidence of the synthesized data, as even though enough data points are available, the synthesized data may not be representative of a real-life situation.
+There have been many issues faced throughout this project. From the very start, managing bodies of datasets would not respond. This impacted my decision-making when selecting one of the datasets discussed in \ref{datasets}. Furthermore, once the \acrshort{chb} dataset was selected there were discrepancies within the summary files and the extracted data, with channel names not matching. The \acrshort{chb} dataset also did not configure the \acrshort{eeg} physical setup in the same manner for all subjects, this led to some data points from \acrshort{eeg} nodes to be discarded as those specific \acrshort{eeg} channels were not used for all subjects. On average this meant over 25\% of recorded data had to be removed. Of what was recorded, some subjects had very little data for certain classes with an overabundance of recorded interictal data. Having such little data for certain classes decreases the confidence of the synthesized data, as even though enough data points are available for data synthetization, the synthesized data may not be representative of a real-life situation.
 
 This project's approach changed substantially across its development. Originally development attempted to extract numeric and statistical features for each recorded point, more akin to traditional \acrshort{ann} methodologies, however, this approach was abandoned as it would not have been able to meet the real-time objective of this project.
 
-Tuning the models raised more problems than anything else in this project, with \acrshort{oom} issues being a common problem occurring throughout the model tuning process and the development of the real-time simulation. All code affected with \acrshort{oom} problems had to be carefully re-written to remove any memory leaks as well as implementing generator functions which for example would open the dataset paths used for training only when required. Some \acrshort{oom} errors were not avoidable, however. Certain model architecture configurations would lead to memory errors with convolutional block complexity growing exponentially only a maximum of 3 convolutional blocks were able to be used. Dense layer count and complexity on top also added to the problem.
+Tuning the models raised more problems than anything else in this project, with \acrshort{oom} issues being a common problem occurring throughout the model tuning process and the development of the real-time simulation. All code affected with \acrshort{oom} problems had to be carefully re-written to remove any memory leaks as well as implementing generator functions which for example would open the dataset paths used for training only when required. Some \acrshort{oom} errors were not avoidable, however. Certain model architecture configurations would lead to memory errors with convolutional block complexity growing exponentially. Therefore only a maximum of 3 convolutional blocks were able to be used. Dense layer count and dense layer complexity further worsened this problem.
 
-There were also many failed attempts at tuning the models. A re-occurring error was missing data points or even classes when tuning, this led to many trained models being invalid as they would only predict 2, or even 1 class due to its training data. Even when tuning was seemingly working this issue would appear with no exceptions being raised or problems being apparent. Over 250 trained models \ref{lst:model-list} have been discarded due to this problem alone, this has drastically reduced the results available for discussion.
+There were also many failed attempts at tuning the models. A re-occurring error was missing data points, or even entire missing classes when tuning. This led to over 250 trained models being invalid as they would only predict 2, or even 1 class due to its trained data missing data points. Even when tuning was seemingly working this issue would appear with no exceptions being raised or problems being apparent, even with through logging. This has drastically reduced the results available for discussion.
 
 \section{Review}
 
@@ -866,8 +866,8 @@ There were also many failed attempts at tuning the models. A re-occurring error 
 \centering
 \begin{tabular}{p{0.1\textwidth}p{0.7\textwidth}p{0.1\textwidth}}
 Index & Objective                                                                                                                                                                                                                    & Achieved \\
-1     & Research and find an suitable dataset allowing for the classification of the interictal, preictal, and ictal periods.                                                                                                        & True     \\
-2     & Research and find an suitable \acrshort{ml} model approach.                                                                                                                                                                  & True     \\
+1     & Research and find a suitable dataset allowing for the classification of the interictal, preictal, and ictal periods.                                                                                                        & True     \\
+2     & Research and find a suitable \acrshort{ml} model approach.                                                                                                                                                                  & True     \\
 3     & Create a data preperation and preprocessing pipeline which extracts the dataset into an \acrshort{ml} format suitable for training and testing.                                                                              & True     \\
 4     & Undergo parameter tuning and model architecture tuning of the selected \acrshort{ml} model approach.                                                                                                                         & True     \\
 5     & Produce a simulation interface which streams \acrshort{eeg} data in real time through the preprocessing pipeline and into the optimal model. The simulation should show the current classification to the user every second. & True    
@@ -895,19 +895,63 @@ The above tables correspond to the items in \ref{requirements} and \ref{objectiv
 
 \subsection{Results}\label{results}
 
+All results are contained in the appendix, under \ref{appendix-results}.
+
+\subsubsection{Training}
+
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{heatmap_training_accuracy_2.4.64}
+\centering
+\caption{Heatmap of accuracy during training for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{heatmap_training_accuracy_2.4.128}
+\centering
+\caption{Heatmap of accuracy during training for models with architecture 2.4.128}
+\label{fig:time-metrics}
+\end{figure}
+
+The results obtained during training are very positive, showing all models for all architectures obtaining an accuracy of 0.965 as minimum. The optimal number of epochs and the batch size has been discovered, with 8 epochs obtaining an higher accuracy metric than any other epoch tested. The optimal batch size is around 32, with higher batch sizes drastically affecting the final accuracy. As the batch size decreases the accuracy follows, however the achieved accuracy of the lower batch sizes is still far better than an larger batch size. 
+
+Notably, 1 epoch through the dataset does not have substantially lower results than models trained with an increased number of epochs. This is quite surprising as one might assume that the characteristics the \acrshort{cnn} is attempt to pick up on may be fairly obscure. The difference between the two tested architectures are minimal. Further testing should be done exploring the abilities of simpler models for this application. This is further discussed in \ref{advancements}.
 
 
 
-\subsection{Future Advancements}
+
+\subsubsection{Testing}
+
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{heatmap_training_accuracy_2.4.64}
+\centering
+\caption{Heatmap of accuracy during training for models with architecture 2.4.64.}
+\label{fig:time-metrics}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{heatmap_training_accuracy_2.4.128}
+\centering
+\caption{Heatmap of accuracy during training for models with architecture 2.4.128}
+\label{fig:time-metrics}
+\end{figure}
+
+
+All testing metrics are shown in seciton \ref{appendix-results} under the appendix. All trained models achieved 100\% accuracy, F1, Precision, and Recall for all classes. Any trained model would be applicable for embedding in an prediction device; having 0 ``false positives/hour'' would allow the final users to have absolute confidence in the machines ability. 
+
+Within these results, it should be noted that the training accuracy is lower than the validation accuracy. This is not an normal occurrence, but it is one that can happen. This can be an indication of two things, either the trained model genuinely has excellent performance, or that the complexity of the testing data is less than the training data. In this situation the testing data is taken from an identical pool of images that the testing data is taken from and therefore is no more complex than its counter part. This enforces that the trained models are able to pick up the characteristics of each class confidently.
+
+\subsection{Future Advancements}\label{advancements}
 
 
 \subsubsection{Generic Model}
 
-All models have been trained against a single subject's data, this has allowed the \acrshort{cnn} to pick up on their own characteristics for each class. Moving forward, a generic model for all subjects should be trained and evaluated against a single-subject model. Through this evaluation, a definitive answer can be found, pointing towards either a generic model having the same capabilities as a single-subject model or if a model for this application would have to be developed on a per-subject basis.
+All models have been trained against a single subject's data, this has allowed the \acrshort{cnn} to pick up on their own characteristics for each class. Moving forward, a generic model for all subjects should be trained and evaluated against a single-subject model. Through this evaluation, a definitive answer can be found, pointing towards either a generic model having the same capabilities as a single-subject model, or if a model for this application would have to be developed on a per-subject basis.
 
 \subsubsection{\acrshort{eeg} node configuration}
 
-The current model utilizes 17 \acrshort{eeg} nodes which are all positioned on the subject's cranium. In a real-life application reducing the number of \acrshort{eeg} nodes will drastically increase the convenience of having an \acrshort{eeg} based prediction device. Therefore a tuning process, where models are developed with different configurations for all possible \acrshort{eeg} node combinations will need to be developed. Reducing the number of \acrshort{eeg} nodes will also decrease the price of a prediction system along with the chance of a node, and therefore the device failing.
+The current model utilizes 17 \acrshort{eeg} nodes which are all positioned on the subject's cranium. In a real-life application, reducing the number of \acrshort{eeg} nodes will drastically increase the convenience of an \acrshort{eeg} based prediction device. Therefore a tuning process, where models are developed with different configurations for all possible \acrshort{eeg} node combinations will need to be developed. Reducing the number of \acrshort{eeg} nodes will also decrease the price of a prediction system along with the chance of a node, and therefore the device failing.
 
 \subsubsection{\acrshort{stft} parameters}
 
@@ -922,7 +966,7 @@ This project attempts to find the optimal \acrshort{cnn} architecture, although 
 
 \subsubsection{Prediction System}
 
-A prediction system prototype should be created to allow for real-life trials. OpenBCI is a company that produces \acrshort{eeg} devices that can stream data in real-time to a machine. OpenBCI advertises \acrshort{eeg} nodes, microcontrollers, and 3D printed models which hold the components on their website. OpenBCI has also made the STL files for their 3D models accessible through their GitHub \url{https://github.com/OpenBCI/Ultracortex/tree/master/Mark_IV}. Using these materials along with either their microcontroller or a custom one running off open source software such as \url{https://github.com/Pi-EEG/EEGwithRaspberryPI} should allow for an easy platform to create such a prediction device.
+A prediction system prototype should be created to allow for real-life trials. OpenBCI is a company that produces \acrshort{eeg} devices that can stream the live \acrshort{eeg} data to any machine. OpenBCI advertises \acrshort{eeg} nodes, microcontrollers, and 3D printed models which hold the components on their website. OpenBCI has also made the STL files for their 3D models accessible through their GitHub \url{https://github.com/OpenBCI/Ultracortex/tree/master/Mark_IV}. Using these materials along with either their microcontroller, or a custom one running off open source software such as \url{https://github.com/Pi-EEG/EEGwithRaspberryPI}, should allow for an easy platform to create such a prediction device.
 
 
 \subsubsection{Online Learning}
@@ -1028,7 +1072,7 @@ No. & Risk                                              & Impact                
 \item \textit{Undergo parameter tuning and model architecture tuning of the selected \acrshort{ml} model approach.} - For tuning \acrshort{ml} models the classes had to be balanced. The chosen approach was to synthesize data by using a sliding window technique, this was used to generate windows until all 3 classes had an equal number of data points. Once the data has been synthesized the pre-processing pipeline was then applied, generating thousands of spectrogram images. Through the use of ``sklearn'', ``Tensorflow'', and ``Keras'' these spectrograms could then be loaded and used for tuning, testing or running a real-time simulation. The tuning process however was slightly buggy, and with more time available this hopefully would of been resolved allowing for a greater number of models to be trained and evaluated. Nevertheless, the results obtained through the tuning process also exceeded my expectations with testing results being near perfect for all tuned models.
         
         
-\item \textit{Produce a simulation interface which streams \acrshort{eeg} data in real-time through the preprocessing pipeline and into the optimal model. The simulation should show the current classification to the user every second.} - The developed simulation proves the pipeline's ability to run in real-time which confirms that the project has met the real-time requirement. The simulation streams 17x256 data points each second for the currently selected class and produces a prediction using a trained model. In the future, this simulation can be easily modified to accept real recorded data from a physical \acrshort{eeg} setup. This is discussed in \ref{future-advancements}. At the beginning of this project, this integration was going to be incorporated into the requirements, however after evaluating the time given it was dropped.
+\item \textit{Produce a simulation interface which streams \acrshort{eeg} data in real-time through the preprocessing pipeline and into the optimal model. The simulation should show the current classification to the user every second.} - The developed simulation proves the pipeline's ability to run in real-time which confirms that the project has met the real-time requirement. The simulation streams 17x256 data points each second for the currently selected class and produces a prediction using a trained model. In the future, this simulation can be easily modified to accept real recorded data from a physical \acrshort{eeg} setup. This is discussed in \ref{advancements}. At the beginning of this project, this integration was going to be incorporated into the requirements, however after evaluating the time given it was dropped.
 \end{enumerate}
 
 \subsection{Final Thoughts}
@@ -1054,7 +1098,7 @@ This project has successfully achieved all requirements and objectives, producin
 \url{https://drive.google.com/file/d/1VGSPdRVlAAZp02pIs3qw4FANiYk2peBG/view?usp=sharing}
 
 
-\section{Results}
+\section{Results}\label{appendix-results}
 
 
 Model key: [convolution block count].[dense layer count].[dense layer size]/[batch size].[epochs]
